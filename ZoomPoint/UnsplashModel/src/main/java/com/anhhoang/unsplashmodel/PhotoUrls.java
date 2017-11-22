@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Anh.Hoang on 11/22/2017.
  */
 
-class PhotoUrls {
+public class PhotoUrls {
     // Photo sizes
     public static final String COL_RAW = "raw";
     public static final String COL_FULL = "full";

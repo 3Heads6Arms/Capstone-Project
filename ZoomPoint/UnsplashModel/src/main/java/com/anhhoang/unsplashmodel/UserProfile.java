@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by Anh.Hoang on 11/22/2017.
  */
 
-class UserProfile {
+public class UserProfile {
     public static final String COL_ID = "id";
     public static final String COL_UPDATED = "updated_at";
     public static final String COL_USERNAME = "username";

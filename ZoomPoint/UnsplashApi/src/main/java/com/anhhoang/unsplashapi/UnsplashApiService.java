@@ -1,5 +1,11 @@
 package com.anhhoang.unsplashapi;
 
+import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.PhotoCollection;
+import com.anhhoang.unsplashmodel.UserProfile;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -15,69 +21,70 @@ import retrofit2.http.Query;
 public interface UnsplashApiService {
 
     @GET("photos")
-    Call<Object> getPhotos(
+    Call<List<Photo>> getPhotos(
             @Query("page") int page,
             @Query("per_page") int perPage,
             @Query("order_by") String orderBy);
 
     @GET("photos/curated")
-    Call<Object> getCuratedPhotos(
+    Call<List<Photo>> getCuratedPhotos(
             @Query("page") int page,
-            @Query("per_page") int perPage,
-            @Query("order_by") String orderBy);
+            @Query("per_page") int perPage);
 
     @GET("photos/{id}")
-    Call<Object> getPhoto(@Path("id") String photoId);
+    Call<Photo> getPhoto(@Path("id") String photoId);
 
     @GET("photos/random")
-    Call<Object> getRandomPhoto(@Query("featured") boolean featured); // TODO: Check featured's type
+    Call<Photo> getRandomPhoto(@Query("featured") boolean featured); // TODO: Check featured's type
 
     @POST("photos/{id}/like")
-    Call<Object> likePhoto(@Path("id") String photoId);
+    Call<Photo> likePhoto(@Path("id") String photoId);
 
 
     @DELETE("photos/{id}/like")
-    Call<Object> unlikePhoto(@Path("id") String photoId);
+    Call<Photo> unlikePhoto(@Path("id") String photoId);
 
     @GET("search/photos")
-    Call<Object> searchPhotos(
+    Call<List<Photo>> searchPhotos(
             @Query("query") String searchTerms,
             @Query("page") int page,
             @Query("per_page") int perPage);
 
     @GET("collections/featured")
-    Call<Object> getFeaturedCollections(@Query("page") int page, @Query("per_page") int perPage);
+    Call<List<PhotoCollection>> getFeaturedCollections(@Query("page") int page, @Query("per_page") int perPage);
 
     @GET("collections/{id}/photos")
-    Call<Object> getCollectionPhotos(
+    Call<List<Photo>> getCollectionPhotos(
             @Path("id") long collectionId,
             @Query("page") int page,
             @Query("per_page") int perPage);
 
     @POST("collections")
-    Call<Object> createCollection(@Body Object collection);
+    Call<PhotoCollection> createCollection(@Body PhotoCollection collection);
 
+    // Returns an object that wraps Photo
     @POST("collections/{id}/add")
-    Call<Object> addPhotoToCollection(@Path("id") long collectionId, @Body Object photoId);
+    Call<Photo> addPhotoToCollection(@Path("id") long collectionId, @Body String photoId);
 
 
+    // Returns an object that wraps Photo
     @DELETE("collections/{id}/remove")
-    Call<Object> removePhotoFromCollection(@Path("id") long collectionId, @Body Object photoId);
+    Call<Photo> removePhotoFromCollection(@Path("id") long collectionId, @Body String photoId);
 
     @GET("users/{username}")
-    Call<Object> getUserProfile(@Path("username") String username);
+    Call<UserProfile> getUserProfile(@Path("username") String username);
 
     @GET("users/{username}/collections")
-    Call<Object> getUserCollections(@Path("username") String username);
+    Call<List<PhotoCollection>> getUserCollections(@Path("username") String username);
 
     @GET("users/{username}/likes")
-    Call<Object> getUserLikedPhotos(
+    Call<List<Photo>> getUserLikedPhotos(
             @Path("username") String username,
             @Query("page") int page,
             @Query("per_page") int perPage);
 
     @GET("users/{username}/photos")
-    Call<Object> getUserPhotos(
+    Call<List<Photo>> getUserPhotos(
             @Path("username") String username,
             @Query("page") int page,
             @Query("per_page") int perPage);

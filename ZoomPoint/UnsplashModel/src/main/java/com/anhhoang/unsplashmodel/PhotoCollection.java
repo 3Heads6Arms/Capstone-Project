@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by Anh.Hoang on 11/22/2017.
  */
 
-class PhotoCollection {
+public class PhotoCollection {
     public static final String COL_ID = "id";
     public static final String COL_TITLE = "title";
     public static final String COL_DESC = "description";

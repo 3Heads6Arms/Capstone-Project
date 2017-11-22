@@ -5,24 +5,36 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 
 public class Photo {
+    public static final String COL_IDENTIFIER = "id";
+    public static final String COL_CREATED_AT = "created_at";
+    public static final String COL_UPDATED_AT = "updated_at";
+    public static final String COL_WIDTH = "width";
+    public static final String COL_HEIGHT = "height";
+    public static final String COL_COLOR = "color";
+    public static final String COL_LIKES = "likes";
+    public static final String COL_LIKED_BY_USER = "liked_by_user";
+    public static final String COL_DESC = "description";
 
-    @SerializedName("id")
-    private String identifer;
-    @SerializedName("created_at")
+    public static final String COL_COLLECTION_ID = "collection_id";
+    public static final String COL_USER_ID = "user_id";
+
+    @SerializedName(COL_IDENTIFIER)
+    private String id;
+    @SerializedName(COL_CREATED_AT)
     private Date createdAt;
-    @SerializedName("updated_at")
+    @SerializedName(COL_UPDATED_AT)
     private Date updatedAt;
-    @SerializedName("width")
+    @SerializedName(COL_WIDTH)
     private float width;
-    @SerializedName("height")
+    @SerializedName(COL_HEIGHT)
     private float height;
-    @SerializedName("color")
+    @SerializedName(COL_COLOR)
     private String color;
-    @SerializedName("likes")
+    @SerializedName(COL_LIKES)
     private int likes;
-    @SerializedName("liked_by_user")
+    @SerializedName(COL_LIKED_BY_USER)
     private boolean likedByUser;
-    @SerializedName("description")
+    @SerializedName(COL_DESC)
     private String description;
     @SerializedName("exif")
     private Exif exif;
@@ -34,4 +46,116 @@ public class Photo {
     private PhotoUrls urls;
     @SerializedName("user")
     private UserProfile user;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public boolean isLikedByUser() {
+        return likedByUser;
+    }
+
+    public void setLikedByUser(boolean likedByUser) {
+        this.likedByUser = likedByUser;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Exif getExif() {
+        return exif;
+    }
+
+    public void setExif(Exif exif) {
+        this.exif = exif;
+    }
+
+    public PhotoLocation getLocation() {
+        return location;
+    }
+
+    public void setLocation(PhotoLocation location) {
+        this.location = location;
+    }
+
+    public PhotoCollection getCollection() {
+        return collection;
+    }
+
+    public void setCollection(PhotoCollection collection) {
+        this.collection = collection;
+    }
+
+    public PhotoUrls getUrls() {
+        return urls;
+    }
+
+    public void setUrls(PhotoUrls urls) {
+        this.urls = urls;
+    }
+
+    public UserProfile getUser() {
+        return user;
+    }
+
+    public void setUser(UserProfile user) {
+        this.user = user;
+    }
 }

@@ -1,5 +1,8 @@
 package com.anhhoang.unsplashapi;
 
+import com.anhhoang.unsplashmodel.authmodel.TokenRequest;
+import com.anhhoang.unsplashmodel.authmodel.TokenResponse;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -10,5 +13,5 @@ import retrofit2.http.POST;
 
 public interface UnsplashAuthApiService {
     @POST("token")
-    Call<Object> getToken(@Body Object body);
+    Call<TokenResponse> getToken(@Body TokenRequest body);
 }

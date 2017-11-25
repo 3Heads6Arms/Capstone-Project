@@ -1,1 +1,1 @@
-include ':app', ':UnsplashApi', ':UnsplashModel'
+include ':app', ':UnsplashApi', ':UnsplashModel', ':Database'

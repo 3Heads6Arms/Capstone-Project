@@ -25,9 +25,9 @@ public class Photo {
     @SerializedName(COL_UPDATED_AT)
     private Date updatedAt;
     @SerializedName(COL_WIDTH)
-    private float width;
+    private int width;
     @SerializedName(COL_HEIGHT)
-    private float height;
+    private int height;
     @SerializedName(COL_COLOR)
     private String color;
     @SerializedName(COL_LIKES)
@@ -71,19 +71,19 @@ public class Photo {
         this.updatedAt = updatedAt;
     }
 
-    public float getWidth() {
+    public int getWidth() {
         return width;
     }
 
-    public void setWidth(float width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public float getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(float height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 

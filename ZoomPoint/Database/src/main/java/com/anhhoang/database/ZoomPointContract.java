@@ -14,6 +14,7 @@ public class ZoomPointContract {
 
     public static final String PATH_PHOTO = "photo";
     public static final String PATH_COLLECTION = "collection";
+    public static final String PATH_USER_PROFILE = "userprofile";
 
     public static final class PhotoEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PHOTO).build();
@@ -33,5 +34,14 @@ public class ZoomPointContract {
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_COLLECTION;
 
         public static final String TABLE_NAME = "collections";
+    }
+
+    public static final class UserProfileEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_USER_PROFILE).build();
+
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USER_PROFILE;
+        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USER_PROFILE;
+
+        public static final String TABLE_NAME = "userprofiles";
     }
 }

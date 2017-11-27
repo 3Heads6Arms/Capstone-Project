@@ -17,7 +17,6 @@ public class PhotoCollection {
     public static final String COL_CURATED = "curated";
     public static final String COL_FEATURED = "featured";
 
-    public static final String COL_COVER_PHOTO_ID = "photo_id";
     public static final String COL_USER_ID = "user_id";
 
     @SerializedName(COL_ID)

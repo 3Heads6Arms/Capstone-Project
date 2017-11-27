@@ -8,7 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQuery;
 
+import com.anhhoang.unsplashmodel.Exif;
 import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.PhotoCollection;
+import com.anhhoang.unsplashmodel.PhotoLocation;
+import com.anhhoang.unsplashmodel.PhotoUrls;
+import com.anhhoang.unsplashmodel.UserProfile;
 
 /**
  * Created by anh.hoang on 26.11.17.
@@ -29,7 +34,7 @@ public class ZoomPointDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String createPhotoDbQuery = "CREATE TABLE " + ZoomPointContract.PhotoEntry.TABLE_NAME + " (" +
+        final String createPhotoQuery = "CREATE TABLE " + ZoomPointContract.PhotoEntry.TABLE_NAME + " (" +
                 ZoomPointContract.PhotoEntry._ID + " INTEGER PRIMARY KEY, " +
                 Photo.COL_IDENTIFIER + " TEXT UNIQUE, " +
                 Photo.COL_CREATED_AT + " NUMERIC, " +
@@ -40,15 +45,64 @@ public class ZoomPointDbHelper extends SQLiteOpenHelper {
                 Photo.COL_LIKES + " INTEGER, " +
                 Photo.COL_LIKED_BY_USER + " NUMERIC, " +
                 Photo.COL_DESC + " TEXT, " +
-                // TODO put EXIF & URLS
+                Exif.COL_MAKE + " TEXT, " +
+                Exif.COL_MODEL + " TEXT, " +
+                Exif.COL_EXPOSURE_TIME + " REAL, " +
+                Exif.COL_APERTURE + " REAL," +
+                Exif.COL_FOCAL_LENGTH + " INTEGER, " +
+                Exif.COL_ISO + " INTEGER, " +
+                PhotoLocation.COL_CITY + " TEXT, " +
+                PhotoLocation.COL_COUNTRY + " TEXT, " +
+                PhotoLocation.COL_LAT + " TEXT, " +
+                PhotoLocation.COL_LON + " TEXT, " +
+                PhotoUrls.COL_RAW + " TEXT, " +
+                PhotoUrls.COL_FULL + " TEXT, " +
+                PhotoUrls.COL_REGULAR + " TEXT, " +
+                PhotoUrls.COL_THUMB + " TEXT, " +
+                PhotoUrls.COL_SMALL + " TEXT, " +
                 Photo.COL_COLLECTION_ID + " INTEGER, " + // UNIQUE but is not primary key, due to API difference. The app will ignore all _IDs columns
-                Photo.COL_USER_ID + " TEXT,";
-                ;
+                Photo.COL_USER_ID + " TEXT);"; // UNIQUE but is not primary key, due to API difference. The app will ignore all _IDs columns
 
+        final String createCollectionQuery = "CREATE TABLE " + ZoomPointContract.CollectionEntry.TABLE_NAME + " (" +
+                ZoomPointContract.CollectionEntry._ID + " INTEGER PRIMARY KEY, " +
+                PhotoCollection.COL_ID + " INTEGER UNIQUE, " +
+                PhotoCollection.COL_TITLE + " TEXT, " +
+                PhotoCollection.COL_DESC + " TEXT, " +
+                PhotoCollection.COL_PUBLISHED + " NUMERIC, " +
+                PhotoCollection.COL_UPDATED + " NUMERIC, " +
+                PhotoCollection.COL_CURATED + " NUMERIC, " +
+                PhotoCollection.COL_FEATURED + " NUMERIC, " +
+                PhotoUrls.COL_RAW + " TEXT, " +
+                PhotoUrls.COL_FULL + " TEXT, " +
+                PhotoUrls.COL_REGULAR + " TEXT, " +
+                PhotoUrls.COL_THUMB + " TEXT, " +
+                PhotoUrls.COL_SMALL + " TEXT, " +
+                PhotoCollection.COL_USER_ID + " TEXT);"; // UNIQUE but is not primary key, due to API difference. The app will ignore all _IDs columns
+
+        final String createUserProfileQuery = "CREATE TABLE " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " (" +
+                ZoomPointContract.UserProfileEntry._ID + " INTEGER PRIMARY KEY, " +
+                UserProfile.COL_ID + " TEXT UNIQUE, " +
+                UserProfile.COL_UPDATED + " NUMERIC, " +
+                UserProfile.COL_USERNAME + " TEXT, " +
+                UserProfile.COL_NAME + " TEXT, " +
+                UserProfile.COL_FIRST_NAME + " TEXT, " +
+                UserProfile.COL_LAST_NAME + " TEXT, " +
+                UserProfile.COL_PORTFOLIO_URL + " TEXT, " +
+                UserProfile.COL_BIO + " TEXT, " +
+                UserProfile.COL_LOCATION + " TEXT, " +
+                PhotoUrls.COL_MEDIUM + " TEXT, " +
+                PhotoUrls.COL_LARGE + " TEXT, " +
+                PhotoUrls.COL_SMALL + " TEXT);";
+
+        db.execSQL(createPhotoQuery);
+        db.execSQL(createCollectionQuery);
+        db.execSQL(createUserProfileQuery);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Since the saved data is not crucial & sensitive to changes
+        // the db can be dropped and create new version
         db.execSQL("DROP TABLE IF EXISTS " + ZoomPointContract.PhotoEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ZoomPointContract.CollectionEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ZoomPointContract.UserProfileEntry.TABLE_NAME);

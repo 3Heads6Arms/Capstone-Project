@@ -5,14 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteTransactionListener;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.test.AndroidTestCase;
 
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.unsplashmodel.UserProfile;
-import com.facebook.stetho.Stetho;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +24,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class ZoomPointDbTest {
-    SQLiteOpenHelper sqLiteOpenHelper;
+    private SQLiteOpenHelper sqLiteOpenHelper;
 
     @Before
     public void setupDb() {

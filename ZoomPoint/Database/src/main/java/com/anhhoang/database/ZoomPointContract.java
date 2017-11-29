@@ -12,9 +12,9 @@ public class ZoomPointContract {
     public static final String CONTENT_AUTHORITY = "com.anhhoang.zoompoint";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    public static final String PATH_PHOTO = "photo";
-    public static final String PATH_COLLECTION = "collection";
-    public static final String PATH_USER_PROFILE = "userprofile";
+    public static final String PATH_PHOTO = "photos";
+    public static final String PATH_COLLECTION = "collections";
+    public static final String PATH_USER_PROFILE = "userprofiles";
 
     public static final class PhotoEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_PHOTO).build();

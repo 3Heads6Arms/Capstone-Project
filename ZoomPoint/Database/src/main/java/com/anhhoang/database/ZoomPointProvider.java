@@ -1,13 +1,19 @@
 package com.anhhoang.database;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.PhotoCollection;
+import com.anhhoang.unsplashmodel.UserProfile;
 
 /**
  * Created by anh.hoang on 28.11.17.
@@ -52,7 +58,78 @@ public class ZoomPointProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return null;
+        int match = URI_MATCHER.match(uri);
+        Cursor cursor;
+        SQLiteDatabase database = openHelper.getReadableDatabase();
+        switch (match) {
+            case PHOTOS:
+                cursor = database.query(
+                        ZoomPointContract.PhotoEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            case PHOTO:
+                String photoId = uri.getPathSegments().get(0);
+                cursor = database.query(
+                        ZoomPointContract.PhotoEntry.TABLE_NAME,
+                        null,
+                        Photo.COL_IDENTIFIER + "=?",
+                        new String[]{photoId},
+                        null,
+                        null,
+                        null);
+                break;
+            case COLLECTIONS:
+                cursor = database.query(
+                        ZoomPointContract.CollectionEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            case COLLECTION:
+                String collectionId = uri.getPathSegments().get(0);
+                cursor = database.query(
+                        ZoomPointContract.CollectionEntry.TABLE_NAME,
+                        null,
+                        PhotoCollection.COL_ID + "=?",
+                        new String[]{collectionId},
+                        null,
+                        null,
+                        null);
+                break;
+            case USER_PROFILES:
+                cursor = database.query(
+                        ZoomPointContract.UserProfileEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+                break;
+            case USER_PROFILE:
+                String userId = uri.getPathSegments().get(0);
+                cursor = database.query(
+                        ZoomPointContract.UserProfileEntry.TABLE_NAME,
+                        null,
+                        UserProfile.COL_ID + "=?",
+                        new String[]{userId},
+                        null,
+                        null,
+                        null);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        return cursor;
     }
 
     @Nullable
@@ -81,16 +158,121 @@ public class ZoomPointProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        return null;
+        final int match = URI_MATCHER.match(uri);
+        SQLiteDatabase database = openHelper.getWritableDatabase();
+        long id;
+        Uri resultUri;
+        switch (match) {
+            case PHOTOS:
+                id = database.insert(ZoomPointContract.PhotoEntry.TABLE_NAME, null, values);
+                resultUri = ContentUris.withAppendedId(ZoomPointContract.PhotoEntry.CONTENT_URI, id);
+                break;
+            case COLLECTIONS:
+                id = database.insert(ZoomPointContract.CollectionEntry.TABLE_NAME, null, values);
+                resultUri = ContentUris.withAppendedId(ZoomPointContract.CollectionEntry.CONTENT_URI, id);
+                break;
+            case USER_PROFILES:
+                id = database.insert(ZoomPointContract.UserProfileEntry.TABLE_NAME, null, values);
+                resultUri = ContentUris.withAppendedId(ZoomPointContract.UserProfileEntry.CONTENT_URI, id);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        // Since the DB uses its own kind of ID(some are string some are integer,
+        // so the returned id from insert doesn't serve any real purpose.
+        return resultUri;
     }
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        final int match = URI_MATCHER.match(uri);
+        SQLiteDatabase database = openHelper.getWritableDatabase();
+        int rowsDeleted;
+        switch (match) {
+            case PHOTOS:
+                rowsDeleted = database.delete(ZoomPointContract.PhotoEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case COLLECTIONS:
+                rowsDeleted = database.delete(ZoomPointContract.CollectionEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case USER_PROFILES:
+                rowsDeleted = database.delete(ZoomPointContract.UserProfileEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (rowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsDeleted;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        final int match = URI_MATCHER.match(uri);
+        SQLiteDatabase database = openHelper.getWritableDatabase();
+        int rowsUpdated;
+        switch (match) {
+            case PHOTOS:
+                rowsUpdated = database.update(ZoomPointContract.PhotoEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case COLLECTIONS:
+                rowsUpdated = database.update(ZoomPointContract.CollectionEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case USER_PROFILES:
+                rowsUpdated = database.update(ZoomPointContract.UserProfileEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (rowsUpdated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsUpdated;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        final int match = URI_MATCHER.match(uri);
+        SQLiteDatabase database = openHelper.getWritableDatabase();
+        int rowsInserted = 0;
+        String tableName;
+        switch (match) {
+            case PHOTOS:
+                tableName = ZoomPointContract.PhotoEntry.TABLE_NAME;
+                break;
+            case COLLECTIONS:
+                tableName = ZoomPointContract.CollectionEntry.TABLE_NAME;
+                break;
+            case USER_PROFILES:
+                tableName = ZoomPointContract.UserProfileEntry.TABLE_NAME;
+                break;
+            default:
+                return super.bulkInsert(uri, values);
+
+        }
+
+        database.beginTransaction();
+        try {
+            for (ContentValues contentValues : values) {
+                long id = database.insert(tableName, null, contentValues);
+                if (id != -1) {
+                    rowsInserted++;
+                }
+            }
+            database.setTransactionSuccessful();
+        } finally {
+            database.endTransaction();
+        }
+
+
+        return rowsInserted;
     }
 }

@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Random;
+
 /**
  * Created by anh.hoang on 29.11.17.
  */
@@ -34,13 +36,55 @@ public class ZoomPointProviderTest {
 
     @Test
     public void testInsertPhoto() {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Photo.COL_IDENTIFIER, "number1");
-
-        Uri uri = context.getContentResolver().insert(ZoomPointContract.PhotoEntry.CONTENT_URI, contentValues);
-
-        long id = ContentUris.parseId(uri);
+        long id = insertPhoto("number1");
 
         Assert.assertTrue(id != -1);
     }
+
+    @Test
+    public void testDeletePhoto() {
+        insertPhoto("number1");
+        int deletedRows = deletePhoto("number1");
+
+        Assert.assertTrue(deletedRows > 0);
+    }
+
+    @Test
+    public void testMassDeletePhoto() {
+        Random random = new Random();
+        int expectedCounts = random.nextInt(10);
+        for (int i = 0; i < expectedCounts; i++) {
+            insertPhoto("number" + i);
+        }
+        int deletedRows = massDeletePhoto();
+        Assert.assertEquals(expectedCounts, deletedRows);
+    }
+
+
+    private long insertPhoto(String id) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Photo.COL_IDENTIFIER, id);
+
+        Uri uri = context.getContentResolver().insert(ZoomPointContract.PhotoEntry.CONTENT_URI, contentValues);
+
+        return ContentUris.parseId(uri);
+    }
+
+    private int deletePhoto(String id) {
+        return context.getContentResolver()
+                .delete(
+                        ZoomPointContract.PhotoEntry.CONTENT_URI,
+                        Photo.COL_IDENTIFIER + "=?",
+                        new String[]{id});
+    }
+
+    private int massDeletePhoto() {
+        return context.getContentResolver()
+                .delete(
+                        ZoomPointContract.PhotoEntry.CONTENT_URI,
+                        null,
+                        null);
+    }
+
+    // TODO: add more tests
 }

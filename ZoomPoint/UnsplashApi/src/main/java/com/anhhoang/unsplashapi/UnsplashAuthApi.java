@@ -15,6 +15,8 @@ public class UnsplashAuthApi {
     private static final String API_URL = "https://unsplash.com/oauth/";
     private static UnsplashAuthApi INSTANCE;
 
+    public static final String AUTH_URL = "https://unsplash.com/oauth/authorize";
+
     public static UnsplashAuthApi getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new UnsplashAuthApi();

@@ -1,5 +1,8 @@
 package com.anhhoang.unsplashapi;
 
+import android.net.Uri;
+import android.text.TextUtils;
+
 import com.anhhoang.unsplashmodel.authmodel.TokenRequest;
 import com.anhhoang.unsplashmodel.authmodel.TokenResponse;
 
@@ -14,6 +17,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class UnsplashAuthApi {
     private static final String API_URL = "https://unsplash.com/oauth/";
     private static UnsplashAuthApi INSTANCE;
+
+    private static String[] scopes = new String[]{
+            "public",
+            "read_user",
+            "write_user",
+            "read_photos",
+            "write_photos",
+            "write_likes",
+            "write_followers",
+            "read_collections",
+            "write_collections"
+    };
 
     public static final String AUTH_URL = "https://unsplash.com/oauth/authorize";
 
@@ -37,5 +52,15 @@ public class UnsplashAuthApi {
 
     public Call<TokenResponse> getToken(TokenRequest request) {
         return unsplashApiService.getToken(request);
+    }
+
+    public static Uri getAuthUri() {
+        return Uri.parse(AUTH_URL)
+                .buildUpon()
+                .appendQueryParameter("client_id", BuildConfig.UNSPLASH_API_KEY)
+                .appendQueryParameter("redirect_uri", "zoompoint://auth/callback")
+                .appendQueryParameter("response_type", "code")
+                .appendQueryParameter("scope", TextUtils.join("+", scopes))
+                .build();
     }
 }

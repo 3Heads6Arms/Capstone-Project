@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
  */
 
 public class ZoomPointContract {
-    public static final String CONTENT_AUTHORITY = "com.anhhoang.zoompoint";
+    public static final String CONTENT_AUTHORITY = "com.anhhoang.zoompoint.database";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     public static final String PATH_PHOTO = "photos";

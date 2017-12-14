@@ -4,7 +4,7 @@
     <application>
         <provider
             android:name=".ZoomPointProvider"
-            android:authorities="com.anhhoang.zoompoint"
+            android:authorities="com.anhhoang.zoompoint.database"
             android:exported="false" />
     </application>
 </manifest>

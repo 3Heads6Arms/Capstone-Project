@@ -1,9 +1,12 @@
 package com.anhhoang.zoompoint.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -36,13 +39,32 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+            presenter.login(uri);
+        }
+    }
+
+    @Override
     public void setPresenter(LoginContracts.Presenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     public void saveToken(String token) {
+        if (!TextUtils.isEmpty(token)) {
+            // TODO: Remove comments following
+//            PreferenceManager.getDefaultSharedPreferences(this)
+//                    .edit()
+//                    .putString(getString(R.string.token_preference_key), token)
+//                    .apply();
 
+            // TODO: Proceed next screen
+            showError("Logged in with token: " + token);
+        }
     }
 
     @Override
@@ -51,15 +73,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
                 .contains(getString(R.string.token_preference_key));
         if (isLoggedIn) {
             // TODO: Proceed next screen
-        } else {
-            toggleProgress(false);
         }
+        toggleProgress(false);
+
     }
 
-    @Override
-    public void openLogin(Intent intent) {
-        startActivity(intent);
-    }
 
     @Override
     public void toggleProgress(boolean show) {
@@ -72,9 +90,20 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
         }
     }
 
+    @Override
+    public void showError(String message) {
+        Snackbar.make(loginControls, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showError(int idString) {
+        showError(getString(idString));
+    }
+
     @OnClick(R.id.button_login)
     public void loginBtn_onClick() {
-        presenter.login();
+        Intent intent = presenter.getLoginIntent();
+        startActivity(intent);
     }
 
     @OnClick(R.id.button_signup)

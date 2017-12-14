@@ -1,6 +1,7 @@
 package com.anhhoang.zoompoint.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import com.anhhoang.zoompoint.BaseMvpContract;
 
@@ -16,11 +17,15 @@ public interface LoginContracts {
 
         void toggleProgress(boolean show);
 
-        void openLogin(Intent intent);
+        void showError(String message);
+
+        void showError(int idString);
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
-        void login();
+        Intent getLoginIntent();
+
+        void login(Uri callbackUri);
 
         void createAccount();
     }

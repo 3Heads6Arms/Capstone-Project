@@ -25,8 +25,8 @@ public interface LoginContracts {
     interface Presenter extends BaseMvpContract.Presenter<View> {
         Intent getLoginIntent();
 
-        void login(Uri callbackUri);
+        Intent getRegisterIntent();
 
-        void createAccount();
+        void login(Uri callbackUri);
     }
 }

@@ -31,6 +31,7 @@ public class UnsplashAuthApi {
     };
 
     private static final String AUTH_URL = "https://unsplash.com/oauth/authorize";
+    private static final String REG_URL = "https://unsplash.com/join";
 
     public static UnsplashAuthApi getInstance() {
         if (INSTANCE == null) {
@@ -64,10 +65,14 @@ public class UnsplashAuthApi {
     public static Uri getAuthUri() {
         return Uri.parse(AUTH_URL)
                 .buildUpon()
-                .encodedQuery("scope="+ TextUtils.join("+", scopes))
+                .encodedQuery("scope=" + TextUtils.join("+", scopes))
                 .appendQueryParameter("client_id", BuildConfig.UNSPLASH_API_KEY)
                 .appendQueryParameter("redirect_uri", "zoompoint://auth/callback")
                 .appendQueryParameter("response_type", "code")
                 .build();
+    }
+
+    public static Uri getRegisterUri() {
+        return Uri.parse(REG_URL);
     }
 }

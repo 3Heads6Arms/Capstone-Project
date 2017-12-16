@@ -38,10 +38,12 @@ public class LoginPresenter implements LoginContracts.Presenter {
 
     @Override
     public Intent getLoginIntent() {
-        Intent intent = new Intent(Intent.ACTION_VIEW, UnsplashAuthApi.getAuthUri());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        return getUnsplashIntent(UnsplashAuthApi.getAuthUri());
+    }
 
-        return intent;
+    @Override
+    public Intent getRegisterIntent() {
+        return getUnsplashIntent(UnsplashAuthApi.getRegisterUri());
     }
 
     @Override
@@ -73,8 +75,10 @@ public class LoginPresenter implements LoginContracts.Presenter {
                 });
     }
 
-    @Override
-    public void createAccount() {
-        // TODO: Create account
+    private Intent getUnsplashIntent(Uri uri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        return intent;
     }
 }

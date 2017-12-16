@@ -108,6 +108,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
 
     @OnClick(R.id.button_signup)
     public void signUpButton_onClick() {
-        presenter.createAccount();
+        startActivity(presenter.getRegisterIntent());
     }
 }

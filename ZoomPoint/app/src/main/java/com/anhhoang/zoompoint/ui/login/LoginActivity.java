@@ -1,4 +1,4 @@
-package com.anhhoang.zoompoint.ui;
+package com.anhhoang.zoompoint.ui.login;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.ui.home.HomeActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,8 +35,12 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+    }
 
-        new LoginPresenter().onAttach(this);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        new LoginPresenter().attach(this);
     }
 
     @Override
@@ -49,35 +54,29 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        presenter.detach();
+    }
+
+    @Override
     public void setPresenter(LoginContracts.Presenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     public void saveToken(String token) {
-        if (!TextUtils.isEmpty(token)) {
-            // TODO: Remove comments following
-//            PreferenceManager.getDefaultSharedPreferences(this)
-//                    .edit()
-//                    .putString(getString(R.string.token_preference_key), token)
-//                    .apply();
-
-            // TODO: Proceed next screen
-            showError("Logged in with token: " + token);
-        }
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(getString(R.string.token_preference_key), token)
+                .apply();
     }
 
     @Override
-    public void checkLoggedIn() {
-        boolean isLoggedIn = PreferenceManager.getDefaultSharedPreferences(this)
+    public boolean isLoggedIn() {
+        return PreferenceManager.getDefaultSharedPreferences(this)
                 .contains(getString(R.string.token_preference_key));
-        if (isLoggedIn) {
-            // TODO: Proceed next screen
-        }
-        toggleProgress(false);
-
     }
-
 
     @Override
     public void toggleProgress(boolean show) {
@@ -98,6 +97,14 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
     @Override
     public void showError(int idString) {
         showError(getString(idString));
+    }
+
+    @Override
+    public void navigateToHome() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        startActivity(intent);
     }
 
     @OnClick(R.id.button_login)

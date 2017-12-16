@@ -9,7 +9,7 @@ public interface BaseMvpContract {
         void setPresenter(P presenter);
     }
     interface Presenter<V extends View> {
-        void onAttach(V view);
-        void onDetach();
+        void attach(V view);
+        void detach();
     }
 }

@@ -1,7 +1,8 @@
-package com.anhhoang.zoompoint.ui;
+package com.anhhoang.zoompoint.ui.login;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.anhhoang.unsplashapi.UnsplashAuthApi;
 import com.anhhoang.unsplashmodel.authmodel.TokenResponse;
@@ -21,18 +22,19 @@ public class LoginPresenter implements LoginContracts.Presenter {
     private LoginContracts.View view;
 
     @Override
-    public void onAttach(LoginContracts.View view) {
+    public void attach(LoginContracts.View view) {
         this.view = view;
 
         if (view != null) {
             view.setPresenter(this);
-            view.toggleProgress(true);
-            view.checkLoggedIn();
+            if (view.isLoggedIn()) {
+                view.navigateToHome();
+            }
         }
     }
 
     @Override
-    public void onDetach() {
+    public void detach() {
         this.view = null;
     }
 
@@ -59,7 +61,10 @@ public class LoginPresenter implements LoginContracts.Presenter {
                         if (response.code() == HttpURLConnection.HTTP_OK) {
                             TokenResponse tokenResponse = response.body();
 
-                            view.saveToken(tokenResponse.getAccessToken());
+                            if (!TextUtils.isEmpty(tokenResponse.getAccessToken())) {
+                                view.saveToken(tokenResponse.getAccessToken());
+                                view.navigateToHome();
+                            }
                         } else {
                             view.showError(R.string.login_error);
                         }

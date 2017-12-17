@@ -9,7 +9,7 @@ import com.anhhoang.zoompoint.BaseMvpContract;
  * Created by Anh.Hoang on 12/5/2017.
  */
 
-public interface LoginContracts {
+public interface LoginContract {
     interface View extends BaseMvpContract.View<Presenter> {
         void saveToken(String token);
 

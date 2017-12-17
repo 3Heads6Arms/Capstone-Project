@@ -18,11 +18,11 @@ import retrofit2.Response;
  * Created by anh.hoang on 13.12.17.
  */
 
-public class LoginPresenter implements LoginContracts.Presenter {
-    private LoginContracts.View view;
+public class LoginPresenter implements LoginContract.Presenter {
+    private LoginContract.View view;
 
     @Override
-    public void attach(LoginContracts.View view) {
+    public void attach(LoginContract.View view) {
         this.view = view;
 
         if (view != null) {

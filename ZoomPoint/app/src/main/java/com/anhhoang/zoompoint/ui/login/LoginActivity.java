@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -18,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends AppCompatActivity implements LoginContracts.View {
+public class LoginActivity extends AppCompatActivity implements LoginContract.View {
     @BindView(R.id.login_controls)
     View loginControls;
     @BindView(R.id.button_login)
@@ -28,7 +27,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
-    private LoginContracts.Presenter presenter;
+    private LoginContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
     }
 
     @Override
-    public void setPresenter(LoginContracts.Presenter presenter) {
+    public void setPresenter(LoginContract.Presenter presenter) {
         this.presenter = presenter;
     }
 
@@ -102,8 +101,6 @@ public class LoginActivity extends AppCompatActivity implements LoginContracts.V
     @Override
     public void navigateToHome() {
         Intent intent = new Intent(this, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-
         startActivity(intent);
     }
 

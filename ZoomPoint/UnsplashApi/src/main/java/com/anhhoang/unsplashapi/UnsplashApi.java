@@ -53,11 +53,11 @@ public class UnsplashApi {
         return unsplashApiService.getPhotos(page, perPage, orderBy);
     }
 
-    public Call<List<Photo>> getCuratedPhotos(int page, int perPage, Callback<List<Photo>> calback) {
+    public Call<List<Photo>> getCuratedPhotos(int page, int perPage) {
         return unsplashApiService.getCuratedPhotos(page, perPage);
     }
 
-    public Call<Photo> getPhoto(String photoId, Callback<Photo> callback) {
+    public Call<Photo> getPhoto(String photoId) {
         return unsplashApiService.getPhoto(photoId);
     }
 

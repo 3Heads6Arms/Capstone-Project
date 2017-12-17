@@ -3,4 +3,5 @@
     <dimen name="grid_horizontal_padding">16dp</dimen>
     <dimen name="grid_vertical_padding">16dp</dimen>
     <dimen name="login_form_min_width">250dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

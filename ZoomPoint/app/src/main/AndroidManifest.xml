@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.login.LoginActivity">
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +31,16 @@
                     android:scheme="zoompoint" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.home.HomeActivity"></activity>
+        <activity android:name=".ui.home.HomeActivity" />
+        <activity
+            android:name=".ui.photocollection.PhotoCollectionActivity"
+            android:label="@string/title_activity_photo_collection"
+            android:parentActivityName=".ui.home.HomeActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.anhhoang.zoompoint.ui.home.HomeActivity" />
+        </activity>
     </application>
 
 </manifest>

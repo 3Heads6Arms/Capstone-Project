@@ -11,9 +11,10 @@ import com.anhhoang.zoompoint.R;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PhotoCollectionActivityFragment extends Fragment {
+public class PhotoCollectionFragment extends Fragment {
+    public static final String TAG = PhotoCollectionFragment.class.getCanonicalName();
 
-    public PhotoCollectionActivityFragment() {
+    public PhotoCollectionFragment() {
     }
 
     @Override

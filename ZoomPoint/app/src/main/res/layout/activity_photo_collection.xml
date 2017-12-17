@@ -20,9 +20,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <fragment
-        android:id="@+id/fragment"
-        android:name="com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionActivityFragment"
+    <FrameLayout
+        android:id="@+id/fragment_photo_collection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

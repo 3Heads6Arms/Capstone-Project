@@ -21,7 +21,7 @@ public class AuthorizationInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request request = chain.request();
         request = request.newBuilder()
-                .addHeader("Authorization", token)
+                .addHeader("Authorization", "Bearer " + token)
                 .build();
 
         Response response = chain.proceed(request);

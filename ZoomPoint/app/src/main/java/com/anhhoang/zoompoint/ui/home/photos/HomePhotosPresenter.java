@@ -12,6 +12,9 @@ public class HomePhotosPresenter implements HomePhotosContract.Presenter {
     @Override
     public void attach(HomePhotosContract.View view) {
         this.view = view;
+        if(view != null){
+            view.setPresenter(this);
+        }
     }
 
     @Override

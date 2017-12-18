@@ -2,10 +2,12 @@ package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,9 +50,17 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+
+        checkNotNull(bundle, "Missing bundle!");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_photo_collection, container, false);
-        ButterKnife.bind(view);
+        ButterKnife.bind(this, view);
 
         photosRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -72,6 +82,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         super.onStart();
 
         adapter = new PhotosAdapter();
+        photosRv.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         photosRv.setAdapter(adapter);
 
         if (presenter == null) {
@@ -79,6 +90,8 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         } else {
             presenter.attach(this);
         }
+
+        presenter.loadPhotos(getArguments());
     }
 
     @Override
@@ -132,7 +145,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     public static Bundle createBundle(long collectionId) {
-        checkArgument(collectionId <= 0, "Invalid collection Id, should be greater than 0");
+        checkArgument(collectionId > 0, "Invalid collection Id, should be greater than 0");
 
         Bundle bundle = new Bundle();
         bundle.putLong(COLLECTION_ID, collectionId);
@@ -141,7 +154,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     public static Bundle createBundle(PhotosCallType callType, String query) {
-        checkArgument(TextUtils.isEmpty(query), "Invalid query, mustn't be null or empty");
+        checkArgument(!TextUtils.isEmpty(query), "Invalid query, mustn't be null or empty");
 
         Bundle bundle = new Bundle();
         bundle.putString(QUERY, query);

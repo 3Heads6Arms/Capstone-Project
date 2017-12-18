@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 public class HomePhotosFragment extends Fragment implements HomePhotosContract.View {
     @BindView(R.id.spinner_sort_query)
     Spinner sortQuerySpn;
+
     private HomePhotosContract.Presenter presenter;
 
     public HomePhotosFragment() {
@@ -36,12 +37,17 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_photos, container, false);
-        ButterKnife.bind(view);
+        ButterKnife.bind(this, view);
 
-        sortQuerySpn.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        sortQuerySpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 presenter.onPhotoSourceChanged(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 

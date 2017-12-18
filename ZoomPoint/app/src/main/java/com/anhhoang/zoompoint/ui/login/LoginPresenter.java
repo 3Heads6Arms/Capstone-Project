@@ -58,24 +58,28 @@ public class LoginPresenter implements LoginContract.Presenter {
                 .enqueue(new Callback<TokenResponse>() {
                     @Override
                     public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
-                        if (response.code() == HttpURLConnection.HTTP_OK) {
-                            TokenResponse tokenResponse = response.body();
+                        if (view != null) {
+                            if (response.code() == HttpURLConnection.HTTP_OK) {
+                                TokenResponse tokenResponse = response.body();
 
-                            if (!TextUtils.isEmpty(tokenResponse.getAccessToken())) {
-                                view.saveToken(tokenResponse.getAccessToken());
-                                view.navigateToHome();
+                                if (!TextUtils.isEmpty(tokenResponse.getAccessToken())) {
+                                    view.saveToken(tokenResponse.getAccessToken());
+                                    view.navigateToHome();
+                                }
+                            } else {
+                                view.showError(R.string.login_error);
                             }
-                        } else {
-                            view.showError(R.string.login_error);
-                        }
 
-                        view.toggleProgress(false);
+                            view.toggleProgress(false);
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<TokenResponse> call, Throwable t) {
-                        view.showError(R.string.login_connection_error);
-                        view.toggleProgress(false);
+                        if (view != null) {
+                            view.showError(R.string.login_connection_error);
+                            view.toggleProgress(false);
+                        }
                     }
                 });
     }

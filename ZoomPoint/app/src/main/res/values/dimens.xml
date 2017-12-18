@@ -4,4 +4,6 @@
     <dimen name="grid_vertical_padding">16dp</dimen>
     <dimen name="login_form_min_width">250dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_grid_padding">4dp</dimen>
+    <dimen name="grid_item_padding">8dp</dimen>
 </resources>

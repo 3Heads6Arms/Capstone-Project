@@ -3,6 +3,7 @@ package com.anhhoang.unsplashmodel;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+import java.util.List;
 
 public class Photo {
     public static final String COL_IDENTIFIER = "id";
@@ -41,7 +42,7 @@ public class Photo {
     @SerializedName("location")
     private PhotoLocation location;
     @SerializedName("current_user_collections")
-    private PhotoCollection collection;
+    private List<PhotoCollection> collections;
     @SerializedName("urls")
     private PhotoUrls urls;
     @SerializedName("user")
@@ -135,12 +136,12 @@ public class Photo {
         this.location = location;
     }
 
-    public PhotoCollection getCollection() {
-        return collection;
+    public List<PhotoCollection> getCollections() {
+        return collections;
     }
 
-    public void setCollection(PhotoCollection collection) {
-        this.collection = collection;
+    public void setCollections(List<PhotoCollection> collections) {
+        this.collections = collections;
     }
 
     public PhotoUrls getUrls() {

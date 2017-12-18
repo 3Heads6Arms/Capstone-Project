@@ -27,7 +27,7 @@ public class PhotoCollectionActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         long collectionId = intent.getLongExtra(COLLECTION_ID, -1);
-        if (collectionId <= -1 || !intent.hasExtra(COLLECTION_NAME)) {
+        if (collectionId <= -1 && !intent.hasExtra(COLLECTION_NAME)) {
             throw new IllegalArgumentException("Missing required extras. Get starting intent from static method or provide required extras");
         }
 
@@ -45,7 +45,7 @@ public class PhotoCollectionActivity extends AppCompatActivity {
     }
 
     public static Intent getStartingIntent(Context context, long collectionId, String collectionName) {
-        checkArgument(collectionId >= 0, "Invalid collection Id, must be greater than 0");
+        checkArgument(collectionId > 0, "Invalid collection Id, must be greater than 0");
 
         Intent intent = new Intent(context, PhotoCollectionActivity.class);
 

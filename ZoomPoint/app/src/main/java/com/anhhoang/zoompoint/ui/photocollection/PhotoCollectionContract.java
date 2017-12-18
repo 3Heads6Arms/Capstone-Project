@@ -1,6 +1,7 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.BaseMvpContract;
@@ -28,7 +29,7 @@ public interface PhotoCollectionContract {
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
-        void loadPhotos(PhotosCallType type, long collectionId, String query);
+        void loadPhotos(Bundle bundle);
 
         void loadMore();
     }

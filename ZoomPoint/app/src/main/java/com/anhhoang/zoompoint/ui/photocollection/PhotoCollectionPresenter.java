@@ -1,5 +1,8 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
+import android.os.Bundle;
+import android.text.TextUtils;
+
 import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
@@ -16,6 +19,11 @@ import retrofit2.Response;
  */
 
 public class PhotoCollectionPresenter implements PhotoCollectionContract.Presenter {
+
+    private static final String COLLECTION_ID = "CollectionIdKey";
+    private static final String QUERY = "QueryKey";
+    private static final String CALL_TYPE = "CallTypeKey";
+
     private PhotoCollectionContract.View view;
     private UnsplashApi unsplashApi;
 
@@ -58,7 +66,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
 
     public PhotoCollectionPresenter() {
         this(1);
-        pageSize = 15;
+        pageSize = 10;
     }
 
     public PhotoCollectionPresenter(int currentPage) {
@@ -70,6 +78,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         this.view = view;
 
         if (view != null) {
+            view.setPresenter(this);
             String token = view.getToken();
             unsplashApi = UnsplashApi.getInstance(token);
         }
@@ -81,21 +90,28 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
     }
 
     @Override
-    public void loadPhotos(PhotosCallType type, long collectionId, String query) {
-        photosCallType = type;
-        this.collectionId = collectionId;
-        this.query = query;
+    public void loadPhotos(Bundle bundle) {
+        this.collectionId = bundle.getLong(COLLECTION_ID, -1);
 
-        loadPhotos(collectionId, query);
+        if (collectionId < 0) {
+            this.photosCallType = (PhotosCallType) bundle.getSerializable(CALL_TYPE);
+            this.query = bundle.getString(QUERY);
+        }
+
+        if (collectionId < 0 && TextUtils.isEmpty(query)) {
+            throw new IllegalArgumentException("Bundles of required arguments was not passed to fragment.");
+        }
+
+        loadPhotos();
     }
 
     @Override
     public void loadMore() {
         currentPage++;
-        loadPhotos(collectionId, query);
+        loadPhotos();
     }
 
-    private void loadPhotos(long collectionId, String query) {
+    private void loadPhotos() {
         view.toggleProgress(true);
 
         switch (photosCallType) {

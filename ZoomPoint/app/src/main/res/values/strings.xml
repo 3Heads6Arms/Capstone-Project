@@ -14,4 +14,5 @@
     <string name="populars">Populars</string>
     <string name="curated">Curated</string>
     <string name="oldest">Oldest</string>
+    <string name="by">by</string>
 </resources>

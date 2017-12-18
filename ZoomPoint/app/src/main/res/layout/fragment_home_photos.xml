@@ -3,10 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/grid_vertical_padding"
     android:paddingEnd="@dimen/grid_horizontal_padding"
     android:paddingStart="@dimen/grid_horizontal_padding"
-    android:paddingTop="@dimen/grid_vertical_padding"
     tools:context="com.anhhoang.zoompoint.ui.home.photos.HomePhotosFragment">
 
     <Spinner
@@ -14,12 +12,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/support_simple_spinner_dropdown_item"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/fragment_photos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

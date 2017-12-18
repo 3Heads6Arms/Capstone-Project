@@ -7,4 +7,11 @@
     <string name="login_connection_error">Unable to connect to server</string>
     <string name="title_activity_photo_collection">PhotoCollectionActivity</string>
     <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="latest">Latest</string>
+    <string name="populars">Populars</string>
+    <string name="curated">Curated</string>
+    <string name="oldest">Oldest</string>
 </resources>

@@ -24,6 +24,10 @@
         android:id="@+id/fragment_photo_collection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="@dimen/grid_vertical_padding"
+        android:paddingEnd="@dimen/grid_horizontal_padding"
+        android:paddingStart="@dimen/grid_horizontal_padding"
+        android:paddingTop="@dimen/grid_vertical_padding"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:layout="@layout/fragment_photo_collection" />
 

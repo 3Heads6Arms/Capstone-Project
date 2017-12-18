@@ -30,6 +30,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             if (view != null) {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     view.updatePhotos(response.body());
+                    // TODO: Save to SQL
                 } else {
 
                     // TODO: Set proper message

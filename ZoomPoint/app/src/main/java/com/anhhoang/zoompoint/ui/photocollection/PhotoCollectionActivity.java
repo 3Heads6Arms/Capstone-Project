@@ -36,6 +36,7 @@ public class PhotoCollectionActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(collectionName);
 
         PhotoCollectionFragment fragment = new PhotoCollectionFragment();
+        fragment.setArguments(PhotoCollectionFragment.createBundle(collectionId));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()

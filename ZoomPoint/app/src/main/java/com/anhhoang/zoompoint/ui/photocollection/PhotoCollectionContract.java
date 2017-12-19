@@ -1,5 +1,6 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
+import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -26,6 +27,10 @@ public interface PhotoCollectionContract {
         void toggleProgress(boolean show);
 
         String getToken();
+
+        void savePhotos(ContentValues[] photos);
+
+        void saveUsers(ContentValues[] users);
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {

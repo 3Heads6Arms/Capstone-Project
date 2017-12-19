@@ -16,6 +16,7 @@ public class Photo {
     public static final String COL_LIKED_BY_USER = "liked_by_user";
     public static final String COL_DESC = "description";
 
+    public static final String COL_TYPE = "type";
     public static final String COL_COLLECTION_ID = "collection_id";
     public static final String COL_USER_ID = "user_id";
 

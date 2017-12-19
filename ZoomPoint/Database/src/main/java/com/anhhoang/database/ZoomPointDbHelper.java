@@ -45,6 +45,7 @@ public class ZoomPointDbHelper extends SQLiteOpenHelper {
                 Photo.COL_LIKES + " INTEGER, " +
                 Photo.COL_LIKED_BY_USER + " NUMERIC, " +
                 Photo.COL_DESC + " TEXT, " +
+                Photo.COL_TYPE + " TEXT, " +
                 Exif.COL_MAKE + " TEXT, " +
                 Exif.COL_MODEL + " TEXT, " +
                 Exif.COL_EXPOSURE_TIME + " REAL, " +

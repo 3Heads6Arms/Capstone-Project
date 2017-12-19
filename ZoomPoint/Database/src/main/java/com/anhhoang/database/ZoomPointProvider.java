@@ -164,15 +164,15 @@ public class ZoomPointProvider extends ContentProvider {
         Uri resultUri;
         switch (match) {
             case PHOTOS:
-                id = database.insert(ZoomPointContract.PhotoEntry.TABLE_NAME, null, values);
+                id = database.insertWithOnConflict(ZoomPointContract.PhotoEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 resultUri = ContentUris.withAppendedId(ZoomPointContract.PhotoEntry.CONTENT_URI, id);
                 break;
             case COLLECTIONS:
-                id = database.insert(ZoomPointContract.CollectionEntry.TABLE_NAME, null, values);
+                id = database.insertWithOnConflict(ZoomPointContract.CollectionEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 resultUri = ContentUris.withAppendedId(ZoomPointContract.CollectionEntry.CONTENT_URI, id);
                 break;
             case USER_PROFILES:
-                id = database.insert(ZoomPointContract.UserProfileEntry.TABLE_NAME, null, values);
+                id = database.insertWithOnConflict(ZoomPointContract.UserProfileEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                 resultUri = ContentUris.withAppendedId(ZoomPointContract.UserProfileEntry.CONTENT_URI, id);
                 break;
             default:
@@ -262,7 +262,7 @@ public class ZoomPointProvider extends ContentProvider {
         database.beginTransaction();
         try {
             for (ContentValues contentValues : values) {
-                long id = database.insert(tableName, null, contentValues);
+                long id = database.insertWithOnConflict(tableName, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                 if (id != -1) {
                     rowsInserted++;
                 }

@@ -1,6 +1,8 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
+import android.content.ContentValues;
 import android.net.Uri;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
@@ -142,6 +145,26 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         return PreferenceManager
                 .getDefaultSharedPreferences(getContext())
                 .getString(getString(R.string.token_preference_key), null);
+    }
+
+    @Override
+    public void savePhotos(final ContentValues[] photos) {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                getContext().getContentResolver().bulkInsert(ZoomPointContract.PhotoEntry.CONTENT_URI, photos);
+            }
+        });
+    }
+
+    @Override
+    public void saveUsers(final ContentValues[] users) {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                getContext().getContentResolver().bulkInsert(ZoomPointContract.UserProfileEntry.CONTENT_URI, users);
+            }
+        });
     }
 
     public static Bundle createBundle(long collectionId) {

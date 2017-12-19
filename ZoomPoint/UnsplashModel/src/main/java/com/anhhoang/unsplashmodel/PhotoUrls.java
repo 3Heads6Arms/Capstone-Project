@@ -60,6 +60,22 @@ public class PhotoUrls {
         this.regular = regular;
     }
 
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
+    }
+
+    public String getLarge() {
+        return large;
+    }
+
+    public void setLarge(String large) {
+        this.large = large;
+    }
+
     public String getSmall() {
         return small;
     }

@@ -1,13 +1,18 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.UserProfile;
+import com.anhhoang.zoompoint.utils.PhotoUtils;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
+import com.anhhoang.zoompoint.utils.UserUtils;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,8 +42,10 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         public void onResponse(Call<List<Photo>> call, Response<List<Photo>> response) {
             if (view != null) {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
-                    view.updatePhotos(response.body());
-                    // TODO: Save to SQL
+                    List<Photo> photos = response.body();
+                    view.updatePhotos(photos);
+
+                    save(photos);
                 } else {
 
                     // TODO: Set proper message
@@ -140,5 +147,29 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                         .enqueue(photosCallback);
                 break;
         }
+    }
+
+    private void save(List<Photo> photos) {
+        List<UserProfile> users = new ArrayList<>();
+        for (Photo photo : photos) {
+            users.add(photo.getUser());
+        }
+
+        String type = null;
+
+        switch (photosCallType) {
+            case PHOTOS:
+                type = query;
+                break;
+            case CURATED_PHOTOS:
+                type = "curated";
+                break;
+        }
+
+        ContentValues[] userContentValues = UserUtils.parseUsers(users).toArray(new ContentValues[users.size()]);
+        ContentValues[] photoContentValues = PhotoUtils.parsePhotos(photos, type).toArray(new ContentValues[photos.size()]);
+
+        view.savePhotos(photoContentValues);
+        view.saveUsers(userContentValues);
     }
 }

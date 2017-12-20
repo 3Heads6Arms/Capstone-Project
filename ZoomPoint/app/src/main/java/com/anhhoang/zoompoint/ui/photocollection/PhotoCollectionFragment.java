@@ -170,13 +170,8 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     @Override
-    public void showError(String message) {
-        Snackbar.make(photosRv, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
     public void showError(int idString) {
-        showError(getString(idString));
+        Snackbar.make(photosRv, idString, Snackbar.LENGTH_LONG).show();
     }
 
     @Override

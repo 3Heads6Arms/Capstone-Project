@@ -20,8 +20,6 @@ public interface PhotoCollectionContract {
 
         void updatePhotos(List<Photo> photos);
 
-        void showError(String message);
-
         void showError(int idString);
 
         void toggleProgress(boolean show);

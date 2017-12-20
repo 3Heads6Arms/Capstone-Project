@@ -1,9 +1,11 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.UserProfile;
@@ -50,8 +52,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
 
                     // TODO: Set proper message
                     view.showError("Something went wrong");
-                    // TODO: load local photos
-                    // view.loadLocalPhotos();
+                    view.loadLocalPhotos(getSqlSelection());
                 }
 
                 view.toggleProgress(false);
@@ -63,8 +64,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             if (view != null) {
                 // TODO: Set proper message
                 view.showError("Something went wrong");
-                // TODO: load local photos
-                //view.loadLocalPhotos();
+                view.loadLocalPhotos(getSqlSelection());
 
                 view.toggleProgress(false);
             }
@@ -171,5 +171,9 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
 
         view.savePhotos(photoContentValues);
         view.saveUsers(userContentValues);
+    }
+
+    private String getSqlSelection() {
+        return Photo.COL_TYPE + "='" + query + "'";
     }
 }

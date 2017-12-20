@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface PhotoCollectionContract {
     interface View extends BaseMvpContract.View<Presenter> {
-        void loadLocalPhotos(Uri uri);
+        void loadLocalPhotos(String query);
 
         void updatePhotos(List<Photo> photos);
 

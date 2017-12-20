@@ -160,4 +160,6 @@ public class Photo {
     public void setUser(UserProfile user) {
         this.user = user;
     }
+
+
 }

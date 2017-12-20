@@ -1,6 +1,7 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -8,6 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -18,7 +22,9 @@ import android.widget.ProgressBar;
 
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.PhotoUrls;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.utils.PhotoUtils;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
 import java.util.List;
@@ -38,6 +44,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     private static final String COLLECTION_ID = "CollectionIdKey";
     private static final String QUERY = "QueryKey";
     private static final String CALL_TYPE = "CallTypeKey";
+    private static final int PHOTO_LOADER = 1;
 
     private PhotoCollectionContract.Presenter presenter;
 
@@ -46,7 +53,38 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     @BindView(R.id.recycler_view_photos)
     RecyclerView photosRv;
     private PhotosAdapter adapter;
-    // TODO: State params
+
+    private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            String query = args.getString("query");
+
+            checkNotNull(query, "Query cannot be null");
+
+            toggleProgress(true);
+
+            return new CursorLoader(
+                    getContext(),
+                    ZoomPointContract.PhotoEntry.CONTENT_URI,
+                    null,
+                    query,
+                    null,
+                    null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            List<Photo> photos = PhotoUtils.parsePhotos(data);
+            updatePhotos(photos);
+
+            data.close();
+            toggleProgress(false);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+        }
+    };
 
     public PhotoCollectionFragment() {
         setRetainInstance(true);
@@ -109,8 +147,10 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     @Override
-    public void loadLocalPhotos(Uri uri) {
-        // TODO:
+    public void loadLocalPhotos(String query) {
+        Bundle bundle = new Bundle();
+        bundle.putString("query", query);
+        getLoaderManager().initLoader(PHOTO_LOADER, bundle, loaderCallbacks);
     }
 
     @Override

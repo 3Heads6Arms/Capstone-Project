@@ -1,13 +1,16 @@
 package com.anhhoang.zoompoint.utils;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.anhhoang.unsplashmodel.Exif;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoLocation;
 import com.anhhoang.unsplashmodel.PhotoUrls;
+import com.anhhoang.unsplashmodel.UserProfile;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -68,8 +71,63 @@ public class PhotoUtils {
         return contentValues;
     }
 
-    public static Photo parse(ContentValues contentValues) {
-        // TODO: Parse to object
-        throw new UnsupportedOperationException();
+    public static List<Photo> parsePhotos(Cursor cursor) {
+        List<Photo> photos = new ArrayList<>();
+
+
+        if (cursor.moveToNext()) {
+            do {
+                photos.add(parsePhoto(cursor));
+            } while (cursor.moveToNext());
+        }
+
+        return photos;
+    }
+
+    public static Photo parsePhoto(Cursor cursor) {
+        Photo result = new Photo();
+        PhotoUrls urls = new PhotoUrls();
+        UserProfile user = new UserProfile();
+        Exif exif = new Exif();
+        PhotoLocation location = new PhotoLocation();
+        PhotoLocation.Position position = new PhotoLocation.Position();
+
+        result.setId(cursor.getString(cursor.getColumnIndex(Photo.COL_IDENTIFIER)));
+        result.setCreatedAt(new Date(cursor.getLong(cursor.getColumnIndex(Photo.COL_CREATED_AT))));
+        result.setUpdatedAt(new Date(cursor.getLong(cursor.getColumnIndex(Photo.COL_UPDATED_AT))));
+        result.setWidth(cursor.getInt(cursor.getColumnIndex(Photo.COL_WIDTH)));
+        result.setHeight(cursor.getInt(cursor.getColumnIndex(Photo.COL_HEIGHT)));
+        result.setColor(cursor.getString(cursor.getColumnIndex(Photo.COL_COLOR)));
+        result.setLikes(cursor.getInt(cursor.getColumnIndex(Photo.COL_LIKES)));
+        result.setLikedByUser(cursor.getInt(cursor.getColumnIndex(Photo.COL_LIKED_BY_USER)) > 0);
+
+        urls.setRaw(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_RAW)));
+        urls.setFull(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_FULL)));
+        urls.setRegular(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_REGULAR)));
+        urls.setThumb(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_THUMB)));
+        urls.setSmall(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_SMALL)));
+
+        user.setId(cursor.getString(cursor.getColumnIndex(Photo.COL_USER_ID)));
+        user.setName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_NAME)));
+
+        exif.setMake(cursor.getString(cursor.getColumnIndex(Exif.COL_MAKE)));
+        exif.setModel(cursor.getString(cursor.getColumnIndex(Exif.COL_MODEL)));
+        exif.setExposureTime(cursor.getDouble(cursor.getColumnIndex(Exif.COL_EXPOSURE_TIME)));
+        exif.setAperture(cursor.getDouble(cursor.getColumnIndex(Exif.COL_APERTURE)));
+        exif.setFocalLength(cursor.getInt(cursor.getColumnIndex(Exif.COL_FOCAL_LENGTH)));
+        exif.setIso(cursor.getInt(cursor.getColumnIndex(Exif.COL_ISO)));
+
+        location.setCity(cursor.getString(cursor.getColumnIndex(PhotoLocation.COL_CITY)));
+        location.setCountry(cursor.getString(cursor.getColumnIndex(PhotoLocation.COL_COUNTRY)));
+        position.setLatitude(cursor.getDouble(cursor.getColumnIndex(PhotoLocation.COL_LAT)));
+        position.setLongitude(cursor.getDouble(cursor.getColumnIndex(PhotoLocation.COL_LON)));
+        location.setPosition(position);
+
+        result.setUrls(urls);
+        result.setUser(user);
+        result.setExif(exif);
+        result.setLocation(location);
+
+        return result;
     }
 }

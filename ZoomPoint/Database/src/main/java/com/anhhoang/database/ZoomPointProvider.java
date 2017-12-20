@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
@@ -63,14 +64,20 @@ public class ZoomPointProvider extends ContentProvider {
         SQLiteDatabase database = openHelper.getReadableDatabase();
         switch (match) {
             case PHOTOS:
-                cursor = database.query(
-                        ZoomPointContract.PhotoEntry.TABLE_NAME,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
+                cursor = database.rawQuery(
+                        "SELECT p.*, u.name FROM " + ZoomPointContract.PhotoEntry.TABLE_NAME + " p " +
+                                "INNER JOIN " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " u " +
+                                "ON p." + Photo.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
+                                "WHERE p." + selection,
+                        selectionArgs);
+//                cursor = database.query(
+//                        ZoomPointContract.PhotoEntry.TABLE_NAME,
+//                        projection,
+//                        selection,
+//                        selectionArgs,
+//                        null,
+//                        null,
+//                        sortOrder);
                 break;
             case PHOTO:
                 String photoId = uri.getPathSegments().get(0);
@@ -84,14 +91,20 @@ public class ZoomPointProvider extends ContentProvider {
                         null);
                 break;
             case COLLECTIONS:
-                cursor = database.query(
-                        ZoomPointContract.CollectionEntry.TABLE_NAME,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
+                cursor = database.rawQuery(
+                        "SELECT p.*, u.name FROM " + ZoomPointContract.CollectionEntry.TABLE_NAME + " p " +
+                                "INNER JOIN " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " u " +
+                                "ON p." + PhotoCollection.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
+                                "WHERE " + selection,
+                        selectionArgs);
+//                cursor = database.query(
+//                        ZoomPointContract.CollectionEntry.TABLE_NAME,
+//                        projection,
+//                        selection,
+//                        selectionArgs,
+//                        null,
+//                        null,
+//                        sortOrder);
                 break;
             case COLLECTION:
                 String collectionId = uri.getPathSegments().get(0);
@@ -107,12 +120,12 @@ public class ZoomPointProvider extends ContentProvider {
             case USER_PROFILES:
                 cursor = database.query(
                         ZoomPointContract.UserProfileEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
                         null,
                         null,
-                        null,
-                        null,
-                        null,
-                        null);
+                        sortOrder);
                 break;
             case USER_PROFILE:
                 String userId = uri.getPathSegments().get(0);

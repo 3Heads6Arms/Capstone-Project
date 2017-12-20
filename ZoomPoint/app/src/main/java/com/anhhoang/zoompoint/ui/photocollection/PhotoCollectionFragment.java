@@ -2,7 +2,6 @@ package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -12,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -23,8 +23,8 @@ import android.widget.TextView;
 
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
-import com.anhhoang.unsplashmodel.PhotoUrls;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 import com.anhhoang.zoompoint.utils.PhotoUtils;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
@@ -49,12 +49,12 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
     private PhotoCollectionContract.Presenter presenter;
 
-    @BindView(R.id.progressBar)
-    ProgressBar progressBar;
     @BindView(R.id.recycler_view_photos)
     RecyclerView photosRv;
     @BindView(R.id.text_view_error)
     TextView errorTv;
+    @BindView(R.id.refreshLayout)
+    SwipeRefreshLayout refreshLayout;
 
     private PhotosAdapter adapter;
 
@@ -64,8 +64,6 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
             String query = args.getString("query");
 
             checkNotNull(query, "Query cannot be null");
-
-            toggleProgress(true);
 
             return new CursorLoader(
                     getContext(),
@@ -113,15 +111,23 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         View view = inflater.inflate(R.layout.fragment_photo_collection, container, false);
         ButterKnife.bind(this, view);
 
-        photosRv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
+            public void onRefresh() {
+                adapter.clearPhotos();
+                presenter.loadPhotos(getArguments());
             }
+        });
 
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        adapter = new PhotosAdapter();
+        photosRv.setLayoutManager(layoutManager);
+        photosRv.setAdapter(adapter);
+
+        photosRv.addOnScrollListener(new EndlessScrollListener(layoutManager) {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+            public void onLoadMore() {
+                presenter.loadMore();
             }
         });
 
@@ -131,10 +137,6 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     @Override
     public void onStart() {
         super.onStart();
-
-        adapter = new PhotosAdapter();
-        photosRv.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
-        photosRv.setAdapter(adapter);
 
         if (presenter == null) {
             new PhotoCollectionPresenter().attach(this);
@@ -165,7 +167,6 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
     @Override
     public void updatePhotos(List<Photo> photos) {
-        // TODO: remove loading
         adapter.addPhotos(photos);
     }
 
@@ -177,11 +178,9 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     @Override
     public void toggleProgress(boolean show) {
         if (show) {
-            progressBar.setVisibility(View.VISIBLE);
-            photosRv.setVisibility(View.GONE);
+            refreshLayout.setRefreshing(true);
         } else {
-            progressBar.setVisibility(View.GONE);
-            photosRv.setVisibility(View.VISIBLE);
+            refreshLayout.setRefreshing(false);
         }
 
         errorTv.setVisibility(View.INVISIBLE);
@@ -204,6 +203,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         });
     }
 
+
     @Override
     public void saveUsers(final ContentValues[] users) {
         new Handler().post(new Runnable() {
@@ -215,6 +215,13 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     @Override
+    public void removePhotos(String query) {
+        getContext()
+                .getContentResolver()
+                .delete(ZoomPointContract.PhotoEntry.CONTENT_URI, query, null);
+    }
+
+    @Override
     public void displayEmpty(boolean isError, int errorId) {
         if (isError) {
             errorTv.setText(errorId);
@@ -223,7 +230,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         }
 
         errorTv.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.INVISIBLE);
+        refreshLayout.setRefreshing(false);
         photosRv.setVisibility(View.INVISIBLE);
     }
 

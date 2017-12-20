@@ -35,6 +35,9 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
     private PhotoCollectionContract.View view;
     private UnsplashApi unsplashApi;
 
+    private boolean isLoading;
+    private boolean hasError;
+    private boolean forceLoad;
     private int pageSize;
     private int currentPage;
     private PhotosCallType photosCallType;
@@ -48,18 +51,27 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                     List<Photo> photos = response.body();
                     view.updatePhotos(photos);
 
-                    save(photos);
+
                     if (photos.size() <= 0) {
                         view.toggleProgress(false);
+                        isLoading = false;
+                        hasError = true;
                         view.displayEmpty(false, 0);
                     } else {
+                        // Remove & save only if there is success load from server
+                        if (forceLoad) {
+                            view.removePhotos(getSqlSelection());
+                        }
+                        save(photos);
                         view.toggleProgress(false);
+                        isLoading = false;
                     }
                 } else {
+                    hasError = true;
                     view.showError(R.string.unable_to_get_photo);
                     view.loadLocalPhotos(getSqlSelection());
-                    view.toggleProgress(false);
                 }
+                forceLoad = false;
             }
         }
 
@@ -68,8 +80,6 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             if (view != null) {
                 view.showError(R.string.unable_to_get_photo);
                 view.loadLocalPhotos(getSqlSelection());
-
-                view.toggleProgress(false);
             }
         }
     };
@@ -111,17 +121,21 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         if (collectionId < 0 && TextUtils.isEmpty(query)) {
             throw new IllegalArgumentException("Bundles of required arguments was not passed to fragment.");
         }
+        forceLoad = true;
 
         loadPhotos();
     }
 
     @Override
     public void loadMore() {
-        currentPage++;
-        loadPhotos();
+        if (!isLoading && !hasError) {
+            currentPage++;
+            loadPhotos();
+        }
     }
 
     private void loadPhotos() {
+        isLoading = true;
         view.toggleProgress(true);
 
         switch (photosCallType) {

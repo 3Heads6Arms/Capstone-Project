@@ -31,6 +31,8 @@ public interface PhotoCollectionContract {
         void saveUsers(ContentValues[] users);
 
         void displayEmpty(boolean isError, int errorId);
+
+        void removePhotos(String query);
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {

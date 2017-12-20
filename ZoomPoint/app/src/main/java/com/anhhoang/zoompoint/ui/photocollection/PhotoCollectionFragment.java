@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
@@ -52,6 +53,9 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     ProgressBar progressBar;
     @BindView(R.id.recycler_view_photos)
     RecyclerView photosRv;
+    @BindView(R.id.text_view_error)
+    TextView errorTv;
+
     private PhotosAdapter adapter;
 
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
@@ -79,6 +83,12 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
             data.close();
             toggleProgress(false);
+
+            if (photos.size() <= 0) {
+                // App is loading locally only when unable to get from server (empty server is not error)
+                // Hence its always error when have to reach to local DB
+                displayEmpty(true, R.string.unable_to_get_photo);
+            }
         }
 
         @Override
@@ -178,6 +188,8 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
             progressBar.setVisibility(View.GONE);
             photosRv.setVisibility(View.VISIBLE);
         }
+
+        errorTv.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -205,6 +217,19 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
                 getContext().getContentResolver().bulkInsert(ZoomPointContract.UserProfileEntry.CONTENT_URI, users);
             }
         });
+    }
+
+    @Override
+    public void displayEmpty(boolean isError, int errorId) {
+        if (isError) {
+            errorTv.setText(errorId);
+        } else {
+            errorTv.setText(R.string.no_photos_here);
+        }
+
+        errorTv.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+        photosRv.setVisibility(View.INVISIBLE);
     }
 
     public static Bundle createBundle(long collectionId) {

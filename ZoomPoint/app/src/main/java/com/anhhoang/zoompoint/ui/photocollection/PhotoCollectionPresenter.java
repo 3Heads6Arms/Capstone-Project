@@ -9,6 +9,7 @@ import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.UserProfile;
+import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.utils.PhotoUtils;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 import com.anhhoang.zoompoint.utils.UserUtils;
@@ -48,22 +49,24 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                     view.updatePhotos(photos);
 
                     save(photos);
+                    if (photos.size() <= 0) {
+                        view.toggleProgress(false);
+                        view.displayEmpty(false, 0);
+                    } else {
+                        view.toggleProgress(false);
+                    }
                 } else {
-
-                    // TODO: Set proper message
-                    view.showError("Something went wrong");
+                    view.showError(R.string.unable_to_get_photo);
                     view.loadLocalPhotos(getSqlSelection());
+                    view.toggleProgress(false);
                 }
-
-                view.toggleProgress(false);
             }
         }
 
         @Override
         public void onFailure(Call<List<Photo>> call, Throwable t) {
             if (view != null) {
-                // TODO: Set proper message
-                view.showError("Something went wrong");
+                view.showError(R.string.unable_to_get_photo);
                 view.loadLocalPhotos(getSqlSelection());
 
                 view.toggleProgress(false);

@@ -70,14 +70,6 @@ public class ZoomPointProvider extends ContentProvider {
                                 "ON p." + Photo.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
                                 "WHERE p." + selection,
                         selectionArgs);
-//                cursor = database.query(
-//                        ZoomPointContract.PhotoEntry.TABLE_NAME,
-//                        projection,
-//                        selection,
-//                        selectionArgs,
-//                        null,
-//                        null,
-//                        sortOrder);
                 break;
             case PHOTO:
                 String photoId = uri.getPathSegments().get(0);
@@ -97,14 +89,6 @@ public class ZoomPointProvider extends ContentProvider {
                                 "ON p." + PhotoCollection.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
                                 "WHERE " + selection,
                         selectionArgs);
-//                cursor = database.query(
-//                        ZoomPointContract.CollectionEntry.TABLE_NAME,
-//                        projection,
-//                        selection,
-//                        selectionArgs,
-//                        null,
-//                        null,
-//                        sortOrder);
                 break;
             case COLLECTION:
                 String collectionId = uri.getPathSegments().get(0);

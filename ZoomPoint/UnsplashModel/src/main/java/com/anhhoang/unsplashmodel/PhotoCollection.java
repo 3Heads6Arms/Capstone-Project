@@ -1,5 +1,8 @@
 package com.anhhoang.unsplashmodel;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -8,7 +11,7 @@ import java.util.Date;
  * Created by Anh.Hoang on 11/22/2017.
  */
 
-public class PhotoCollection {
+public class PhotoCollection implements Parcelable {
     public static final String COL_ID = "id";
     public static final String COL_TITLE = "title";
     public static final String COL_DESC = "description";
@@ -109,4 +112,51 @@ public class PhotoCollection {
     public void setUser(UserProfile user) {
         this.user = user;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeLong(this.publishedAt != null ? this.publishedAt.getTime() : -1);
+        dest.writeLong(this.updatedAt != null ? this.updatedAt.getTime() : -1);
+        dest.writeByte(this.isCurated ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isFeatured ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.photo, flags);
+        dest.writeParcelable(this.user, flags);
+    }
+
+    public PhotoCollection() {
+    }
+
+    protected PhotoCollection(Parcel in) {
+        this.id = in.readInt();
+        this.title = in.readString();
+        this.description = in.readString();
+        long tmpPublishedAt = in.readLong();
+        this.publishedAt = tmpPublishedAt == -1 ? null : new Date(tmpPublishedAt);
+        long tmpUpdatedAt = in.readLong();
+        this.updatedAt = tmpUpdatedAt == -1 ? null : new Date(tmpUpdatedAt);
+        this.isCurated = in.readByte() != 0;
+        this.isFeatured = in.readByte() != 0;
+        this.photo = in.readParcelable(Photo.class.getClassLoader());
+        this.user = in.readParcelable(UserProfile.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<PhotoCollection> CREATOR = new Parcelable.Creator<PhotoCollection>() {
+        @Override
+        public PhotoCollection createFromParcel(Parcel source) {
+            return new PhotoCollection(source);
+        }
+
+        @Override
+        public PhotoCollection[] newArray(int size) {
+            return new PhotoCollection[size];
+        }
+    };
 }

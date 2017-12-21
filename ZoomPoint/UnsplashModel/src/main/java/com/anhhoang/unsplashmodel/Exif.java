@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Anh.Hoang on 11/22/2017.
  */
 
-public class Exif {
+public class Exif implements android.os.Parcelable {
     public static final String COL_MAKE = "make";
     public static final String COL_MODEL = "model";
     public static final String COL_EXPOSURE_TIME = "exposure_time";
@@ -74,4 +74,43 @@ public class Exif {
     public void setIso(int iso) {
         this.iso = iso;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(android.os.Parcel dest, int flags) {
+        dest.writeString(this.make);
+        dest.writeString(this.model);
+        dest.writeDouble(this.exposureTime);
+        dest.writeDouble(this.aperture);
+        dest.writeInt(this.focalLength);
+        dest.writeInt(this.iso);
+    }
+
+    public Exif() {
+    }
+
+    protected Exif(android.os.Parcel in) {
+        this.make = in.readString();
+        this.model = in.readString();
+        this.exposureTime = in.readDouble();
+        this.aperture = in.readDouble();
+        this.focalLength = in.readInt();
+        this.iso = in.readInt();
+    }
+
+    public static final android.os.Parcelable.Creator<Exif> CREATOR = new android.os.Parcelable.Creator<Exif>() {
+        @Override
+        public Exif createFromParcel(android.os.Parcel source) {
+            return new Exif(source);
+        }
+
+        @Override
+        public Exif[] newArray(int size) {
+            return new Exif[size];
+        }
+    };
 }

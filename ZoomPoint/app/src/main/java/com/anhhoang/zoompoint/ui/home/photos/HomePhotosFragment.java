@@ -2,6 +2,7 @@ package com.anhhoang.zoompoint.ui.home.photos;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,10 +21,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class HomePhotosFragment extends Fragment implements HomePhotosContract.View {
+    private static final String SPINNER_POSITION = "SpinnerPosition";
+
     @BindView(R.id.spinner_sort_query)
     Spinner sortQuerySpn;
 
     private HomePhotosContract.Presenter presenter;
+    private boolean isRecoveringState;
 
     public HomePhotosFragment() {
         setRetainInstance(true);
@@ -39,10 +43,27 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
         View view = inflater.inflate(R.layout.fragment_home_photos, container, false);
         ButterKnife.bind(this, view);
 
+        SpinnerAdapter adapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, new String[]{
+                getString(R.string.latest),
+                getString(R.string.populars),
+                getString(R.string.curated),
+                getString(R.string.oldest)
+        });
+        sortQuerySpn.setAdapter(adapter);
+
+        if (savedInstanceState != null) {
+            sortQuerySpn.setSelection(savedInstanceState.getInt(SPINNER_POSITION, 0));
+            isRecoveringState = true;
+        }
+
         sortQuerySpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                presenter.onPhotoSourceChanged(position);
+                if(!isRecoveringState) {
+                    presenter.onPhotoSourceChanged(position);
+                }
+
+                isRecoveringState = false;
             }
 
             @Override
@@ -62,15 +83,6 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
         } else {
             presenter.attach(this);
         }
-
-        SpinnerAdapter adapter = new ArrayAdapter<String>(getContext(), R.layout.support_simple_spinner_dropdown_item, new String[]{
-                getString(R.string.latest),
-                getString(R.string.populars),
-                getString(R.string.curated),
-                getString(R.string.oldest)
-        });
-
-        sortQuerySpn.setAdapter(adapter);
     }
 
     @Override
@@ -78,6 +90,13 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
         super.onStop();
 
         presenter.detach();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(SPINNER_POSITION, sortQuerySpn.getSelectedItemPosition());
     }
 
     @Override

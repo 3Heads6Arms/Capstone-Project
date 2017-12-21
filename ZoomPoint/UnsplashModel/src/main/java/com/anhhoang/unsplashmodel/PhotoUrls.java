@@ -1,12 +1,15 @@
 package com.anhhoang.unsplashmodel;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Anh.Hoang on 11/22/2017.
  */
 
-public class PhotoUrls {
+public class PhotoUrls implements Parcelable {
     // Photo sizes
     public static final String COL_RAW = "raw";
     public static final String COL_FULL = "full";
@@ -91,4 +94,45 @@ public class PhotoUrls {
     public void setThumb(String thumb) {
         this.thumb = thumb;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.raw);
+        dest.writeString(this.full);
+        dest.writeString(this.regular);
+        dest.writeString(this.small);
+        dest.writeString(this.thumb);
+        dest.writeString(this.medium);
+        dest.writeString(this.large);
+    }
+
+    public PhotoUrls() {
+    }
+
+    protected PhotoUrls(Parcel in) {
+        this.raw = in.readString();
+        this.full = in.readString();
+        this.regular = in.readString();
+        this.small = in.readString();
+        this.thumb = in.readString();
+        this.medium = in.readString();
+        this.large = in.readString();
+    }
+
+    public static final Parcelable.Creator<PhotoUrls> CREATOR = new Parcelable.Creator<PhotoUrls>() {
+        @Override
+        public PhotoUrls createFromParcel(Parcel source) {
+            return new PhotoUrls(source);
+        }
+
+        @Override
+        public PhotoUrls[] newArray(int size) {
+            return new PhotoUrls[size];
+        }
+    };
 }

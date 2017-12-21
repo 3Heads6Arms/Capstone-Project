@@ -1,5 +1,8 @@
 package com.anhhoang.unsplashmodel;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -8,7 +11,7 @@ import java.util.Date;
  * Created by Anh.Hoang on 11/22/2017.
  */
 
-public class UserProfile {
+public class UserProfile implements Parcelable {
     public static final String COL_ID = "id";
     public static final String COL_UPDATED = "updated_at";
     public static final String COL_USERNAME = "username";
@@ -119,4 +122,52 @@ public class UserProfile {
     public void setProfileImage(PhotoUrls profileImage) {
         this.profileImage = profileImage;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeLong(this.updatedAt != null ? this.updatedAt.getTime() : -1);
+        dest.writeString(this.username);
+        dest.writeString(this.name);
+        dest.writeString(this.firstName);
+        dest.writeString(this.lastName);
+        dest.writeString(this.portfolioUrl);
+        dest.writeString(this.bio);
+        dest.writeString(this.location);
+        dest.writeParcelable(this.profileImage, flags);
+    }
+
+    public UserProfile() {
+    }
+
+    protected UserProfile(Parcel in) {
+        this.id = in.readString();
+        long tmpUpdatedAt = in.readLong();
+        this.updatedAt = tmpUpdatedAt == -1 ? null : new Date(tmpUpdatedAt);
+        this.username = in.readString();
+        this.name = in.readString();
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+        this.portfolioUrl = in.readString();
+        this.bio = in.readString();
+        this.location = in.readString();
+        this.profileImage = in.readParcelable(PhotoUrls.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<UserProfile> CREATOR = new Parcelable.Creator<UserProfile>() {
+        @Override
+        public UserProfile createFromParcel(Parcel source) {
+            return new UserProfile(source);
+        }
+
+        @Override
+        public UserProfile[] newArray(int size) {
+            return new UserProfile[size];
+        }
+    };
 }

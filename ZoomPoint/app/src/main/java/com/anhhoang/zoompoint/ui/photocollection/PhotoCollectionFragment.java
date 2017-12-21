@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 import com.anhhoang.zoompoint.utils.PhotoUtils;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,6 +44,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PhotoCollectionFragment extends Fragment implements PhotoCollectionContract.View {
     public static final String TAG = PhotoCollectionFragment.class.getCanonicalName();
 
+    private static final String PHOTOS_ITEMS = "PhotoItems";
+    private static final String RECYCLER_POSITION = "RecyclerPosition";
     private static final String COLLECTION_ID = "CollectionIdKey";
     private static final String QUERY = "QueryKey";
     private static final String CALL_TYPE = "CallTypeKey";
@@ -131,26 +135,34 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
             }
         });
 
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
         if (presenter == null) {
             new PhotoCollectionPresenter().attach(this);
         } else {
             presenter.attach(this);
         }
 
-        presenter.loadPhotos(getArguments());
+        if (savedInstanceState != null) {
+            List<Photo> photos = savedInstanceState.getParcelableArrayList(PHOTOS_ITEMS);
+            adapter.addPhotos(photos);
+            photosRv.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_POSITION));
+        } else {
+            presenter.loadPhotos(getArguments());
+        }
+
+        return view;
     }
 
     @Override
     public void onStop() {
         super.onStop();
         presenter.detach();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(PHOTOS_ITEMS, new ArrayList<Photo>(adapter.getPhotos()));
+        outState.putParcelable(RECYCLER_POSITION, photosRv.getLayoutManager().onSaveInstanceState());
     }
 
     @Override
@@ -195,23 +207,13 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
     @Override
     public void savePhotos(final ContentValues[] photos) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                getContext().getContentResolver().bulkInsert(ZoomPointContract.PhotoEntry.CONTENT_URI, photos);
-            }
-        });
+        getContext().getContentResolver().bulkInsert(ZoomPointContract.PhotoEntry.CONTENT_URI, photos);
     }
 
 
     @Override
     public void saveUsers(final ContentValues[] users) {
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                getContext().getContentResolver().bulkInsert(ZoomPointContract.UserProfileEntry.CONTENT_URI, users);
-            }
-        });
+        getContext().getContentResolver().bulkInsert(ZoomPointContract.UserProfileEntry.CONTENT_URI, users);
     }
 
     @Override

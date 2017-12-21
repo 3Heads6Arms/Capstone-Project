@@ -65,7 +65,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    public void clearPhotos(){
+    public void clearPhotos() {
         photos.clear();
         notifyDataSetChanged();
     }

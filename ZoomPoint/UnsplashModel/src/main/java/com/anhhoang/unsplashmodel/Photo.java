@@ -2,10 +2,11 @@ package com.anhhoang.unsplashmodel;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Photo {
+public class Photo implements android.os.Parcelable {
     public static final String COL_IDENTIFIER = "id";
     public static final String COL_CREATED_AT = "created_at";
     public static final String COL_UPDATED_AT = "updated_at";
@@ -162,4 +163,61 @@ public class Photo {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(android.os.Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeLong(this.createdAt != null ? this.createdAt.getTime() : -1);
+        dest.writeLong(this.updatedAt != null ? this.updatedAt.getTime() : -1);
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+        dest.writeString(this.color);
+        dest.writeInt(this.likes);
+        dest.writeByte(this.likedByUser ? (byte) 1 : (byte) 0);
+        dest.writeString(this.description);
+        dest.writeParcelable(this.exif, flags);
+        dest.writeParcelable(this.location, flags);
+        dest.writeList(this.collections);
+        dest.writeParcelable(this.urls, flags);
+        dest.writeParcelable(this.user, flags);
+    }
+
+    public Photo() {
+    }
+
+    protected Photo(android.os.Parcel in) {
+        this.id = in.readString();
+        long tmpCreatedAt = in.readLong();
+        this.createdAt = tmpCreatedAt == -1 ? null : new Date(tmpCreatedAt);
+        long tmpUpdatedAt = in.readLong();
+        this.updatedAt = tmpUpdatedAt == -1 ? null : new Date(tmpUpdatedAt);
+        this.width = in.readInt();
+        this.height = in.readInt();
+        this.color = in.readString();
+        this.likes = in.readInt();
+        this.likedByUser = in.readByte() != 0;
+        this.description = in.readString();
+        this.exif = in.readParcelable(Exif.class.getClassLoader());
+        this.location = in.readParcelable(PhotoLocation.class.getClassLoader());
+        this.collections = new ArrayList<PhotoCollection>();
+        in.readList(this.collections, PhotoCollection.class.getClassLoader());
+        this.urls = in.readParcelable(PhotoUrls.class.getClassLoader());
+        this.user = in.readParcelable(UserProfile.class.getClassLoader());
+    }
+
+    public static final android.os.Parcelable.Creator<Photo> CREATOR = new android.os.Parcelable.Creator<Photo>() {
+        @Override
+        public Photo createFromParcel(android.os.Parcel source) {
+            return new Photo(source);
+        }
+
+        @Override
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
 }

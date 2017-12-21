@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,7 +28,7 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
     Spinner sortQuerySpn;
 
     private HomePhotosContract.Presenter presenter;
-    private boolean isRecoveringState;
+    private boolean isUserAction;
 
     public HomePhotosFragment() {
         setRetainInstance(true);
@@ -50,20 +51,13 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
                 getString(R.string.oldest)
         });
         sortQuerySpn.setAdapter(adapter);
-
-        if (savedInstanceState != null) {
-            sortQuerySpn.setSelection(savedInstanceState.getInt(SPINNER_POSITION, 0));
-            isRecoveringState = true;
-        }
-
         sortQuerySpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(!isRecoveringState) {
+                if (isUserAction) {
                     presenter.onPhotoSourceChanged(position);
+                    isUserAction = false;
                 }
-
-                isRecoveringState = false;
             }
 
             @Override
@@ -71,6 +65,21 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
 
             }
         });
+        // On screen rotation this will triggers ItemSelectedListener. Which will cause reload of fragment
+        sortQuerySpn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                isUserAction = true;
+                return false;
+            }
+        });
+
+        if (savedInstanceState != null) {
+            sortQuerySpn.setSelection(savedInstanceState.getInt(SPINNER_POSITION, 0));
+        } else {
+            // On first/creation onItemSelected is wanted to be called with user action to access presenter logic
+            isUserAction = true;
+        }
 
         return view;
     }

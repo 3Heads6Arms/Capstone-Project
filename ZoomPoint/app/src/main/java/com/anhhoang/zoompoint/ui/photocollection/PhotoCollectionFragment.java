@@ -174,7 +174,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     public void loadLocalPhotos(String query) {
         Bundle bundle = new Bundle();
         bundle.putString("query", query);
-        getLoaderManager().initLoader(PHOTO_LOADER, bundle, loaderCallbacks);
+        getLoaderManager().restartLoader(PHOTO_LOADER, bundle, loaderCallbacks);
     }
 
     @Override

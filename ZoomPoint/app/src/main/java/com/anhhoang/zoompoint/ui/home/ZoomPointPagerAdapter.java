@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.anhhoang.zoompoint.ui.home.collections.CollectionsFragment;
 import com.anhhoang.zoompoint.ui.home.photos.HomePhotosFragment;
 
 /**
@@ -18,7 +19,13 @@ public class ZoomPointPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new HomePhotosFragment();
+        switch (position) {
+            case 0:
+                return new HomePhotosFragment();
+            default:
+                return new CollectionsFragment();
+        }
+
     }
 
     // ZoomPoint Tabs are fixed

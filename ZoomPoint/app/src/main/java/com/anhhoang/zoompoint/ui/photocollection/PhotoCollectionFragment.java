@@ -2,13 +2,12 @@ package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.os.Handler;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -19,14 +18,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
-import com.anhhoang.zoompoint.utils.PhotoUtils;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
 import java.util.ArrayList;
@@ -80,17 +77,8 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            List<Photo> photos = PhotoUtils.parsePhotos(data);
-            updatePhotos(photos);
-
+            presenter.loadFinished(data);
             data.close();
-            toggleProgress(false);
-
-            if (photos.size() <= 0) {
-                // App is loading locally only when unable to get from server (empty server is not error)
-                // Hence its always error when have to reach to local DB
-                displayEmpty(true, R.string.unable_to_get_photo);
-            }
         }
 
         @Override
@@ -118,8 +106,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                adapter.clearPhotos();
-                presenter.loadPhotos(getArguments());
+                presenter.load(getArguments());
             }
         });
 
@@ -146,7 +133,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
             adapter.addPhotos(photos);
             photosRv.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_POSITION));
         } else {
-            presenter.loadPhotos(getArguments());
+            presenter.load(getArguments());
         }
 
         return view;
@@ -178,8 +165,13 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     @Override
-    public void updatePhotos(List<Photo> photos) {
+    public void displayPhotos(List<Photo> photos) {
         adapter.addPhotos(photos);
+    }
+
+    @Override
+    public void clearPhotos() {
+        adapter.clearPhotos();
     }
 
     @Override
@@ -224,7 +216,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     @Override
-    public void displayEmpty(boolean isError, int errorId) {
+    public void showEmpty(boolean isError, int errorId) {
         if (isError) {
             errorTv.setText(errorId);
         } else {

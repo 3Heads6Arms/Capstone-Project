@@ -1,11 +1,10 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.content.ContentValues;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.UserProfile;
@@ -49,23 +48,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             if (view != null) {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     List<Photo> photos = response.body();
-                    view.updatePhotos(photos);
-
-
-                    if (photos.size() <= 0) {
-                        view.toggleProgress(false);
-                        isLoading = false;
-                        hasError = true;
-                        view.displayEmpty(false, 0);
-                    } else {
-                        // Remove & save only if there is success load from server
-                        if (forceLoad) {
-                            view.removePhotos(getSqlSelection());
-                        }
-                        save(photos);
-                        view.toggleProgress(false);
-                        isLoading = false;
-                    }
+                    loadFinished(photos);
                 } else {
                     hasError = true;
                     view.showError(R.string.unable_to_get_photo);
@@ -110,7 +93,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
     }
 
     @Override
-    public void loadPhotos(Bundle bundle) {
+    public void load(Bundle bundle) {
         this.collectionId = bundle.getLong(COLLECTION_ID, -1);
 
         if (collectionId < 0) {
@@ -123,6 +106,11 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         }
         forceLoad = true;
 
+        if(view != null){
+            // Load is only called when is newly loaded or swiperefresh.
+            // So clearing is required
+            view.clearPhotos();
+        }
         loadPhotos();
     }
 
@@ -132,6 +120,49 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             currentPage++;
             loadPhotos();
         }
+    }
+
+    @Override
+    public void loadFinished(Cursor cursor) {
+        if (view != null) {
+            // on loadFinished with cursor means something went wrong with the server and had to load from local DB,
+            // where all data will be loaded once from beginning
+            // To prevent displaying same item twice or more, current list needs to be cleared.
+            view.clearPhotos();
+
+            List<Photo> photos = PhotoUtils.parsePhotos(cursor);
+            if (photos.size() <= 0) {
+                // App is loading locally only when unable to get from server (empty server is not error)
+                // Hence its always error when have to reach to local DB
+                view.showEmpty(true, R.string.unable_to_get_photo);
+            } else {
+                view.displayPhotos(photos);
+            }
+
+            view.toggleProgress(false);
+        }
+    }
+
+    @Override
+    public void loadFinished(List<Photo> photos) {
+        if (view != null) {
+            view.displayPhotos(photos);
+            if (photos.size() <= 0) {
+                // Concrete call from server and is empty is also considered error
+                // to preven loadMore from firing
+                hasError = true;
+                view.showEmpty(false, 0);
+            } else {
+                // Remove & save only if there is success load from server
+                if (forceLoad) {
+                    view.removePhotos(getSqlSelection());
+                }
+                save(photos);
+            }
+            view.toggleProgress(false);
+        }
+
+        isLoading = false;
     }
 
     private void loadPhotos() {

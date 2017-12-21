@@ -1,12 +1,11 @@
 package com.anhhoang.zoompoint.ui.photocollection;
 
 import android.content.ContentValues;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.BaseMvpContract;
-import com.anhhoang.zoompoint.utils.PhotosCallType;
 
 import java.util.List;
 
@@ -16,28 +15,35 @@ import java.util.List;
 
 public interface PhotoCollectionContract {
     interface View extends BaseMvpContract.View<Presenter> {
+        String getToken();
+
         void loadLocalPhotos(String query);
 
-        void updatePhotos(List<Photo> photos);
+        void displayPhotos(List<Photo> photos);
 
-        void showError(int idString);
+        void clearPhotos();
 
         void toggleProgress(boolean show);
 
-        String getToken();
+        void saveUsers(ContentValues[] users);
 
         void savePhotos(ContentValues[] photos);
 
-        void saveUsers(ContentValues[] users);
-
-        void displayEmpty(boolean isError, int errorId);
-
         void removePhotos(String query);
+
+        void showError(int idString);
+
+        void showEmpty(boolean isError, int errorId);
+
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
-        void loadPhotos(Bundle bundle);
+        void load(Bundle bundle);
 
         void loadMore();
+
+        void loadFinished(Cursor cursor);
+
+        void loadFinished(List<Photo> photos);
     }
 }

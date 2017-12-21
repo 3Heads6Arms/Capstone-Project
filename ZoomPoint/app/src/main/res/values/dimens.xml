@@ -6,4 +6,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_grid_padding">4dp</dimen>
     <dimen name="grid_item_padding">8dp</dimen>
+    <dimen name="list_max_image_height">250dp</dimen>
 </resources>

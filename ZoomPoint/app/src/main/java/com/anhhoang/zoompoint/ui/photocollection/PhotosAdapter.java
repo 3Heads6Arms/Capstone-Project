@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.ui.DynamicSizeImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -44,7 +45,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
         Photo photo = photos.get(position);
 
         holder.userNameTv.setText(photo.getUser().getName());
-
+        holder.photoIv.setAspectRatio((float) photo.getWidth() / photo.getHeight());
         Glide.with(holder.photoIv)
                 .asDrawable()
                 .load(photo.getUrls().getRegular())
@@ -76,7 +77,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.image_view_photo)
-        ImageView photoIv;
+        DynamicSizeImageView photoIv;
         @BindView(R.id.text_view_user_name)
         TextView userNameTv;
 

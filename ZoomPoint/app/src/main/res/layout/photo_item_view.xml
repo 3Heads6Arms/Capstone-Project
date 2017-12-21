@@ -6,15 +6,21 @@
     android:layout_height="wrap_content"
     android:paddingBottom="16dp">
 
-    <ImageView
-        android:id="@+id/image_view_photo"
+    <FrameLayout
+        android:id="@+id/photo_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/dummy"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.anhhoang.zoompoint.ui.DynamicSizeImageView
+            android:id="@+id/image_view_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:maxHeight="@dimen/list_max_image_height"
+            android:scaleType="centerCrop"
+            android:src="@drawable/dummy" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/text_view_by"
@@ -23,8 +29,7 @@
         android:text="@string/by"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintBaseline_toBaselineOf="@+id/text_view_user_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_view_photo" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/text_view_user_name"
@@ -34,7 +39,7 @@
         android:layout_marginTop="@dimen/text_grid_padding"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintStart_toEndOf="@id/text_view_by"
-        app:layout_constraintTop_toBottomOf="@id/image_view_photo"
+        app:layout_constraintTop_toBottomOf="@id/photo_wrapper"
         tools:text="John Doe" />
 
 </android.support.constraint.ConstraintLayout>

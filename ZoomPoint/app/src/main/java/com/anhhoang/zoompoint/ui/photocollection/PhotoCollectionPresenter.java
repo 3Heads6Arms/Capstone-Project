@@ -54,7 +54,6 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                     view.showError(R.string.unable_to_get_photo);
                     view.loadLocalPhotos(getSqlSelection());
                 }
-                forceLoad = false;
             }
         }
 
@@ -106,7 +105,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         }
         forceLoad = true;
 
-        if(view != null){
+        if (view != null) {
             // Load is only called when is newly loaded or swiperefresh.
             // So clearing is required
             view.clearPhotos();
@@ -156,6 +155,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                 // Remove & save only if there is success load from server
                 if (forceLoad) {
                     view.removePhotos(getSqlSelection());
+                    forceLoad = false;
                 }
                 save(photos);
             }
@@ -167,7 +167,9 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
 
     private void loadPhotos() {
         isLoading = true;
-        view.toggleProgress(true);
+        if (view != null) {
+            view.toggleProgress(true);
+        }
 
         switch (photosCallType) {
             case PHOTOS:

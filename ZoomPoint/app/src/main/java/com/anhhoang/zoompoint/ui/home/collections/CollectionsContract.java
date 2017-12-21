@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public interface CollectionsContract {
-    interface View<Presenter> extends BaseMvpContract.View {
+    interface View extends BaseMvpContract.View<Presenter> {
         String getToken();
 
         void toggleProgress(boolean show);
@@ -23,16 +23,20 @@ public interface CollectionsContract {
         void showEmpty(boolean hasError, int idString);
 
 
-        void loadLocalCollections();
+        void loadLocalCollections(String query);
 
         void saveUsers(ContentValues[] users);
 
         void saveCollections(ContentValues[] collections);
 
+        void removeCollections(String query);
+
         void displayCollections(List<PhotoCollection> collections);
+
+        void clearCollections();
     }
 
-    interface Presenter<View> extends BaseMvpContract.Presenter {
+    interface Presenter extends BaseMvpContract.Presenter<View> {
         void load();
 
         void loadMore();

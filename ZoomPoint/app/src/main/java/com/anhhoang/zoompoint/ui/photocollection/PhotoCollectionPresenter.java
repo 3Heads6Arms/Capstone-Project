@@ -216,8 +216,8 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                 break;
         }
 
-        ContentValues[] userContentValues = UserUtils.parseUsers(users).toArray(new ContentValues[users.size()]);
-        ContentValues[] photoContentValues = PhotoUtils.parsePhotos(photos, type).toArray(new ContentValues[photos.size()]);
+        ContentValues[] userContentValues = UserUtils.parseUsers(users);
+        ContentValues[] photoContentValues = PhotoUtils.parsePhotos(photos, type);
 
         view.savePhotos(photoContentValues);
         view.saveUsers(userContentValues);

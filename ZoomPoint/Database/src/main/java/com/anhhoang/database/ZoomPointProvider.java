@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
@@ -87,7 +86,7 @@ public class ZoomPointProvider extends ContentProvider {
                         "SELECT p.*, u.name FROM " + ZoomPointContract.CollectionEntry.TABLE_NAME + " p " +
                                 "INNER JOIN " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " u " +
                                 "ON p." + PhotoCollection.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
-                                "WHERE " + selection,
+                                "WHERE p." + selection,
                         selectionArgs);
                 break;
             case COLLECTION:

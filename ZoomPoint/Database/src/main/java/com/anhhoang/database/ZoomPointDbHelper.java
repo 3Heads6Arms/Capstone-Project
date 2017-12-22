@@ -1,12 +1,8 @@
 package com.anhhoang.database;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
-import android.database.sqlite.SQLiteCursorDriver;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQuery;
 
 import com.anhhoang.unsplashmodel.Exif;
 import com.anhhoang.unsplashmodel.Photo;
@@ -21,7 +17,7 @@ import com.anhhoang.unsplashmodel.UserProfile;
 
 public class ZoomPointDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "zoompoint.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
 
     public ZoomPointDbHelper(Context context) {
@@ -78,6 +74,8 @@ public class ZoomPointDbHelper extends SQLiteOpenHelper {
                 PhotoUrls.COL_REGULAR + " TEXT, " +
                 PhotoUrls.COL_THUMB + " TEXT, " +
                 PhotoUrls.COL_SMALL + " TEXT, " +
+                Photo.COL_WIDTH + " INTEGER, " +
+                Photo.COL_HEIGHT + " INTEGER, " +
                 PhotoCollection.COL_USER_ID + " TEXT);"; // UNIQUE but is not primary key, due to API difference. The app will ignore all _IDs columns
 
         final String createUserProfileQuery = "CREATE TABLE " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " (" +

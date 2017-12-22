@@ -62,13 +62,13 @@ public class PhotoUtils {
         return contentValues;
     }
 
-    public static List<ContentValues> parsePhotos(List<Photo> photos, String type) {
+    public static ContentValues[] parsePhotos(List<Photo> photos, String type) {
         List<ContentValues> contentValues = new ArrayList<>();
         for (Photo photo : photos) {
             contentValues.add(parsePhoto(photo, type));
         }
 
-        return contentValues;
+        return contentValues.toArray(new ContentValues[contentValues.size()]);
     }
 
     public static List<Photo> parsePhotos(Cursor cursor) {

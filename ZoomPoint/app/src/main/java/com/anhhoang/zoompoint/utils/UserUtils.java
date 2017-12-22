@@ -1,11 +1,13 @@
 package com.anhhoang.zoompoint.utils;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.anhhoang.unsplashmodel.PhotoUrls;
 import com.anhhoang.unsplashmodel.UserProfile;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,18 +38,36 @@ public class UserUtils {
         return contentValues;
     }
 
-    public static List<ContentValues> parseUsers(List<UserProfile> users) {
+    public static ContentValues[] parseUsers(List<UserProfile> users) {
         List<ContentValues> contentValues = new ArrayList<>();
 
         for (UserProfile user : users) {
             contentValues.add(parseUser(user));
         }
 
-        return contentValues;
+        return contentValues.toArray(new ContentValues[contentValues.size()]);
     }
 
-    public static UserProfile parse(ContentValues contentValues) {
-        // TODO: Parse to user
-        throw new UnsupportedOperationException();
+    public static UserProfile parse(Cursor cursor) {
+        UserProfile userProfile = new UserProfile();
+        PhotoUrls urls = new PhotoUrls();
+
+        userProfile.setId(cursor.getString(cursor.getColumnIndex(UserProfile.COL_ID)));
+        userProfile.setUpdatedAt(new Date(cursor.getLong(cursor.getColumnIndex(UserProfile.COL_UPDATED))));
+        userProfile.setUsername(cursor.getString(cursor.getColumnIndex(UserProfile.COL_USERNAME)));
+        userProfile.setName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_NAME)));
+        userProfile.setFirstName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_FIRST_NAME)));
+        userProfile.setLastName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_LAST_NAME)));
+        userProfile.setPortfolioUrl(cursor.getString(cursor.getColumnIndex(UserProfile.COL_PORTFOLIO_URL)));
+        userProfile.setBio(cursor.getString(cursor.getColumnIndex(UserProfile.COL_BIO)));
+        userProfile.setLocation(cursor.getString(cursor.getColumnIndex(UserProfile.COL_LOCATION)));
+
+        urls.setMedium(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_MEDIUM)));
+        urls.setLarge(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_LARGE)));
+        urls.setSmall(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_SMALL)));
+
+        userProfile.setProfileImage(urls);
+
+        return userProfile;
     }
 }

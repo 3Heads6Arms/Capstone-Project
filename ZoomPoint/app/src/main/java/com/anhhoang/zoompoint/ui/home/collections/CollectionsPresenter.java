@@ -7,6 +7,7 @@ import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.utils.PhotoCollectionUtils;
 import com.anhhoang.zoompoint.utils.UserUtils;
 
 import java.net.HttpURLConnection;
@@ -104,7 +105,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
             // To prevent displaying same item twice or more, current list needs to be cleared.
             view.clearCollections();
 
-            List<PhotoCollection> collections = new ArrayList<>(); // TODO: CollectionUtils.parseCollections(cursor);
+            List<PhotoCollection> collections = PhotoCollectionUtils.parseCollections(cursor);
 
             if (collections.size() <= 0) {
                 // App is loading locally only when unable to get from server (empty server is not error)
@@ -146,10 +147,10 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         }
 
 
-        ContentValues[] userContentValues = UserUtils.parseUsers(users).toArray(new ContentValues[users.size()]);
-//        ContentValues[] photoContentValues = new ContentValues[5];// TODO: implement CollectionUtils.parseCollections(collections).toArray(new ContentValues[collections.size()]);
-        // TODO:
-//        view.saveCollections(photoContentValues);
+        ContentValues[] userContentValues = UserUtils.parseUsers(users);
+        ContentValues[] collectionContentValues = PhotoCollectionUtils.parseCollections(collections);
+
+        view.saveCollections(collectionContentValues);
         view.saveUsers(userContentValues);
     }
 

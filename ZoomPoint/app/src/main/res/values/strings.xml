@@ -15,4 +15,5 @@
     <string name="by">by</string>
     <string name="no_photos_here">No photos here</string>
     <string name="unable_to_get_photo">Unable to get new photos from server\nTry again later</string>
+    <string name="no_collection_found">No collection found!</string>
 </resources>

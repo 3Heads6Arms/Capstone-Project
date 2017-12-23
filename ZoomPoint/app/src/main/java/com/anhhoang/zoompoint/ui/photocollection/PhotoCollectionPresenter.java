@@ -103,13 +103,14 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         if (collectionId < 0 && TextUtils.isEmpty(query)) {
             throw new IllegalArgumentException("Bundles of required arguments was not passed to fragment.");
         }
-        forceLoad = true;
 
         if (view != null) {
             // Load is only called when is newly loaded or swiperefresh.
             // So clearing is required
             view.clearPhotos();
         }
+        forceLoad = true;
+        currentPage = 1;
         loadPhotos();
     }
 

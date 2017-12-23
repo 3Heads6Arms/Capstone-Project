@@ -23,7 +23,7 @@ import retrofit2.Response;
  */
 
 public class CollectionsPresenter implements CollectionsContract.Presenter {
-    private static final String COLLECTION_QUERY = PhotoCollection.COL_FEATURED + "=true";
+    private static final String COLLECTION_QUERY = PhotoCollection.COL_FEATURED + "=1";
 
     private UnsplashApi unsplashApi;
 
@@ -86,6 +86,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         }
 
         forceLoad = true;
+        currentPage = 1;
         loadCollections();
     }
 

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
@@ -42,7 +43,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     public static final String TAG = PhotoCollectionFragment.class.getCanonicalName();
 
     private static final String PHOTOS_ITEMS = "PhotoItems";
-    private static final String RECYCLER_POSITION = "RecyclerPosition";
+    private static final String RECYCLER_VIEW_POSITION = "RecyclerViewPosition";
     private static final String COLLECTION_ID = "CollectionIdKey";
     private static final String QUERY = "QueryKey";
     private static final String CALL_TYPE = "CallTypeKey";
@@ -62,8 +63,9 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            String query = args.getString("query");
+            checkNotNull(args);
 
+            String query = args.getString("query");
             checkNotNull(query, "Query cannot be null");
 
             return new CursorLoader(
@@ -114,6 +116,9 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         adapter = new PhotosAdapter();
         photosRv.setLayoutManager(layoutManager);
         photosRv.setAdapter(adapter);
+        photosRv.addItemDecoration(new ItemSpacingDecoration(
+                (int) getResources().getDimension(R.dimen.grid_item_padding)
+        ));
 
         photosRv.addOnScrollListener(new EndlessScrollListener(layoutManager) {
             @Override
@@ -131,7 +136,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         if (savedInstanceState != null) {
             List<Photo> photos = savedInstanceState.getParcelableArrayList(PHOTOS_ITEMS);
             adapter.addPhotos(photos);
-            photosRv.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_POSITION));
+            photosRv.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_VIEW_POSITION));
         } else {
             presenter.load(getArguments());
         }
@@ -147,9 +152,8 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putSerializable(PHOTOS_ITEMS, new ArrayList<Photo>(adapter.getPhotos()));
-        outState.putParcelable(RECYCLER_POSITION, photosRv.getLayoutManager().onSaveInstanceState());
+        outState.putParcelable(RECYCLER_VIEW_POSITION, photosRv.getLayoutManager().onSaveInstanceState());
     }
 
     @Override

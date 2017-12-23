@@ -22,6 +22,8 @@ public interface CollectionsContract {
 
         void showEmpty(boolean hasError, int idString);
 
+        void removeLoadMore();
+
 
         void loadLocalCollections(String query);
 

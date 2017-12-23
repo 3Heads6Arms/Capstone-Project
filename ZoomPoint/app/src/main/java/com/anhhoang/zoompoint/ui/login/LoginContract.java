@@ -13,6 +13,8 @@ public interface LoginContract {
     interface View extends BaseMvpContract.View<Presenter> {
         void saveToken(String token);
 
+        void saveUsername(String username);
+
         boolean isLoggedIn();
 
         void toggleProgress(boolean show);

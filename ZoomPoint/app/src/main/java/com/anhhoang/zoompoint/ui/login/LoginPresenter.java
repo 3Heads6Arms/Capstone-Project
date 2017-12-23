@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashapi.UnsplashAuthApi;
+import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.unsplashmodel.authmodel.TokenResponse;
 import com.anhhoang.zoompoint.R;
 
@@ -61,16 +63,38 @@ public class LoginPresenter implements LoginContract.Presenter {
                         if (view != null) {
                             if (response.code() == HttpURLConnection.HTTP_OK) {
                                 TokenResponse tokenResponse = response.body();
+                                final String token = tokenResponse.getAccessToken();
 
-                                if (!TextUtils.isEmpty(tokenResponse.getAccessToken())) {
-                                    view.saveToken(tokenResponse.getAccessToken());
-                                    view.navigateToHome();
+                                if (!TextUtils.isEmpty(token)) {
+                                    UnsplashApi.getInstance(token)
+                                            .getMyProfile()
+                                            .enqueue(new Callback<UserProfile>() {
+                                                @Override
+                                                public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
+                                                    if (response.code() == HttpURLConnection.HTTP_OK) {
+                                                        view.saveUsername(response.body().getUsername());
+                                                        view.saveToken(token);
+                                                        view.navigateToHome();
+                                                    } else {
+                                                        view.showError(R.string.login_error);
+                                                    }
+                                                    view.toggleProgress(false);
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<UserProfile> call, Throwable t) {
+                                                    view.showError(R.string.login_error);
+                                                    view.toggleProgress(false);
+                                                }
+                                            });
+                                } else {
+                                    view.showError(R.string.login_error);
+                                    view.toggleProgress(false);
                                 }
                             } else {
                                 view.showError(R.string.login_error);
+                                view.toggleProgress(false);
                             }
-
-                            view.toggleProgress(false);
                         }
                     }
 

@@ -50,6 +50,8 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     private static final int PHOTO_LOADER = 1;
 
     private PhotoCollectionContract.Presenter presenter;
+    private PhotosAdapter adapter;
+    private StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 
     @BindView(R.id.recycler_view_photos)
     RecyclerView photosRv;
@@ -58,7 +60,6 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
 
-    private PhotosAdapter adapter;
 
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
@@ -88,6 +89,13 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         }
     };
 
+    private RecyclerView.OnScrollListener endlessScrollListener = new EndlessScrollListener(layoutManager) {
+        @Override
+        public void onLoadMore() {
+            presenter.loadMore();
+        }
+    };
+
     public PhotoCollectionFragment() {
         setRetainInstance(true);
     }
@@ -109,23 +117,19 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
             @Override
             public void onRefresh() {
                 presenter.load(getArguments());
+                // Re-enable onscrolllistener in case there are need
+                photosRv.removeOnScrollListener(endlessScrollListener);
+                photosRv.addOnScrollListener(endlessScrollListener);
             }
         });
 
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
         adapter = new PhotosAdapter();
         photosRv.setLayoutManager(layoutManager);
         photosRv.setAdapter(adapter);
         photosRv.addItemDecoration(new ItemSpacingDecoration(
                 (int) getResources().getDimension(R.dimen.grid_item_padding)
         ));
-
-        photosRv.addOnScrollListener(new EndlessScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore() {
-                presenter.loadMore();
-            }
-        });
+        photosRv.addOnScrollListener(endlessScrollListener);
 
         if (presenter == null) {
             new PhotoCollectionPresenter().attach(this);
@@ -171,6 +175,10 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     @Override
     public void displayPhotos(List<Photo> photos) {
         adapter.addPhotos(photos);
+        if (adapter.getPhotos().size() > 0) {
+            errorTv.setVisibility(View.INVISIBLE);
+            photosRv.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -180,7 +188,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
     @Override
     public void showError(int idString) {
-        Snackbar.make(photosRv, idString, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(getView(), idString, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -230,6 +238,11 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         errorTv.setVisibility(View.VISIBLE);
         refreshLayout.setRefreshing(false);
         photosRv.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void removeLoadMore() {
+        photosRv.removeOnScrollListener(endlessScrollListener);
     }
 
     public static Bundle createBundle(long collectionId) {

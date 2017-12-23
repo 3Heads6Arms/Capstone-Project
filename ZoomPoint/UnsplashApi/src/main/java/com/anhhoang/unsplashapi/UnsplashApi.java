@@ -4,18 +4,11 @@ import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.unsplashmodel.UserProfile;
 
-import java.io.IOException;
 import java.util.List;
 
-import okhttp3.Authenticator;
-import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.Route;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -100,6 +93,10 @@ public class UnsplashApi {
 
     public Call<Photo> removePhotoFromCollection(long collectionId, String photoId) {
         return unsplashApiService.removePhotoFromCollection(collectionId, photoId);
+    }
+
+    public Call<UserProfile> getMyProfile() {
+        return unsplashApiService.getMyProfile();
     }
 
     public Call<UserProfile> getUserProfile(String username) {

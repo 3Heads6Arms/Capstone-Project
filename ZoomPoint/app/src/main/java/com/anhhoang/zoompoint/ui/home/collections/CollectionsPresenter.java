@@ -28,7 +28,6 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
     private UnsplashApi unsplashApi;
 
     private boolean isLoading;
-    private boolean hasError;
     private boolean forceLoad;
     private int pageSize;
     private int currentPage;
@@ -43,7 +42,8 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                     List<PhotoCollection> collections = response.body();
                     loadFinished(collections);
                 } else {
-                    hasError = true;
+                    // LoadMore is not required when load from local.
+                    view.removeLoadMore();
                     view.showError(R.string.unable_to_get_photo);
                     view.loadLocalCollections(COLLECTION_QUERY);
                 }
@@ -92,7 +92,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
     @Override
     public void loadMore() {
-        if (!isLoading && !hasError) {
+        if (!isLoading) {
             currentPage++;
             loadCollections();
         }
@@ -108,24 +108,26 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
 
             List<PhotoCollection> collections = PhotoCollectionUtils.parseCollections(cursor);
 
+            view.toggleProgress(false);
             if (collections.size() <= 0) {
                 // App is loading locally only when unable to get from server (empty server is not error)
                 // Hence its always error when have to reach to local DB
+                view.removeLoadMore();
                 view.showEmpty(true, R.string.unable_to_get_photo);
             } else {
                 view.displayCollections(collections);
             }
 
-            view.toggleProgress(false);
         }
     }
 
     @Override
     public void loadFinished(List<PhotoCollection> collections) {
         if (view != null) {
+            view.toggleProgress(false);
             view.displayCollections(collections);
-            if (collections.size() <= 0) {
-                hasError = true;
+            if (collections.size() <= 0 && currentPage == 1) {
+                view.removeLoadMore();
                 view.showEmpty(false, 0);
             } else {
                 if (forceLoad) {
@@ -135,7 +137,6 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                 save(collections);
             }
 
-            view.toggleProgress(false);
         }
 
         isLoading = false;

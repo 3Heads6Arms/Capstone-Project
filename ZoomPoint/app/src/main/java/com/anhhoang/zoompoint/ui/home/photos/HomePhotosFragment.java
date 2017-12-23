@@ -21,7 +21,9 @@ import com.anhhoang.zoompoint.utils.PhotosCallType;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+
 public class HomePhotosFragment extends Fragment implements HomePhotosContract.View {
+    private static final String TAG = HomePhotosFragment.class.getCanonicalName();
     private static final String SPINNER_POSITION = "SpinnerPosition";
 
     @BindView(R.id.spinner_sort_query)
@@ -120,7 +122,7 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
 
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_photos, fragment, PhotoCollectionFragment.TAG)
+                .replace(R.id.fragment_photos, fragment, TAG)
                 .commit();
     }
 }

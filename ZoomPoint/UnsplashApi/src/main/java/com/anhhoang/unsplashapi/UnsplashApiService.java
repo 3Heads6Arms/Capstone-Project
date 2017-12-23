@@ -71,6 +71,9 @@ public interface UnsplashApiService {
     @DELETE("collections/{id}/remove")
     Call<Photo> removePhotoFromCollection(@Path("id") long collectionId, @Body String photoId);
 
+    @GET("me")
+    Call<UserProfile> getMyProfile();
+
     @GET("users/{username}")
     Call<UserProfile> getUserProfile(@Path("username") String username);
 

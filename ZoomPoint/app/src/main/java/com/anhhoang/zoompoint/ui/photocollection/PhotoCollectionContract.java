@@ -35,6 +35,7 @@ public interface PhotoCollectionContract {
 
         void showEmpty(boolean isError, int errorId);
 
+        void removeLoadMore();
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {

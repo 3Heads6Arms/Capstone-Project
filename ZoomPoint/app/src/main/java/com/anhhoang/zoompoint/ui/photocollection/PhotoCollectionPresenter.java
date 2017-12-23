@@ -35,7 +35,6 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
     private UnsplashApi unsplashApi;
 
     private boolean isLoading;
-    private boolean hasError;
     private boolean forceLoad;
     private int pageSize;
     private int currentPage;
@@ -50,7 +49,8 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                     List<Photo> photos = response.body();
                     loadFinished(photos);
                 } else {
-                    hasError = true;
+                    // Loadmore is not required when load from local db
+                    view.removeLoadMore();
                     view.showError(R.string.unable_to_get_photo);
                     view.loadLocalPhotos(getSqlSelection());
                 }
@@ -116,7 +116,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
 
     @Override
     public void loadMore() {
-        if (!isLoading && !hasError) {
+        if (!isLoading) {
             currentPage++;
             loadPhotos();
         }
@@ -128,29 +128,31 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             // on loadFinished with cursor means something went wrong with the server and had to load from local DB,
             // where all data will be loaded once from beginning
             // To prevent displaying same item twice or more, current list needs to be cleared.
+            view.toggleProgress(false);
             view.clearPhotos();
 
             List<Photo> photos = PhotoUtils.parsePhotos(cursor);
             if (photos.size() <= 0) {
                 // App is loading locally only when unable to get from server (empty server is not error)
                 // Hence its always error when have to reach to local DB
+                view.removeLoadMore();
                 view.showEmpty(true, R.string.unable_to_get_photo);
             } else {
                 view.displayPhotos(photos);
             }
 
-            view.toggleProgress(false);
         }
     }
 
     @Override
     public void loadFinished(List<Photo> photos) {
         if (view != null) {
+            view.toggleProgress(false);
             view.displayPhotos(photos);
-            if (photos.size() <= 0) {
+            if (photos.size() <= 0 && currentPage == 1) {
                 // Concrete call from server and is empty is also considered error
                 // to preven loadMore from firing
-                hasError = true;
+                view.removeLoadMore();
                 view.showEmpty(false, 0);
             } else {
                 // Remove & save only if there is success load from server
@@ -160,7 +162,6 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                 }
                 save(photos);
             }
-            view.toggleProgress(false);
         }
 
         isLoading = false;

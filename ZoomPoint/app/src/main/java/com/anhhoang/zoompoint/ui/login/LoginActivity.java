@@ -2,10 +2,10 @@ package com.anhhoang.zoompoint.ui.login;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -68,6 +68,14 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
         PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
                 .putString(getString(R.string.token_preference_key), token)
+                .apply();
+    }
+
+    @Override
+    public void saveUsername(String username) {
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(getString(R.string.username_preference_key), username)
                 .apply();
     }
 

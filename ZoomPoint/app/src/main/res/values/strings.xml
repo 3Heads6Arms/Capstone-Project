@@ -3,6 +3,7 @@
     <string name="login">Login</string>
     <string name="sign_up">Sign Up</string>
     <string name="token_preference_key" translatable="false">TokenPreferenceKey</string>
+    <string name="username_preference_key" translatable="false">UserPreferenceKey</string>
     <string name="login_error">Unable to login</string>
     <string name="login_connection_error">Unable to connect to server</string>
     <string name="title_activity_photo_collection" translatable="false">PhotoCollectionActivity</string>
@@ -16,4 +17,7 @@
     <string name="no_photos_here">No photos here</string>
     <string name="unable_to_get_photo">Unable to get new photos from server\nTry again later</string>
     <string name="no_collection_found">No collection found!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -43,7 +43,13 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
     private CollectionsContract.Presenter presenter;
     private CollectionAdapter adapter;
-
+    private StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+    private RecyclerView.OnScrollListener endlessScrollListener = new EndlessScrollListener(layoutManager) {
+        @Override
+        public void onLoadMore() {
+            presenter.loadMore();
+        }
+    };
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
     @BindView(R.id.recycler_view_collections)
@@ -93,14 +99,8 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
         View view = inflater.inflate(R.layout.fragment_collections, container, false);
         ButterKnife.bind(this, view);
 
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         collectionsRv.setLayoutManager(layoutManager);
-        collectionsRv.addOnScrollListener(new EndlessScrollListener(layoutManager) {
-            @Override
-            public void onLoadMore() {
-                presenter.loadMore();
-            }
-        });
+        collectionsRv.addOnScrollListener(endlessScrollListener);
         adapter = new CollectionAdapter();
         collectionsRv.setAdapter(adapter);
         collectionsRv.addItemDecoration(new ItemSpacingDecoration(
@@ -167,7 +167,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
     @Override
     public void showError(int idString) {
-        Snackbar.make(collectionsRv, idString, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(getView(), idString, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -181,6 +181,11 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
         collectionsRv.setVisibility(View.INVISIBLE);
         errorTv.setVisibility(View.VISIBLE);
         refreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void removeLoadMore() {
+        collectionsRv.removeOnScrollListener(endlessScrollListener);
     }
 
     @Override
@@ -215,6 +220,11 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     @Override
     public void displayCollections(List<PhotoCollection> collections) {
         adapter.addCollections(collections);
+
+        if (adapter.getCollections().size() > 0) {
+            collectionsRv.setVisibility(View.VISIBLE);
+            errorTv.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

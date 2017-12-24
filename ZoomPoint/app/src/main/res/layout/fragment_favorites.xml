@@ -7,6 +7,9 @@
     <FrameLayout
         android:id="@+id/fragment_favorite_photos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:paddingEnd="@dimen/grid_horizontal_padding"
+        android:paddingStart="@dimen/grid_horizontal_padding"
+        android:paddingTop="@dimen/grid_vertical_padding" />
 
 </FrameLayout>

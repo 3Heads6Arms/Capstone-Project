@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="tabIconUnselectedColor">#fff</color>
+    <color name="edit_text_icon_color">#b0bec5</color>
 </resources>

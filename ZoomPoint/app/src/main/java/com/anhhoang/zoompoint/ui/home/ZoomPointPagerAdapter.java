@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.anhhoang.zoompoint.ui.home.collections.CollectionsFragment;
 import com.anhhoang.zoompoint.ui.home.favorites.FavoritesFragment;
 import com.anhhoang.zoompoint.ui.home.photos.HomePhotosFragment;
+import com.anhhoang.zoompoint.ui.home.search.SearchFragment;
 
 /**
  * Created by anh.hoang on 17.12.17.
@@ -27,8 +28,10 @@ public class ZoomPointPagerAdapter extends FragmentPagerAdapter {
                 return new CollectionsFragment();
             case 2:
                 return new FavoritesFragment();
+            case 3:
+                return new SearchFragment();
             default:
-                return new CollectionsFragment();
+                throw new UnsupportedOperationException("Invalid page!");
         }
 
     }

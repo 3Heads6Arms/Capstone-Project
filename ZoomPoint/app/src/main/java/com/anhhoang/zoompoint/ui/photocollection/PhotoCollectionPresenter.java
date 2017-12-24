@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.anhhoang.unsplashapi.RequestModel.RequestSearchPhoto;
 import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.UserProfile;
@@ -59,6 +60,30 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
 
         @Override
         public void onFailure(Call<List<Photo>> call, Throwable t) {
+            if (view != null) {
+                view.showError(R.string.unable_to_get_photo);
+                view.loadLocalPhotos(getSqlSelection());
+            }
+        }
+    };
+    private Callback<RequestSearchPhoto> searchPhotoCallback = new Callback<RequestSearchPhoto>() {
+        @Override
+        public void onResponse(Call<RequestSearchPhoto> call, Response<RequestSearchPhoto> response) {
+            if (view != null) {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
+                    List<Photo> photos = response.body().getResults();
+                    loadFinished(photos);
+                } else {
+                    // Loadmore is not required when load from local db
+                    view.removeLoadMore();
+                    view.showError(R.string.unable_to_get_photo);
+                    view.loadLocalPhotos(getSqlSelection());
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Call<RequestSearchPhoto> call, Throwable t) {
             if (view != null) {
                 view.showError(R.string.unable_to_get_photo);
                 view.loadLocalPhotos(getSqlSelection());
@@ -184,7 +209,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                 break;
             case SEARCH_PHOTOS:
                 unsplashApi.searchPhotos(query, currentPage, pageSize)
-                        .enqueue(photosCallback);
+                        .enqueue(searchPhotoCallback);
                 break;
             case COLLECTION_PHOTOS:
                 unsplashApi.getCollectionPhotos(collectionId, currentPage, pageSize)

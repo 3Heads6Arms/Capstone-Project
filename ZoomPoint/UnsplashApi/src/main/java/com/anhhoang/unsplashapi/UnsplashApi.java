@@ -1,5 +1,6 @@
 package com.anhhoang.unsplashapi;
 
+import com.anhhoang.unsplashapi.RequestModel.RequestSearchPhoto;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.unsplashmodel.UserProfile;
@@ -71,7 +72,7 @@ public class UnsplashApi {
         return unsplashApiService.unlikePhoto(photoId);
     }
 
-    public Call<List<Photo>> searchPhotos(String searchTerms, int page, int perPage) {
+    public Call<RequestSearchPhoto> searchPhotos(String searchTerms, int page, int perPage) {
         return unsplashApiService.searchPhotos(searchTerms, page, perPage);
     }
 

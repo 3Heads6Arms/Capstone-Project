@@ -1,5 +1,6 @@
 package com.anhhoang.unsplashapi;
 
+import com.anhhoang.unsplashapi.RequestModel.RequestSearchPhoto;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.unsplashmodel.UserProfile;
@@ -45,7 +46,7 @@ public interface UnsplashApiService {
     Call<Photo> unlikePhoto(@Path("id") String photoId);
 
     @GET("search/photos")
-    Call<List<Photo>> searchPhotos(
+    Call<RequestSearchPhoto> searchPhotos(
             @Query("query") String searchTerms,
             @Query("page") int page,
             @Query("per_page") int perPage);

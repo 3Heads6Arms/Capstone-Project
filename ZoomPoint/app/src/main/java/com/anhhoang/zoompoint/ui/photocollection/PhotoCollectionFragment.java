@@ -51,7 +51,6 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
     private PhotoCollectionContract.Presenter presenter;
     private PhotosAdapter adapter;
-    private StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
 
     @BindView(R.id.recycler_view_photos)
     RecyclerView photosRv;
@@ -89,12 +88,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         }
     };
 
-    private RecyclerView.OnScrollListener endlessScrollListener = new EndlessScrollListener(layoutManager) {
-        @Override
-        public void onLoadMore() {
-            presenter.loadMore();
-        }
-    };
+    private RecyclerView.OnScrollListener endlessScrollListener;
 
     public PhotoCollectionFragment() {
         setRetainInstance(true);
@@ -113,6 +107,22 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         View view = inflater.inflate(R.layout.fragment_photo_collection, container, false);
         ButterKnife.bind(this, view);
 
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
+        endlessScrollListener = new EndlessScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore() {
+                presenter.loadMore();
+            }
+        };
+        adapter = new PhotosAdapter();
+
+        photosRv.setLayoutManager(layoutManager);
+        photosRv.setAdapter(adapter);
+        photosRv.addItemDecoration(new ItemSpacingDecoration(
+                (int) getResources().getDimension(R.dimen.grid_item_padding)
+        ));
+        photosRv.addOnScrollListener(endlessScrollListener);
+
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -122,14 +132,6 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
                 photosRv.addOnScrollListener(endlessScrollListener);
             }
         });
-
-        adapter = new PhotosAdapter();
-        photosRv.setLayoutManager(layoutManager);
-        photosRv.setAdapter(adapter);
-        photosRv.addItemDecoration(new ItemSpacingDecoration(
-                (int) getResources().getDimension(R.dimen.grid_item_padding)
-        ));
-        photosRv.addOnScrollListener(endlessScrollListener);
 
         if (presenter == null) {
             new PhotoCollectionPresenter().attach(this);

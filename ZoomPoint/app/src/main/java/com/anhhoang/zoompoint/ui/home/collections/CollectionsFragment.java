@@ -43,13 +43,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
     private CollectionsContract.Presenter presenter;
     private CollectionAdapter adapter;
-    private StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-    private RecyclerView.OnScrollListener endlessScrollListener = new EndlessScrollListener(layoutManager) {
-        @Override
-        public void onLoadMore() {
-            presenter.loadMore();
-        }
-    };
+    private RecyclerView.OnScrollListener endlessScrollListener;
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
     @BindView(R.id.recycler_view_collections)
@@ -99,9 +93,17 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
         View view = inflater.inflate(R.layout.fragment_collections, container, false);
         ButterKnife.bind(this, view);
 
+        adapter = new CollectionAdapter();
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        endlessScrollListener = new EndlessScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore() {
+                presenter.loadMore();
+            }
+        };
+
         collectionsRv.setLayoutManager(layoutManager);
         collectionsRv.addOnScrollListener(endlessScrollListener);
-        adapter = new CollectionAdapter();
         collectionsRv.setAdapter(adapter);
         collectionsRv.addItemDecoration(new ItemSpacingDecoration(
                 (int) getResources().getDimension(R.dimen.grid_item_padding)

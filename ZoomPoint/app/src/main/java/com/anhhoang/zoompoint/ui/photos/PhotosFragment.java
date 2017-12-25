@@ -1,4 +1,4 @@
-package com.anhhoang.zoompoint.ui.photocollection;
+package com.anhhoang.zoompoint.ui.photos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -24,6 +24,7 @@ import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.photocollection.PhotosAdapter;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
@@ -39,8 +40,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PhotoCollectionFragment extends Fragment implements PhotoCollectionContract.View {
-    public static final String TAG = PhotoCollectionFragment.class.getCanonicalName();
+public class PhotosFragment extends Fragment implements PhotosContract.View {
+    public static final String TAG = PhotosFragment.class.getCanonicalName();
 
     private static final String PHOTOS_ITEMS = "PhotoItems";
     private static final String RECYCLER_VIEW_POSITION = "RecyclerViewPosition";
@@ -49,7 +50,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     private static final String CALL_TYPE = "CallTypeKey";
     private static final int PHOTO_LOADER = 1;
 
-    private PhotoCollectionContract.Presenter presenter;
+    private PhotosContract.Presenter presenter;
     private PhotosAdapter adapter;
 
     @BindView(R.id.recycler_view_photos)
@@ -90,7 +91,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
     private RecyclerView.OnScrollListener endlessScrollListener;
 
-    public PhotoCollectionFragment() {
+    public PhotosFragment() {
         setRetainInstance(true);
     }
 
@@ -134,7 +135,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
         });
 
         if (presenter == null) {
-            new PhotoCollectionPresenter().attach(this);
+            new PhotosPresenter().attach(this);
         } else {
             presenter.attach(this);
         }
@@ -163,7 +164,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
     }
 
     @Override
-    public void setPresenter(PhotoCollectionContract.Presenter presenter) {
+    public void setPresenter(PhotosContract.Presenter presenter) {
         this.presenter = presenter;
     }
 

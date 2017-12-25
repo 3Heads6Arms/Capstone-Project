@@ -1,4 +1,4 @@
-package com.anhhoang.zoompoint.ui.home.photos;
+package com.anhhoang.zoompoint.ui.home.homephotos;
 
 import com.anhhoang.zoompoint.BaseMvpContract;
 import com.anhhoang.zoompoint.utils.PhotosCallType;

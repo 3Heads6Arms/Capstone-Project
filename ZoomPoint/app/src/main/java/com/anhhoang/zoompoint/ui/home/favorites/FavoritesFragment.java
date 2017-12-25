@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.anhhoang.zoompoint.R;
-import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionFragment;
+import com.anhhoang.zoompoint.ui.photos.PhotosFragment;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
 /**
@@ -39,8 +39,8 @@ public class FavoritesFragment extends Fragment {
         super.onStart();
         if (!isRestoringScreen) {
             String username = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.username_preference_key), null);
-            Fragment fragment = new PhotoCollectionFragment();
-            fragment.setArguments(PhotoCollectionFragment.createBundle(PhotosCallType.LIKED_PHOTOS, username));
+            Fragment fragment = new PhotosFragment();
+            fragment.setArguments(PhotosFragment.createBundle(PhotosCallType.LIKED_PHOTOS, username));
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.fragment_favorite_photos, fragment, TAG)

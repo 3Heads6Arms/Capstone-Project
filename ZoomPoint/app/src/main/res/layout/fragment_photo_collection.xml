@@ -4,7 +4,7 @@
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionFragment">
+    tools:context="com.anhhoang.zoompoint.ui.photos.PhotosFragment">
 
     <FrameLayout
         android:layout_width="match_parent"

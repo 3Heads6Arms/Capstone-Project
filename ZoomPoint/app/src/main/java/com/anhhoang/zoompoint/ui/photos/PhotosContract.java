@@ -1,4 +1,4 @@
-package com.anhhoang.zoompoint.ui.photocollection;
+package com.anhhoang.zoompoint.ui.photos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by anh.hoang on 17.12.17.
  */
 
-public interface PhotoCollectionContract {
+public interface PhotosContract {
     interface View extends BaseMvpContract.View<Presenter> {
         String getToken();
 

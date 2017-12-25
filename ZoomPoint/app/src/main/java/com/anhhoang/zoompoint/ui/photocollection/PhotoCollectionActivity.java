@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.ui.photos.PhotosFragment;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -37,12 +38,12 @@ public class PhotoCollectionActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(collectionName);
 
         if (savedInstanceState == null) {
-            PhotoCollectionFragment fragment = new PhotoCollectionFragment();
-            fragment.setArguments(PhotoCollectionFragment.createBundle(collectionId));
+            PhotosFragment fragment = new PhotosFragment();
+            fragment.setArguments(PhotosFragment.createBundle(collectionId));
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .add(R.id.fragment_photo_collection, fragment, PhotoCollectionFragment.TAG)
+                    .add(R.id.fragment_photo_collection, fragment, PhotosFragment.TAG)
                     .commit();
         }
     }

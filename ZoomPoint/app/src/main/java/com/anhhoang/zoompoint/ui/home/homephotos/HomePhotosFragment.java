@@ -1,4 +1,4 @@
-package com.anhhoang.zoompoint.ui.home.photos;
+package com.anhhoang.zoompoint.ui.home.homephotos;
 
 
 import android.os.Bundle;
@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.anhhoang.zoompoint.R;
-import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionFragment;
+import com.anhhoang.zoompoint.ui.photos.PhotosFragment;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
 import butterknife.BindView;
@@ -117,8 +117,8 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
 
     @Override
     public void updatePhotoSource(PhotosCallType callType, String query) {
-        Fragment fragment = new PhotoCollectionFragment();
-        fragment.setArguments(PhotoCollectionFragment.createBundle(callType, query));
+        Fragment fragment = new PhotosFragment();
+        fragment.setArguments(PhotosFragment.createBundle(callType, query));
 
         getFragmentManager()
                 .beginTransaction()

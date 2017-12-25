@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:paddingEnd="@dimen/grid_horizontal_padding"
     android:paddingStart="@dimen/grid_horizontal_padding"
-    tools:context="com.anhhoang.zoompoint.ui.home.photos.HomePhotosFragment">
+    tools:context="com.anhhoang.zoompoint.ui.home.homephotos.HomePhotosFragment">
 
     <Spinner
         android:id="@+id/spinner_sort_query"

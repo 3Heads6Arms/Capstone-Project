@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.anhhoang.zoompoint.R;
-import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionFragment;
+import com.anhhoang.zoompoint.ui.photos.PhotosFragment;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
 import butterknife.BindView;
@@ -104,8 +104,8 @@ public class SearchFragment extends Fragment implements SearchContract.View {
     @Override
     public void updatePhotoSource(PhotosCallType type, String query) {
 
-        Fragment fragment = new PhotoCollectionFragment();
-        fragment.setArguments(PhotoCollectionFragment.createBundle(type, query));
+        Fragment fragment = new PhotosFragment();
+        fragment.setArguments(PhotosFragment.createBundle(type, query));
 
         getFragmentManager()
                 .beginTransaction()

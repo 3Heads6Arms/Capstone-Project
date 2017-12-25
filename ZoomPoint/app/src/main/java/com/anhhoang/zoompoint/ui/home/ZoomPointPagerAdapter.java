@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.anhhoang.zoompoint.ui.home.collections.CollectionsFragment;
 import com.anhhoang.zoompoint.ui.home.favorites.FavoritesFragment;
-import com.anhhoang.zoompoint.ui.home.photos.HomePhotosFragment;
+import com.anhhoang.zoompoint.ui.home.homephotos.HomePhotosFragment;
 import com.anhhoang.zoompoint.ui.home.search.SearchFragment;
 
 /**

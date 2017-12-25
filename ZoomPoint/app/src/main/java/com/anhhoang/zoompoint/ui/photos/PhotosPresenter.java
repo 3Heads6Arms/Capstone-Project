@@ -1,4 +1,4 @@
-package com.anhhoang.zoompoint.ui.photocollection;
+package com.anhhoang.zoompoint.ui.photos;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -28,13 +28,13 @@ import static com.bumptech.glide.util.Preconditions.checkNotNull;
  * Created by anh.hoang on 17.12.17.
  */
 
-public class PhotoCollectionPresenter implements PhotoCollectionContract.Presenter {
+public class PhotosPresenter implements PhotosContract.Presenter {
 
     private static final String COLLECTION_ID = "CollectionIdKey";
     private static final String QUERY = "QueryKey";
     private static final String CALL_TYPE = "CallTypeKey";
 
-    private PhotoCollectionContract.View view;
+    private PhotosContract.View view;
     private UnsplashApi unsplashApi;
 
     private boolean isLoading;
@@ -90,17 +90,17 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         }
     };
 
-    public PhotoCollectionPresenter() {
+    public PhotosPresenter() {
         this(1);
         pageSize = 10;
     }
 
-    public PhotoCollectionPresenter(int currentPage) {
+    public PhotosPresenter(int currentPage) {
         this.currentPage = currentPage;
     }
 
     @Override
-    public void attach(PhotoCollectionContract.View view) {
+    public void attach(PhotosContract.View view) {
         this.view = view;
 
         if (view != null) {

@@ -25,10 +25,17 @@ import butterknife.ButterKnife;
  */
 
 public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.ViewHolder> {
+    private final OnCollectionItemClickListener itemClickListener;
+
+    interface OnCollectionItemClickListener {
+        void onCollectionItemClicked(PhotoCollection collection);
+    }
+
     private List<PhotoCollection> collections;
 
-    public CollectionAdapter() {
+    public CollectionAdapter(OnCollectionItemClickListener itemClickListener) {
         collections = new ArrayList<>();
+        this.itemClickListener = itemClickListener;
     }
 
     @Override
@@ -41,6 +48,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         PhotoCollection collection = collections.get(position);
+        holder.itemView.setTag(collection);
 
         holder.titleTv.setText(collection.getTitle());
 
@@ -85,6 +93,16 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (itemClickListener != null) {
+                        PhotoCollection collection = (PhotoCollection) v.getTag();
+                        itemClickListener.onCollectionItemClicked(collection);
+                    }
+                }
+            });
         }
     }
 }

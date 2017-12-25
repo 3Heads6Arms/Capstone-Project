@@ -252,6 +252,7 @@ public class PhotoCollectionFragment extends Fragment implements PhotoCollection
 
         Bundle bundle = new Bundle();
         bundle.putLong(COLLECTION_ID, collectionId);
+        bundle.putSerializable(CALL_TYPE, PhotosCallType.COLLECTION_PHOTOS);
 
         return bundle;
     }

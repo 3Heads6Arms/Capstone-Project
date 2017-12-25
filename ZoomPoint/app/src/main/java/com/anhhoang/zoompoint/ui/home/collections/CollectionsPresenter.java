@@ -112,7 +112,6 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
             if (collections.size() <= 0) {
                 // App is loading locally only when unable to get from server (empty server is not error)
                 // Hence its always error when have to reach to local DB
-                view.removeLoadMore();
                 view.showEmpty(true, R.string.unable_to_get_photo);
             } else {
                 view.displayCollections(collections);
@@ -126,8 +125,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         if (view != null) {
             view.toggleProgress(false);
             view.displayCollections(collections);
-            if (collections.size() <= 0 && currentPage == 1) {
-                view.removeLoadMore();
+            if (collections.size() <= 0) {
                 view.showEmpty(false, 0);
             } else {
                 if (forceLoad) {
@@ -137,9 +135,17 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                 save(collections);
             }
 
+            if (collections.size() < pageSize) {
+                view.removeLoadMore();
+            }
         }
 
         isLoading = false;
+    }
+
+    @Override
+    public void collectionSelected(PhotoCollection collection) {
+        view.openCollection(collection.getId(), collection.getTitle());
     }
 
     private void save(List<PhotoCollection> collections) {

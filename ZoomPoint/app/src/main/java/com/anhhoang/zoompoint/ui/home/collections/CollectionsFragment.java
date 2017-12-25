@@ -2,10 +2,12 @@ package com.anhhoang.zoompoint.ui.home.collections;
 
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -23,6 +25,7 @@ import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionActivity;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 
 import java.util.ArrayList;
@@ -93,8 +96,13 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
         View view = inflater.inflate(R.layout.fragment_collections, container, false);
         ButterKnife.bind(this, view);
 
-        adapter = new CollectionAdapter();
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        adapter = new CollectionAdapter(new CollectionAdapter.OnCollectionItemClickListener() {
+            @Override
+            public void onCollectionItemClicked(PhotoCollection collection) {
+                presenter.collectionSelected(collection);
+            }
+        });
         endlessScrollListener = new EndlessScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
@@ -116,26 +124,36 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             }
         });
 
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         if (presenter != null) {
             presenter.attach(this);
         } else {
             new CollectionsPresenter().attach(this);
             presenter.load();
         }
-
-        if (savedInstanceState != null) {
-            List<PhotoCollection> collections = savedInstanceState.getParcelableArrayList(COLLECTION_ITEMS);
-            adapter.addCollections(collections);
-            collectionsRv.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_VIEW_POSITION));
-        }
-
-        return view;
     }
 
     @Override
     public void onStop() {
         super.onStop();
         presenter.detach();
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            List<PhotoCollection> collections = savedInstanceState.getParcelableArrayList(COLLECTION_ITEMS);
+            adapter.addCollections(collections);
+            collectionsRv.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_VIEW_POSITION));
+        }
     }
 
     @Override
@@ -188,6 +206,12 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     @Override
     public void removeLoadMore() {
         collectionsRv.removeOnScrollListener(endlessScrollListener);
+    }
+
+    @Override
+    public void openCollection(long id, String collectionName) {
+        Intent intent = PhotoCollectionActivity.getStartingIntent(getContext(), id, collectionName);
+        startActivity(intent);
     }
 
     @Override

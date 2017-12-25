@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import static com.google.common.base.Preconditions.checkArgument;
+import android.view.MenuItem;
 
 import com.anhhoang.zoompoint.R;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class PhotoCollectionActivity extends AppCompatActivity {
     private static final String COLLECTION_ID = "CollectionIdKey";
@@ -35,13 +36,25 @@ public class PhotoCollectionActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(collectionName);
 
-        PhotoCollectionFragment fragment = new PhotoCollectionFragment();
-        fragment.setArguments(PhotoCollectionFragment.createBundle(collectionId));
+        if (savedInstanceState == null) {
+            PhotoCollectionFragment fragment = new PhotoCollectionFragment();
+            fragment.setArguments(PhotoCollectionFragment.createBundle(collectionId));
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.fragment_photo_collection, fragment, PhotoCollectionFragment.TAG)
-                .commit();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.fragment_photo_collection, fragment, PhotoCollectionFragment.TAG)
+                    .commit();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public static Intent getStartingIntent(Context context, long collectionId, String collectionName) {

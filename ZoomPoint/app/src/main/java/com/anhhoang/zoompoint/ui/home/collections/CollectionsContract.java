@@ -24,6 +24,8 @@ public interface CollectionsContract {
 
         void removeLoadMore();
 
+        void openCollection(long id, String collectionName);
+
 
         void loadLocalCollections(String query);
 
@@ -46,5 +48,7 @@ public interface CollectionsContract {
         void loadFinished(Cursor cursor);
 
         void loadFinished(List<PhotoCollection> collections);
+
+        void collectionSelected(PhotoCollection collection);
     }
 }

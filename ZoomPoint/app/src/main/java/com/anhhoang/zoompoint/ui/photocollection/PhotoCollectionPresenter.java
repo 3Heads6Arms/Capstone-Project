@@ -22,6 +22,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.bumptech.glide.util.Preconditions.checkNotNull;
+
 /**
  * Created by anh.hoang on 17.12.17.
  */
@@ -52,7 +54,6 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                 } else {
                     // Loadmore is not required when load from local db
                     view.removeLoadMore();
-                    view.showError(R.string.unable_to_get_photo);
                     view.loadLocalPhotos(getSqlSelection());
                 }
             }
@@ -61,7 +62,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         @Override
         public void onFailure(Call<List<Photo>> call, Throwable t) {
             if (view != null) {
-                view.showError(R.string.unable_to_get_photo);
+                view.removeLoadMore();
                 view.loadLocalPhotos(getSqlSelection());
             }
         }
@@ -74,10 +75,8 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
                     List<Photo> photos = response.body().getResults();
                     loadFinished(photos);
                 } else {
-                    // Loadmore is not required when load from local db
                     view.removeLoadMore();
-                    view.showError(R.string.unable_to_get_photo);
-                    view.loadLocalPhotos(getSqlSelection());
+                    view.showEmpty(true, R.string.unable_to_get_photo);
                 }
             }
         }
@@ -85,8 +84,8 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         @Override
         public void onFailure(Call<RequestSearchPhoto> call, Throwable t) {
             if (view != null) {
-                view.showError(R.string.unable_to_get_photo);
-                view.loadLocalPhotos(getSqlSelection());
+                view.removeLoadMore();
+                view.showEmpty(true, R.string.unable_to_get_photo);
             }
         }
     };
@@ -119,9 +118,9 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
     @Override
     public void load(Bundle bundle) {
         this.collectionId = bundle.getLong(COLLECTION_ID, -1);
+        this.photosCallType = (PhotosCallType) bundle.getSerializable(CALL_TYPE);
 
         if (collectionId < 0) {
-            this.photosCallType = (PhotosCallType) bundle.getSerializable(CALL_TYPE);
             this.query = bundle.getString(QUERY);
         }
 
@@ -160,9 +159,9 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             if (photos.size() <= 0) {
                 // App is loading locally only when unable to get from server (empty server is not error)
                 // Hence its always error when have to reach to local DB
-                view.removeLoadMore();
                 view.showEmpty(true, R.string.unable_to_get_photo);
             } else {
+                view.showError(R.string.unable_to_get_photo);
                 view.displayPhotos(photos);
             }
 
@@ -174,18 +173,24 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         if (view != null) {
             view.toggleProgress(false);
             view.displayPhotos(photos);
-            if (photos.size() <= 0 && currentPage == 1) {
+            if (photos.size() <= 0) {
                 // Concrete call from server and is empty is also considered error
                 // to preven loadMore from firing
-                view.removeLoadMore();
                 view.showEmpty(false, 0);
             } else {
                 // Remove & save only if there is success load from server
-                if (forceLoad) {
-                    view.removePhotos(getSqlSelection());
-                    forceLoad = false;
+                if (photosCallType != PhotosCallType.SEARCH_PHOTOS) {
+                    if (forceLoad) {
+                        view.removePhotos(getSqlSelection());
+                    }
+                    save(photos);
                 }
-                save(photos);
+
+                forceLoad = false;
+            }
+
+            if (photos.size() < pageSize) {
+                view.removeLoadMore();
             }
         }
 
@@ -232,16 +237,7 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
             users.add(photo.getUser());
         }
 
-        String type = null;
-
-        switch (photosCallType) {
-            case PHOTOS:
-                type = query;
-                break;
-            case CURATED_PHOTOS:
-                type = "curated";
-                break;
-        }
+        String type = getPhotoType();
 
         ContentValues[] userContentValues = UserUtils.parseUsers(users);
         ContentValues[] photoContentValues = PhotoUtils.parsePhotos(photos, type);
@@ -250,7 +246,31 @@ public class PhotoCollectionPresenter implements PhotoCollectionContract.Present
         view.saveUsers(userContentValues);
     }
 
+    private String getPhotoType() {
+        String type = null;
+        switch (photosCallType) {
+            case PHOTOS:
+            case USER_PHOTOS:
+                type = query;
+                break;
+            case LIKED_PHOTOS:
+                type = query + "liked";
+                break;
+            case COLLECTION_PHOTOS:
+                type = String.valueOf(collectionId);
+                break;
+            case CURATED_PHOTOS:
+                type = "curated";
+                break;
+        }
+        return type;
+    }
+
     private String getSqlSelection() {
-        return Photo.COL_TYPE + "='" + query + "'";
+        String type = getPhotoType();
+
+        checkNotNull(type);
+
+        return Photo.COL_TYPE + "='" + type + "'";
     }
 }

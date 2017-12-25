@@ -1,5 +1,6 @@
 package com.anhhoang.zoompoint.ui.login;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 
@@ -14,6 +15,8 @@ public interface LoginContract {
         void saveToken(String token);
 
         void saveUsername(String username);
+
+        void saveMyProfile(ContentValues userProfile);
 
         boolean isLoggedIn();
 

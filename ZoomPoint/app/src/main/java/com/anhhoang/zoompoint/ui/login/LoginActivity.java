@@ -1,5 +1,6 @@
 package com.anhhoang.zoompoint.ui.login;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.home.HomeActivity;
 
@@ -77,6 +79,11 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
                 .edit()
                 .putString(getString(R.string.username_preference_key), username)
                 .apply();
+    }
+
+    @Override
+    public void saveMyProfile(ContentValues userProfile) {
+        getContentResolver().insert(ZoomPointContract.UserProfileEntry.CONTENT_URI, userProfile);
     }
 
     @Override

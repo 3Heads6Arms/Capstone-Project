@@ -44,7 +44,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
                 } else {
                     // LoadMore is not required when load from local.
                     view.removeLoadMore();
-                    view.showError(R.string.unable_to_get_photo);
+                    view.showError(R.string.unable_to_get_collections);
                     view.loadLocalCollections(COLLECTION_QUERY);
                 }
             }
@@ -53,7 +53,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
         @Override
         public void onFailure(Call<List<PhotoCollection>> call, Throwable t) {
             if (view != null) {
-                view.showError(R.string.unable_to_get_photo);
+                view.showError(R.string.unable_to_get_collections);
                 view.loadLocalCollections(COLLECTION_QUERY);
             }
         }

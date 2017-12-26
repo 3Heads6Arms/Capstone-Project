@@ -82,7 +82,7 @@ public class ZoomPointDbHelper extends SQLiteOpenHelper {
                 ZoomPointContract.UserProfileEntry._ID + " INTEGER PRIMARY KEY, " +
                 UserProfile.COL_ID + " TEXT UNIQUE, " +
                 UserProfile.COL_UPDATED + " NUMERIC, " +
-                UserProfile.COL_USERNAME + " TEXT, " +
+                UserProfile.COL_USERNAME + " TEXT UNIQUE, " +
                 UserProfile.COL_NAME + " TEXT, " +
                 UserProfile.COL_FIRST_NAME + " TEXT, " +
                 UserProfile.COL_LAST_NAME + " TEXT, " +

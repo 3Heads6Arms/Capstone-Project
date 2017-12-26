@@ -10,10 +10,10 @@ import android.view.View;
  * Created by anh.hoang on 23.12.17.
  */
 
-public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
+public class VeriticalItemSpacingDecoration extends RecyclerView.ItemDecoration {
     private int spacing;
 
-    public ItemSpacingDecoration(int spacing) {
+    public VeriticalItemSpacingDecoration(int spacing) {
         this.spacing = spacing;
     }
 

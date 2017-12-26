@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.zoompoint.R;
-import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.VeriticalItemSpacingDecoration;
 import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionActivity;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 
@@ -113,7 +113,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
         collectionsRv.setLayoutManager(layoutManager);
         collectionsRv.addOnScrollListener(endlessScrollListener);
         collectionsRv.setAdapter(adapter);
-        collectionsRv.addItemDecoration(new ItemSpacingDecoration(
+        collectionsRv.addItemDecoration(new VeriticalItemSpacingDecoration(
                 (int) getResources().getDimension(R.dimen.grid_item_padding)
         ));
 

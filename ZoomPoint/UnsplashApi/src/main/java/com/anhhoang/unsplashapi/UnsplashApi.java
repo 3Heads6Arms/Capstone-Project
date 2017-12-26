@@ -104,8 +104,8 @@ public class UnsplashApi {
         return unsplashApiService.getUserProfile(username);
     }
 
-    public Call<List<PhotoCollection>> getUserCollections(String username) {
-        return unsplashApiService.getUserCollections(username);
+    public Call<List<PhotoCollection>> getUserCollections(String username, int page, int perPage) {
+        return unsplashApiService.getUserCollections(username, page, perPage);
     }
 
     public Call<List<Photo>> getUserLikedPhotos(String username, int page, int perPage) {

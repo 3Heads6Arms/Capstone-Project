@@ -41,6 +41,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.anhhoang.zoompoint.ui.home.HomeActivity" />
         </activity>
+        <activity
+            android:name=".ui.userprofile.UserProfileActivity"
+            android:label="@string/title_activity_user_profile"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

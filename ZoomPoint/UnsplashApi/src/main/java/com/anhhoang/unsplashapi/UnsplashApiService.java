@@ -79,7 +79,10 @@ public interface UnsplashApiService {
     Call<UserProfile> getUserProfile(@Path("username") String username);
 
     @GET("users/{username}/collections")
-    Call<List<PhotoCollection>> getUserCollections(@Path("username") String username);
+    Call<List<PhotoCollection>> getUserCollections(
+            @Path("username") String username,
+            @Query("page") int page,
+            @Query("per_page") int perPage);
 
     @GET("users/{username}/likes")
     Call<List<Photo>> getUserLikedPhotos(

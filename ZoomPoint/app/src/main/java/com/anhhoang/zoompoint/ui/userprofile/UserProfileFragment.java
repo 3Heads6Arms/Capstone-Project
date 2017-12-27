@@ -31,6 +31,7 @@ import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
 import com.anhhoang.zoompoint.ui.login.LoginActivity;
 import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionActivity;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
@@ -174,6 +175,7 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
 
         collectionsRv.setLayoutManager(layoutManager);
         collectionsRv.addOnScrollListener(scrollListener);
+        collectionsRv.addItemDecoration(new ItemSpacingDecoration((int) getResources().getDimension(R.dimen.grid_item_padding), true));
         collectionsRv.setAdapter(adapter);
 
 
@@ -187,7 +189,7 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
         if (savedInstanceState != null) {
             List<PhotoCollection> collections = savedInstanceState.getParcelableArrayList(COLLECTIONS_KEY);
 
-            if(collections.size() < UserProfilePresenter.PAGE_SIZE){
+            if (collections.size() < UserProfilePresenter.PAGE_SIZE) {
                 collectionsRv.removeOnScrollListener(scrollListener);
             }
             adapter.updateCollections(collections);

@@ -10,11 +10,13 @@ import android.view.View;
  * Created by anh.hoang on 23.12.17.
  */
 
-public class VeriticalItemSpacingDecoration extends RecyclerView.ItemDecoration {
+public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
+    private final boolean isHorizontal;
     private int spacing;
 
-    public VeriticalItemSpacingDecoration(int spacing) {
+    public ItemSpacingDecoration(int spacing, boolean isHorizontal) {
         this.spacing = spacing;
+        this.isHorizontal = isHorizontal;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class VeriticalItemSpacingDecoration extends RecyclerView.ItemDecoration 
             outRect.left = spacing;
         }
 
-        outRect.bottom = spacing;
+        outRect.bottom = isHorizontal ? 0 : spacing;
         outRect.right = 0;
         outRect.top = 0;
     }

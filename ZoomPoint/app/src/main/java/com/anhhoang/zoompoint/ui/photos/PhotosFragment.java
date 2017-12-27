@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.zoompoint.R;
-import com.anhhoang.zoompoint.ui.VeriticalItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
@@ -118,9 +118,7 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
 
         photosRv.setLayoutManager(layoutManager);
         photosRv.setAdapter(adapter);
-        photosRv.addItemDecoration(new VeriticalItemSpacingDecoration(
-                (int) getResources().getDimension(R.dimen.grid_item_padding)
-        ));
+        photosRv.addItemDecoration(new ItemSpacingDecoration((int) getResources().getDimension(R.dimen.grid_item_padding), false));
         photosRv.addOnScrollListener(endlessScrollListener);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

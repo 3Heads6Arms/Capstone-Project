@@ -38,7 +38,7 @@ public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
 
         // If is not Grid or first column of the grid then shouldn't add padding to start/left,
         // might break symmetry that is set from parent if do
-        if (!isGridLike || isStart) {
+        if ((!isGridLike && !isHorizontal) || isStart) {
             outRect.left = 0;
         } else {
             outRect.left = spacing;

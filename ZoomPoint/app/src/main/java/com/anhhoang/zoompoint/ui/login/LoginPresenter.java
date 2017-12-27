@@ -33,6 +33,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     ContentValues userProfile = UserUtils.parseUser(response.body());
                     view.saveMyProfile(userProfile);
+                    view.saveFullName(response.body().getName());
                     view.navigateToHome();
                 } else {
                     view.showError(R.string.login_error);

@@ -44,6 +44,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
         Photo photo = photos.get(position);
 
         holder.userNameTv.setText(photo.getUser().getName());
+        holder.photoIv.setContentDescription(photo.getDescription());
         holder.photoIv.setAspectRatio((float) photo.getWidth() / photo.getHeight());
         Glide.with(holder.photoIv)
                 .asDrawable()

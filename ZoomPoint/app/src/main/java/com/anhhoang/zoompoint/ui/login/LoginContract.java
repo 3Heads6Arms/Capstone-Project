@@ -16,6 +16,8 @@ public interface LoginContract {
 
         void saveUsername(String username);
 
+        void saveFullName(String fullName);
+
         void saveMyProfile(ContentValues userProfile);
 
         boolean isLoggedIn();

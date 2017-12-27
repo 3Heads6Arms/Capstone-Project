@@ -49,25 +49,29 @@ public class UserUtils {
     }
 
     public static UserProfile parse(Cursor cursor) {
-        UserProfile userProfile = new UserProfile();
-        PhotoUrls urls = new PhotoUrls();
+        if (cursor.moveToFirst()) {
+            UserProfile userProfile = new UserProfile();
+            PhotoUrls urls = new PhotoUrls();
 
-        userProfile.setId(cursor.getString(cursor.getColumnIndex(UserProfile.COL_ID)));
-        userProfile.setUpdatedAt(new Date(cursor.getLong(cursor.getColumnIndex(UserProfile.COL_UPDATED))));
-        userProfile.setUsername(cursor.getString(cursor.getColumnIndex(UserProfile.COL_USERNAME)));
-        userProfile.setName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_NAME)));
-        userProfile.setFirstName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_FIRST_NAME)));
-        userProfile.setLastName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_LAST_NAME)));
-        userProfile.setPortfolioUrl(cursor.getString(cursor.getColumnIndex(UserProfile.COL_PORTFOLIO_URL)));
-        userProfile.setBio(cursor.getString(cursor.getColumnIndex(UserProfile.COL_BIO)));
-        userProfile.setLocation(cursor.getString(cursor.getColumnIndex(UserProfile.COL_LOCATION)));
+            userProfile.setId(cursor.getString(cursor.getColumnIndex(UserProfile.COL_ID)));
+            userProfile.setUpdatedAt(new Date(cursor.getLong(cursor.getColumnIndex(UserProfile.COL_UPDATED))));
+            userProfile.setUsername(cursor.getString(cursor.getColumnIndex(UserProfile.COL_USERNAME)));
+            userProfile.setName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_NAME)));
+            userProfile.setFirstName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_FIRST_NAME)));
+            userProfile.setLastName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_LAST_NAME)));
+            userProfile.setPortfolioUrl(cursor.getString(cursor.getColumnIndex(UserProfile.COL_PORTFOLIO_URL)));
+            userProfile.setBio(cursor.getString(cursor.getColumnIndex(UserProfile.COL_BIO)));
+            userProfile.setLocation(cursor.getString(cursor.getColumnIndex(UserProfile.COL_LOCATION)));
 
-        urls.setMedium(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_MEDIUM)));
-        urls.setLarge(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_LARGE)));
-        urls.setSmall(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_SMALL)));
+            urls.setMedium(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_MEDIUM)));
+            urls.setLarge(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_LARGE)));
+            urls.setSmall(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_SMALL)));
 
-        userProfile.setProfileImage(urls);
+            userProfile.setProfileImage(urls);
 
-        return userProfile;
+            return userProfile;
+        }
+
+        return null;
     }
 }

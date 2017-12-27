@@ -106,6 +106,8 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
         endlessScrollListener = new EndlessScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
+                collectionsRv.removeOnScrollListener(endlessScrollListener);
+                collectionsRv.addOnScrollListener(endlessScrollListener);
                 presenter.loadMore();
             }
         };

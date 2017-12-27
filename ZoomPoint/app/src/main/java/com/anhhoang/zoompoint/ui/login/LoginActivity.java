@@ -82,6 +82,14 @@ public class LoginActivity extends AppCompatActivity implements LoginContract.Vi
     }
 
     @Override
+    public void saveFullName(String fullName) {
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(getString(R.string.fullname_preference_key), fullName)
+                .apply();
+    }
+
+    @Override
     public void saveMyProfile(ContentValues userProfile) {
         getContentResolver().insert(ZoomPointContract.UserProfileEntry.CONTENT_URI, userProfile);
     }

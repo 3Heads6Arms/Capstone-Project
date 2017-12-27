@@ -24,8 +24,9 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
     private UnsplashApi unsplashApi;
     private String username;
     private boolean isLoading;
+    private boolean forceLoad;
     private int currentPage;
-    private int pageSize;
+    public static final int PAGE_SIZE = 20;
 
     private Callback<UserProfile> userCallback = new Callback<UserProfile>() {
         @Override
@@ -34,7 +35,7 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     loadFinished(response.body(), false);
                 } else {
-                    view.showEmptyCollection(true, R.string.no_collection_found);
+                    view.showEmptyCollection();
                     view.showError(R.string.unable_to_connect);
                     view.loadUserFromLocal(getSqlSelectionQuery());
                 }
@@ -44,7 +45,7 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
         @Override
         public void onFailure(Call<UserProfile> call, Throwable t) {
             if (view != null) {
-                view.showEmptyCollection(true, R.string.no_collection_found);
+                view.showEmptyCollection();
                 view.showError(R.string.unable_to_connect);
                 view.loadUserFromLocal(getSqlSelectionQuery());
             }
@@ -57,9 +58,8 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     loadFinished(response.body());
                 } else {
-                    view.showEmptyCollection(true, R.string.no_collection_found);
+                    view.showEmptyCollection();
                     view.showError(R.string.unable_to_connect);
-                    view.loadUserFromLocal(getSqlSelectionQuery());
                 }
             }
         }
@@ -67,14 +67,14 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
         @Override
         public void onFailure(Call<List<PhotoCollection>> call, Throwable t) {
             if (view != null) {
-                view.showEmptyCollection(true, R.string.no_collection_found);
+                view.showEmptyCollection();
                 view.showError(R.string.unable_to_connect);
             }
         }
     };
 
-    public UserProfilePresenter() {
-        pageSize = 20;
+    public UserProfilePresenter(String username) {
+        this.username = username;
         currentPage = 1;
     }
 
@@ -93,8 +93,8 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
     }
 
     @Override
-    public void loadProfile(String username) {
-        this.username = username;
+    public void loadProfile() {
+        forceLoad = true;
 
         if (view != null) {
             view.toggleProgress(true);
@@ -119,44 +119,54 @@ public class UserProfilePresenter implements UserProfileContract.Presenter {
         }
     }
 
+    @Override
+    public void collectionSelected(PhotoCollection collection) {
+        if (view != null) {
+            view.openCollection(collection.getId(), collection.getTitle());
+        }
+    }
+
     private void loadCollections() {
         if (view != null) {
             isLoading = true;
-            view.toggleProgress(true);
-            unsplashApi.getUserCollections(username, currentPage, pageSize)
+            unsplashApi.getUserCollections(username, currentPage, PAGE_SIZE)
                     .enqueue(collectionsCallback);
         }
     }
 
-    private void loadFinished(UserProfile userProfile, boolean hasError) {
+    private void loadFinished(UserProfile userProfile, boolean isLoadingFromDb) {
+        view.toggleProgress(false);
+
         if (userProfile.getProfileImage() != null) {
             view.displayProfilePicture(userProfile.getProfileImage().getLarge());
         }
         view.displayProfile(userProfile);
 
-        if (hasError) {
-            view.removeLoadMore();
-            view.toggleProgress(false);
-        } else {
+        if (!isLoadingFromDb) {
             view.saveUserProfile(UserUtils.parseUser(userProfile));
-            loadCollections();
         }
+
+        loadCollections();
     }
 
     private void loadFinished(List<PhotoCollection> collections) {
         if (view != null) {
-            view.toggleProgress(false);
+            if (forceLoad) {
+                view.clearCollections();
+            }
+
             if (collections.size() <= 0) {
-                view.showEmptyCollection(false, 0);
+                view.showEmptyCollection();
             } else {
                 view.displayCollections(collections);
             }
 
-            if (collections.size() < pageSize) {
+            if (collections.size() < PAGE_SIZE) {
                 view.removeLoadMore();
             }
         }
 
+        forceLoad = false;
         isLoading = false;
     }
 

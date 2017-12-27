@@ -21,6 +21,7 @@ public class UserProfile implements Parcelable {
     public static final String COL_PORTFOLIO_URL = "portfolio_url";
     public static final String COL_BIO = "bio";
     public static final String COL_LOCATION = "location";
+    public static final String COL_TWITTER ="twitter_username";
 
     @SerializedName(COL_ID)
     private String id;
@@ -42,6 +43,16 @@ public class UserProfile implements Parcelable {
     private String location;
     @SerializedName("profile_image")
     private PhotoUrls profileImage;
+    @SerializedName(COL_TWITTER)
+    private String twitter;
+
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
 
     public String getId() {
         return id;
@@ -140,6 +151,7 @@ public class UserProfile implements Parcelable {
         dest.writeString(this.bio);
         dest.writeString(this.location);
         dest.writeParcelable(this.profileImage, flags);
+        dest.writeString(this.twitter);
     }
 
     public UserProfile() {
@@ -157,6 +169,7 @@ public class UserProfile implements Parcelable {
         this.bio = in.readString();
         this.location = in.readString();
         this.profileImage = in.readParcelable(PhotoUrls.class.getClassLoader());
+        this.twitter = in.readString();
     }
 
     public static final Parcelable.Creator<UserProfile> CREATOR = new Parcelable.Creator<UserProfile>() {

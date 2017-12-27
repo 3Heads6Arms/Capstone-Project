@@ -17,7 +17,7 @@ import com.anhhoang.unsplashmodel.UserProfile;
 
 public class ZoomPointDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "zoompoint.db";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 1;
 
 
     public ZoomPointDbHelper(Context context) {
@@ -89,6 +89,7 @@ public class ZoomPointDbHelper extends SQLiteOpenHelper {
                 UserProfile.COL_PORTFOLIO_URL + " TEXT, " +
                 UserProfile.COL_BIO + " TEXT, " +
                 UserProfile.COL_LOCATION + " TEXT, " +
+                UserProfile.COL_TWITTER + " TEXT, " +
                 PhotoUrls.COL_MEDIUM + " TEXT, " +
                 PhotoUrls.COL_LARGE + " TEXT, " +
                 PhotoUrls.COL_SMALL + " TEXT);";

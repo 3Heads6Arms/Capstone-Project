@@ -116,7 +116,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
         collectionsRv.addOnScrollListener(endlessScrollListener);
         collectionsRv.setAdapter(adapter);
         collectionsRv.addItemDecoration(new ItemSpacingDecoration(
-                (int) getResources().getDimension(R.dimen.grid_item_padding)
+                (int) getResources().getDimension(R.dimen.grid_item_padding), false
         ));
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

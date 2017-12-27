@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.DynamicSizeImageView;
 import com.bumptech.glide.Glide;
@@ -25,10 +26,16 @@ import butterknife.ButterKnife;
  */
 
 public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder> {
-    private List<Photo> photos;
+    interface OnUserClickListener {
+        void onUserClicked(UserProfile userProfile);
+    }
 
-    public PhotosAdapter() {
+    private List<Photo> photos;
+    private final OnUserClickListener userClickListener;
+
+    public PhotosAdapter(OnUserClickListener userClickListener) {
         photos = new ArrayList<>();
+        this.userClickListener = userClickListener;
     }
 
     @Override
@@ -42,6 +49,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Photo photo = photos.get(position);
+        holder.userNameTv.setTag(photo.getUser());
 
         holder.userNameTv.setText(photo.getUser().getName());
         holder.photoIv.setContentDescription(photo.getDescription());
@@ -85,6 +93,14 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            userNameTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UserProfile userProfile = (UserProfile) v.getTag();
+                    userClickListener.onUserClicked(userProfile);
+                }
+            });
         }
     }
 }

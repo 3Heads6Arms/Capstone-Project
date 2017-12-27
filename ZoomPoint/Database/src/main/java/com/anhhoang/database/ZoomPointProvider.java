@@ -64,7 +64,7 @@ public class ZoomPointProvider extends ContentProvider {
         switch (match) {
             case PHOTOS:
                 cursor = database.rawQuery(
-                        "SELECT p.*, u.name FROM " + ZoomPointContract.PhotoEntry.TABLE_NAME + " p " +
+                        "SELECT p.*, u." + UserProfile.COL_NAME + ", u." + UserProfile.COL_USERNAME + " FROM " + ZoomPointContract.PhotoEntry.TABLE_NAME + " p " +
                                 "INNER JOIN " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " u " +
                                 "ON p." + Photo.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
                                 "WHERE p." + selection,
@@ -83,7 +83,7 @@ public class ZoomPointProvider extends ContentProvider {
                 break;
             case COLLECTIONS:
                 cursor = database.rawQuery(
-                        "SELECT p.*, u.name FROM " + ZoomPointContract.CollectionEntry.TABLE_NAME + " p " +
+                        "SELECT p.*, u." + UserProfile.COL_NAME + ", u." + UserProfile.COL_USERNAME + " FROM " + ZoomPointContract.CollectionEntry.TABLE_NAME + " p " +
                                 "INNER JOIN " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " u " +
                                 "ON p." + PhotoCollection.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
                                 "WHERE p." + selection,

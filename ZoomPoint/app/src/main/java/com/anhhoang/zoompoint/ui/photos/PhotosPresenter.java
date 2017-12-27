@@ -197,6 +197,13 @@ public class PhotosPresenter implements PhotosContract.Presenter {
         isLoading = false;
     }
 
+    @Override
+    public void onUserSelected(UserProfile userProfile) {
+        if (view != null) {
+            view.openUser(userProfile.getUsername(), userProfile.getName());
+        }
+    }
+
     private void loadPhotos() {
         isLoading = true;
         if (view != null) {

@@ -25,23 +25,30 @@ public class ItemSpacingDecoration extends RecyclerView.ItemDecoration {
 
         boolean isGridLike = false;
         boolean isStart = false;
+        boolean isFirstItem = false;
 
         if (layoutManager instanceof StaggeredGridLayoutManager) {
             isGridLike = ((StaggeredGridLayoutManager) layoutManager).getSpanCount() > 1;
             StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) view.getLayoutParams();
             isStart = layoutParams.getSpanIndex() == 0;
+            isFirstItem = layoutParams.getViewAdapterPosition() == 0;
         } else if (layoutManager instanceof GridLayoutManager) {
             isGridLike = ((GridLayoutManager) layoutManager).getSpanCount() > 1;
             GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) view.getLayoutParams();
             isStart = layoutParams.getSpanIndex() == 0;
+            isFirstItem = layoutParams.getViewAdapterPosition() == 0;
         }
 
         // If is not Grid or first column of the grid then shouldn't add padding to start/left,
         // might break symmetry that is set from parent if do
-        if ((!isGridLike && !isHorizontal) || isStart) {
-            outRect.left = 0;
+        if (isHorizontal) {
+            outRect.left = isFirstItem ? 0 : spacing;
         } else {
-            outRect.left = spacing;
+            if ((!isGridLike) || isStart) {
+                outRect.left = 0;
+            } else {
+                outRect.left = spacing;
+            }
         }
 
         outRect.bottom = isHorizontal ? 0 : spacing;

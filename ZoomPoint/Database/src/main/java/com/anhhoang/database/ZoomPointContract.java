@@ -25,6 +25,10 @@ public class ZoomPointContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PHOTO;
 
         public static final String TABLE_NAME = "photos";
+
+        public static Uri buildItemUri(String identifier) {
+            return CONTENT_URI.buildUpon().appendPath(identifier).build();
+        }
     }
 
     public static final class CollectionEntry implements BaseColumns {
@@ -34,6 +38,10 @@ public class ZoomPointContract {
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_COLLECTION;
 
         public static final String TABLE_NAME = "collections";
+
+        public static Uri buildItemUri(int identifier) {
+            return CONTENT_URI.buildUpon().appendPath(String.valueOf(identifier)).build();
+        }
     }
 
     public static final class UserProfileEntry implements BaseColumns {
@@ -43,5 +51,9 @@ public class ZoomPointContract {
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_USER_PROFILE;
 
         public static final String TABLE_NAME = "userprofiles";
+
+        public static Uri buildItemUri(String identifier) {
+            return CONTENT_URI.buildUpon().appendPath(identifier).build();
+        }
     }
 }

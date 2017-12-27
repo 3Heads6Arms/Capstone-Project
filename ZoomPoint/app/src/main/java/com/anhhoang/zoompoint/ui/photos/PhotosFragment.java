@@ -1,6 +1,7 @@
 package com.anhhoang.zoompoint.ui.photos;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,8 +23,10 @@ import android.widget.TextView;
 
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.userprofile.UserProfileActivity;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
 
@@ -87,7 +90,12 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         public void onLoaderReset(Loader<Cursor> loader) {
         }
     };
-
+    private PhotosAdapter.OnUserClickListener userClickListener = new PhotosAdapter.OnUserClickListener() {
+        @Override
+        public void onUserClicked(UserProfile userProfile) {
+            presenter.onUserSelected(userProfile);
+        }
+    };
     private RecyclerView.OnScrollListener endlessScrollListener;
 
     public PhotosFragment() {
@@ -114,7 +122,7 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
                 presenter.loadMore();
             }
         };
-        adapter = new PhotosAdapter();
+        adapter = new PhotosAdapter(userClickListener);
 
         photosRv.setLayoutManager(layoutManager);
         photosRv.setAdapter(adapter);
@@ -131,21 +139,25 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
             }
         });
 
-        if (presenter == null) {
-            new PhotosPresenter().attach(this);
-        } else {
-            presenter.attach(this);
-        }
-
         if (savedInstanceState != null) {
             List<Photo> photos = savedInstanceState.getParcelableArrayList(PHOTOS_ITEMS);
             adapter.addPhotos(photos);
             photosRv.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(RECYCLER_VIEW_POSITION));
-        } else {
-            presenter.load(getArguments());
         }
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (presenter == null) {
+            new PhotosPresenter().attach(this);
+            presenter.load(getArguments());
+        } else {
+            presenter.attach(this);
+        }
     }
 
     @Override
@@ -243,6 +255,12 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     @Override
     public void removeLoadMore() {
         photosRv.removeOnScrollListener(endlessScrollListener);
+    }
+
+    @Override
+    public void openUser(String username, String fullname) {
+        Intent intent = UserProfileActivity.getStartingIntent(getContext(), username, fullname);
+        startActivity(intent);
     }
 
     public static Bundle createBundle(long collectionId) {

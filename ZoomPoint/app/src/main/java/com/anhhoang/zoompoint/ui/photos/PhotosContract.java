@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 
 import com.anhhoang.unsplashmodel.Photo;
+import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.BaseMvpContract;
 
 import java.util.List;
@@ -36,6 +37,8 @@ public interface PhotosContract {
         void showEmpty(boolean isError, int errorId);
 
         void removeLoadMore();
+
+        void openUser(String username, String fullname);
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
@@ -46,5 +49,7 @@ public interface PhotosContract {
         void loadFinished(Cursor cursor);
 
         void loadFinished(List<Photo> photos);
+
+        void onUserSelected(UserProfile userProfile);
     }
 }

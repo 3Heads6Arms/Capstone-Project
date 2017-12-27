@@ -30,12 +30,18 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
         void onUserClicked(UserProfile userProfile);
     }
 
+    interface OnPhotoClickListener {
+        void onPhotoClicked(String photoId);
+    }
+
     private List<Photo> photos;
     private final OnUserClickListener userClickListener;
+    private final OnPhotoClickListener photoClickListener;
 
-    public PhotosAdapter(OnUserClickListener userClickListener) {
+    public PhotosAdapter(OnUserClickListener userClickListener, OnPhotoClickListener photoClickListener) {
         photos = new ArrayList<>();
         this.userClickListener = userClickListener;
+        this.photoClickListener = photoClickListener;
     }
 
     @Override
@@ -49,6 +55,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Photo photo = photos.get(position);
+        holder.itemView.setTag(photo.getId());
         holder.userNameTv.setTag(photo.getUser());
 
         holder.userNameTv.setText(photo.getUser().getName());
@@ -94,6 +101,13 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
             super(itemView);
             ButterKnife.bind(this, itemView);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String photoId = (String) v.getTag();
+                    photoClickListener.onPhotoClicked(photoId);
+                }
+            });
             userNameTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

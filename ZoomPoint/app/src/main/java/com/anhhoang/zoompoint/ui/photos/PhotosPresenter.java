@@ -204,6 +204,13 @@ public class PhotosPresenter implements PhotosContract.Presenter {
         }
     }
 
+    @Override
+    public void onPhotoSelected(String photoId) {
+        if (view != null) {
+            view.openPhoto(photoId);
+        }
+    }
+
     private void loadPhotos() {
         isLoading = true;
         if (view != null) {

@@ -26,6 +26,7 @@ import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.photo.PhotoActivity;
 import com.anhhoang.zoompoint.ui.userprofile.UserProfileActivity;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
 import com.anhhoang.zoompoint.utils.PhotosCallType;
@@ -97,6 +98,12 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         }
     };
     private RecyclerView.OnScrollListener endlessScrollListener;
+    private PhotosAdapter.OnPhotoClickListener photoClickListener = new PhotosAdapter.OnPhotoClickListener() {
+        @Override
+        public void onPhotoClicked(String photoId) {
+            presenter.onPhotoSelected(photoId);
+        }
+    };
 
     public PhotosFragment() {
         setRetainInstance(true);
@@ -122,7 +129,7 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
                 presenter.loadMore();
             }
         };
-        adapter = new PhotosAdapter(userClickListener);
+        adapter = new PhotosAdapter(userClickListener, photoClickListener);
 
         photosRv.setLayoutManager(layoutManager);
         photosRv.setAdapter(adapter);
@@ -261,6 +268,11 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     public void openUser(String username, String fullname) {
         Intent intent = UserProfileActivity.getStartingIntent(getContext(), username, fullname);
         startActivity(intent);
+    }
+
+    @Override
+    public void openPhoto(String photoId) {
+        startActivity(PhotoActivity.getStartingIntent(getContext(), photoId));
     }
 
     public static Bundle createBundle(long collectionId) {

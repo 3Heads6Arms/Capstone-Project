@@ -39,6 +39,8 @@ public interface PhotosContract {
         void removeLoadMore();
 
         void openUser(String username, String fullname);
+
+        void openPhoto(String photoId);
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
@@ -51,5 +53,7 @@ public interface PhotosContract {
         void loadFinished(List<Photo> photos);
 
         void onUserSelected(UserProfile userProfile);
+
+        void onPhotoSelected(String photoId);
     }
 }

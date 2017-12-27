@@ -2,7 +2,6 @@ package com.anhhoang.zoompoint.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.anhhoang.zoompoint.R;
-import com.anhhoang.zoompoint.ui.login.LoginActivity;
+import com.anhhoang.zoompoint.ui.userprofile.UserProfileActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,13 +53,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_logout) {
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .remove(getString(R.string.token_preference_key))
-                    .apply();
-
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+            startActivity(new Intent(this, UserProfileActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

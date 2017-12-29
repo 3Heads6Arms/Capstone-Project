@@ -76,7 +76,7 @@ public class PhotosPresenter implements PhotosContract.Presenter {
                     loadFinished(photos);
                 } else {
                     view.removeLoadMore();
-                    view.showEmpty(true, R.string.unable_to_get_photo);
+                    view.showEmpty(true, R.string.unable_to_get_photos);
                 }
             }
         }
@@ -85,7 +85,7 @@ public class PhotosPresenter implements PhotosContract.Presenter {
         public void onFailure(Call<RequestSearchPhoto> call, Throwable t) {
             if (view != null) {
                 view.removeLoadMore();
-                view.showEmpty(true, R.string.unable_to_get_photo);
+                view.showEmpty(true, R.string.unable_to_get_photos);
             }
         }
     };
@@ -159,9 +159,9 @@ public class PhotosPresenter implements PhotosContract.Presenter {
             if (photos.size() <= 0) {
                 // App is loading locally only when unable to get from server (empty server is not error)
                 // Hence its always error when have to reach to local DB
-                view.showEmpty(true, R.string.unable_to_get_photo);
+                view.showEmpty(true, R.string.unable_to_get_photos);
             } else {
-                view.showError(R.string.unable_to_get_photo);
+                view.showError(R.string.unable_to_get_photos);
                 view.displayPhotos(photos);
             }
 

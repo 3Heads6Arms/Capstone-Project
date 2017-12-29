@@ -49,6 +49,15 @@ public class Photo implements android.os.Parcelable {
     private PhotoUrls urls;
     @SerializedName("user")
     private UserProfile user;
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getId() {
         return id;
@@ -184,6 +193,7 @@ public class Photo implements android.os.Parcelable {
         dest.writeList(this.collections);
         dest.writeParcelable(this.urls, flags);
         dest.writeParcelable(this.user, flags);
+        dest.writeString(this.type);
     }
 
     public Photo() {
@@ -207,6 +217,7 @@ public class Photo implements android.os.Parcelable {
         in.readList(this.collections, PhotoCollection.class.getClassLoader());
         this.urls = in.readParcelable(PhotoUrls.class.getClassLoader());
         this.user = in.readParcelable(UserProfile.class.getClassLoader());
+        this.type = in.readString();
     }
 
     public static final android.os.Parcelable.Creator<Photo> CREATOR = new android.os.Parcelable.Creator<Photo>() {

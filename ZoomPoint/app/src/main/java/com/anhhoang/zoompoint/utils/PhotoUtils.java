@@ -101,6 +101,7 @@ public class PhotoUtils {
         result.setColor(cursor.getString(cursor.getColumnIndex(Photo.COL_COLOR)));
         result.setLikes(cursor.getInt(cursor.getColumnIndex(Photo.COL_LIKES)));
         result.setLikedByUser(cursor.getInt(cursor.getColumnIndex(Photo.COL_LIKED_BY_USER)) > 0);
+        result.setType(cursor.getString(cursor.getColumnIndex(Photo.COL_TYPE)));
 
         urls.setRaw(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_RAW)));
         urls.setFull(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_FULL)));

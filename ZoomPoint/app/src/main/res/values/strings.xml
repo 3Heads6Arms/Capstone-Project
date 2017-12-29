@@ -16,10 +16,11 @@
     <string name="oldest">Oldest</string>
     <string name="by">by</string>
     <string name="no_photos_here">No photos here</string>
-    <string name="unable_to_get_photo">Unable to get new photos from server\nTry again later</string>
+    <string name="unable_to_get_photos">Unable to get new photos from server\nTry again later</string>
+    <string name="unable_to_get_photo">Unable to get new photo from server\nTry again later</string>
     <string name="unable_to_get_collections">Unable to get new collections from server\nTry again later</string>
     <string name="no_collection_found">No collection found!</string>
-    <string name="unable_to_connect">Unable to connect to server</string>
+    <string name="unable_to_connect">Unable to connect to server\nRefresh to try again</string>
 
     <string name="search_button">Search Button</string>
     <string name="title_activity_user_profile" translatable="false">UserProfileActivity</string>
@@ -32,4 +33,5 @@
     <string name="user_profile_picture">User Profile Picture</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="likes_placeholder">0 likes</string>
+    <string name="success">Success!</string>
 </resources>

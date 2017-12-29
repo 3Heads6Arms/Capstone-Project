@@ -112,7 +112,7 @@ public class CollectionsPresenter implements CollectionsContract.Presenter {
             if (collections.size() <= 0) {
                 // App is loading locally only when unable to get from server (empty server is not error)
                 // Hence its always error when have to reach to local DB
-                view.showEmpty(true, R.string.unable_to_get_photo);
+                view.showEmpty(true, R.string.unable_to_get_photos);
             } else {
                 view.displayCollections(collections);
             }

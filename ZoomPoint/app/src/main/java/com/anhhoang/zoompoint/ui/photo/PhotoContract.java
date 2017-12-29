@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 public interface PhotoContract {
-    interface View extends BaseMvpContract.View {
+    interface View extends BaseMvpContract.View<Presenter> {
         void toggleProgress(boolean show);
 
         void displayPhotoImage(String url);
@@ -20,9 +20,12 @@ public interface PhotoContract {
         void displayUser(String name, String username, String profileImageUrl);
 
         void displayLikes(boolean likedByUser, int likes);
+
         void displayDescription(String description);
 
         void displayExif(List<Pair> items);
+
+        void displayLocation(String location);
 
         void showError(int idErrorString);
 
@@ -35,6 +38,10 @@ public interface PhotoContract {
         void openUser(String username, String fullname);
 
         void updatePhoto(ContentValues photo);
+
+        void openLocation();
+
+        void loadPhotoFromLocalDb();
 
         String getMyUsername();
     }
@@ -57,5 +64,7 @@ public interface PhotoContract {
         void onCollectionSelected(int collectionId, String photoId);
 
         void loadMyCollections();
+
+        void onLocationSelected();
     }
 }

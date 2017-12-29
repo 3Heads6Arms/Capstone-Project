@@ -48,8 +48,8 @@ public class PhotoPresenter implements Presenter {
                     loadFinished(photo);
                 } else {
                     hasError = true;
-                    view.toggleProgress(false);
                     view.showError(R.string.unable_to_get_photo);
+                    view.loadPhotoFromLocalDb();
                 }
             }
             isLoading = false;
@@ -60,8 +60,8 @@ public class PhotoPresenter implements Presenter {
             hasError = true;
             isLoading = false;
             if (view != null) {
-                view.toggleProgress(false);
                 view.showError(R.string.unable_to_get_photo);
+                view.loadPhotoFromLocalDb();
             }
         }
     };
@@ -69,7 +69,7 @@ public class PhotoPresenter implements Presenter {
         @Override
         public void onResponse(Call<Photo> call, Response<Photo> response) {
             if (view != null) {
-                if (response.code() == HttpURLConnection.HTTP_OK) {
+                if (response.code() == HttpURLConnection.HTTP_OK || response.code() == HttpURLConnection.HTTP_CREATED) {
                     hasError = false;
 
                     // Update likes upon success update with server
@@ -254,6 +254,18 @@ public class PhotoPresenter implements Presenter {
         }
     }
 
+    @Override
+    public void onLocationSelected() {
+        if (view != null) {
+            if (photo.getLocation() != null) {
+                photo.getLocation();
+
+                // TODO:
+                view.openLocation();
+            }
+        }
+    }
+
     private void loadFinished(Photo photo) {
         if (view != null) {
             view.toggleProgress(false);
@@ -264,6 +276,11 @@ public class PhotoPresenter implements Presenter {
                     user.getName(),
                     user.getUsername(),
                     user.getProfileImage().getLarge());
+
+            if (photo.getLocation() != null) {
+                view.displayLocation(photo.getLocation().getCity() + ", " + photo.getLocation().getCountry());
+            }
+
             view.displayLikes(photo.isLikedByUser(), photo.getLikes());
 
             if (!TextUtils.isEmpty(photo.getDescription())) {
@@ -283,49 +300,58 @@ public class PhotoPresenter implements Presenter {
                     if (exif.getModel().toLowerCase().contains(exif.getMake().toLowerCase())) {
                         pairs.add(new Pair(
                                 R.drawable.ic_camera,
-                                exif.getModel()
+                                exif.getModel(),
+                                R.string.camera_icon
                         ));
                     } else {
                         pairs.add(new Pair(
                                 R.drawable.ic_camera,
-                                exif.getMake() + " " + exif.getModel()
+                                exif.getMake() + " " + exif.getModel(),
+                                R.string.camera_icon
                         ));
                     }
                 } else {
                     pairs.add(new Pair(
                             R.drawable.ic_camera,
-                            exif.getMake()
+                            exif.getMake(),
+                            R.string.camera_icon
                     ));
                 }
             } else {
                 pairs.add(new Pair(
                         R.drawable.ic_camera,
-                        "N/A"
+                        "N/A",
+                        R.string.camera_icon
                 ));
             }
-            if (exif.getFocalLength() > 0) {
+            if (!TextUtils.isEmpty(exif.getFocalLength())) {
                 pairs.add(new Pair(
                         R.drawable.ic_length,
-                        String.format("%dmm", exif.getFocalLength())
+                        String.format("%smm", exif.getFocalLength()),
+                        R.string.focal_length_icon
                 ));
             }
-            if (exif.getAperture() > 0) {
+            if (!TextUtils.isEmpty(exif.getAperture())) {
                 pairs.add(new Pair(
                         R.drawable.ic_aperture,
-                        String.format("f/%.1f", exif.getAperture())
+                        String.format("f/%s", exif.getAperture()),
+                        R.string.aperture_icon
                 ));
             }
             if (exif.getIso() > 0) {
                 pairs.add(new Pair(
                         R.drawable.ic_iso,
-                        String.valueOf(exif.getIso())));
+                        String.valueOf(exif.getIso()),
+                        R.string.iso_icon
+                ));
             }
 
             if (updatedAt != null) {
                 DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
                 pairs.add(new Pair(
                         R.drawable.ic_calendar,
-                        dateFormat.format(updatedAt)
+                        dateFormat.format(updatedAt),
+                        R.string.calendar_icon
                 ));
             }
 

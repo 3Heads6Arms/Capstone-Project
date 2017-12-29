@@ -1,11 +1,27 @@
 package com.anhhoang.zoompoint.ui.photo;
 
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -14,10 +30,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.userprofile.UserProfileActivity;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,10 +53,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PhotoFragment extends Fragment {
+public class PhotoFragment extends Fragment implements PhotoContract.View {
     private static final String PHOTO_ID_KEY = "PhotoIdKey";
-    private String photoId;
+    private static final int PHOTO_LOADER_KEY = 42;
 
+    @BindView(R.id.refreshLayout)
+    SwipeRefreshLayout refreshLayout;
     @BindView(R.id.adView)
     AdView adView;
     @BindView(R.id.toolbar)
@@ -44,20 +71,55 @@ public class PhotoFragment extends Fragment {
     TextView nameTv;
     @BindView(R.id.text_view_username)
     TextView usernameTv;
+    @BindView(R.id.text_view_location)
+    TextView locationTv;
+    @BindView(R.id.image_view_location)
+    ImageView locationIv;
     @BindView(R.id.image_view_like)
-    ImageView likeIv;
+    AppCompatImageView likeIv;
     @BindView(R.id.text_view_likes)
     TextView likesTv;
     @BindView(R.id.text_view_description)
     TextView descriptionTv;
     @BindView(R.id.recycler_view_exif)
     RecyclerView exifRv;
+    @BindView(R.id.text_view_empty_exif)
+    TextView emptyExifTv;
     @BindView(R.id.fab_download)
     FloatingActionButton downloadFab;
     @BindView(R.id.fab_set_wallpaper)
     FloatingActionButton setWallpaperFab;
     @BindView(R.id.fab_add_to_collection)
     FloatingActionButton addToCollectionFab;
+
+    private String photoId;
+    private ExifAdapter adapter;
+    private PhotoContract.Presenter presenter;
+    private LoaderManager.LoaderCallbacks<Cursor> loaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            Uri queryUri = ZoomPointContract.PhotoEntry.buildItemUri(photoId);
+            return new CursorLoader(
+                    getContext(),
+                    queryUri,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            presenter.loadFinished(data);
+            data.close();
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+    };
 
     public PhotoFragment() {
         setRetainInstance(true);
@@ -97,6 +159,25 @@ public class PhotoFragment extends Fragment {
                 adView.setVisibility(View.VISIBLE);
             }
         });
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenter.load(photoId);
+            }
+        });
+        likeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onLikeButtonSelected();
+            }
+        });
+
+        adapter = new ExifAdapter();
+        exifRv.addItemDecoration(new ItemSpacingDecoration(
+                (int) getResources().getDimension(R.dimen.grid_item_padding),
+                false));
+        exifRv.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        exifRv.setAdapter(adapter);
 
         return view;
     }
@@ -104,6 +185,12 @@ public class PhotoFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (presenter != null) {
+            presenter.attach(this);
+        } else {
+            new PhotoPresenter().attach(this);
+            presenter.load(photoId);
+        }
 
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
@@ -111,6 +198,164 @@ public class PhotoFragment extends Fragment {
 
 
         adView.loadAd(adRequest);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        presenter.detach();
+    }
+
+    @Override
+    public void setPresenter(PhotoContract.Presenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void toggleProgress(boolean show) {
+        refreshLayout.setRefreshing(show);
+    }
+
+    @Override
+    public void displayPhotoImage(String url) {
+        Glide.with(getContext())
+                .asDrawable()
+                .load(url)
+                .apply(new RequestOptions()
+                        .error(R.drawable.ic_image_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+                        .skipMemoryCache(true))
+                .transition(new DrawableTransitionOptions().crossFade())
+                .into(photoIv);
+        // TODO: Open image
+    }
+
+    @Override
+    public void displayUser(String name, String username, String profileImageUrl) {
+        Glide.with(getContext())
+                .asDrawable()
+                .load(profileImageUrl)
+                .apply(new RequestOptions()
+                        .error(R.drawable.ic_image_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+                        .skipMemoryCache(true))
+                .transition(new DrawableTransitionOptions().crossFade())
+                .into(userPhotoIv);
+
+        nameTv.setText(name);
+        usernameTv.setText("@" + username);
+
+
+        View.OnClickListener userClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onUserSelected();
+            }
+        };
+
+        photoIv.setContentDescription(getString(R.string.photo_content_description, name));
+
+        userPhotoIv.setOnClickListener(userClickListener);
+        nameTv.setOnClickListener(userClickListener);
+        usernameTv.setOnClickListener(userClickListener);
+    }
+
+    @Override
+    public void displayLikes(boolean likedByUser, int likes) {
+        if (likedByUser) {
+            Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_white_24dp);
+            drawable.mutate();
+            DrawableCompat.setTint(drawable, Color.RED);
+            likeIv.setImageDrawable(drawable);
+        } else {
+            likeIv.setImageResource(R.drawable.ic_favorite_border);
+        }
+        likesTv.setText(getResources().getQuantityString(R.plurals.likes, likes, likes));
+    }
+
+    @Override
+    public void displayDescription(String description) {
+        descriptionTv.setText(description);
+    }
+
+    @Override
+    public void displayExif(List<Pair> items) {
+        adapter.updateExifs(items);
+        if (items.size() > 0) {
+            emptyExifTv.setVisibility(View.GONE);
+            exifRv.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void displayLocation(String location) {
+        locationTv.setText(location);
+
+        View.OnClickListener locationClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onLocationSelected();
+            }
+        };
+
+        locationTv.setOnClickListener(locationClickListener);
+        locationIv.setOnClickListener(locationClickListener);
+    }
+
+    @Override
+    public void showError(int idErrorString) {
+        Snackbar.make(getView(), idErrorString, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showEmptyExif() {
+        emptyExifTv.setVisibility(View.VISIBLE);
+        exifRv.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void displayCollections(List<Pair> collections) {
+        // TODO: Open dialog fragment for picker
+    }
+
+    @Override
+    public String getToken() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(getContext())
+                .getString(getString(R.string.token_preference_key), null);
+    }
+
+    @Override
+    public void openUser(String username, String fullname) {
+        Intent intent = UserProfileActivity.getStartingIntent(getContext(), username, fullname);
+        startActivity(intent);
+    }
+
+    @Override
+    public void updatePhoto(ContentValues photo) {
+        // Insert will override old values due to conflict with unique identifier
+        getContext()
+                .getContentResolver()
+                .insert(ZoomPointContract.PhotoEntry.CONTENT_URI, photo);
+    }
+
+    @Override
+    public void openLocation() {
+        // TODO: Open Map
+    }
+
+    @Override
+    public void loadPhotoFromLocalDb() {
+        getLoaderManager()
+                .restartLoader(PHOTO_LOADER_KEY, null, loaderCallback);
+    }
+
+    @Override
+    public String getMyUsername() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(getContext())
+                .getString(getString(R.string.username_preference_key), null);
     }
 
     public static Bundle getStartingBundle(String photoId) {

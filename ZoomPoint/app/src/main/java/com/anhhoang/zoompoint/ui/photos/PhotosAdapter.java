@@ -1,5 +1,6 @@
 package com.anhhoang.zoompoint.ui.photos;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,12 +55,13 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Context context = holder.itemView.getContext();
         Photo photo = photos.get(position);
         holder.itemView.setTag(photo.getId());
         holder.userNameTv.setTag(photo.getUser());
 
         holder.userNameTv.setText(photo.getUser().getName());
-        holder.photoIv.setContentDescription(photo.getDescription());
+        holder.photoIv.setContentDescription(context.getString(R.string.photo_content_description, photo.getUser().getName()));
         holder.photoIv.setAspectRatio((float) photo.getWidth() / photo.getHeight());
         Glide.with(holder.photoIv)
                 .asDrawable()

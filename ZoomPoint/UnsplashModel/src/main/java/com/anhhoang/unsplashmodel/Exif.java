@@ -19,11 +19,11 @@ public class Exif implements android.os.Parcelable {
     @SerializedName(COL_MODEL)
     private String model;
     @SerializedName(COL_EXPOSURE_TIME)
-    private double exposureTime;
+    private String exposureTime;
     @SerializedName(COL_APERTURE)
-    private double aperture;
+    private String aperture;
     @SerializedName(COL_FOCAL_LENGTH)
-    private int focalLength;
+    private String focalLength;
     @SerializedName(COL_ISO)
     private int iso;
 
@@ -43,27 +43,27 @@ public class Exif implements android.os.Parcelable {
         this.model = model;
     }
 
-    public double getExposureTime() {
+    public String getExposureTime() {
         return exposureTime;
     }
 
-    public void setExposureTime(double exposureTime) {
+    public void setExposureTime(String exposureTime) {
         this.exposureTime = exposureTime;
     }
 
-    public double getAperture() {
+    public String getAperture() {
         return aperture;
     }
 
-    public void setAperture(double aperture) {
+    public void setAperture(String aperture) {
         this.aperture = aperture;
     }
 
-    public int getFocalLength() {
+    public String getFocalLength() {
         return focalLength;
     }
 
-    public void setFocalLength(int focalLength) {
+    public void setFocalLength(String focalLength) {
         this.focalLength = focalLength;
     }
 
@@ -84,9 +84,9 @@ public class Exif implements android.os.Parcelable {
     public void writeToParcel(android.os.Parcel dest, int flags) {
         dest.writeString(this.make);
         dest.writeString(this.model);
-        dest.writeDouble(this.exposureTime);
-        dest.writeDouble(this.aperture);
-        dest.writeInt(this.focalLength);
+        dest.writeString(this.exposureTime);
+        dest.writeString(this.aperture);
+        dest.writeString(this.focalLength);
         dest.writeInt(this.iso);
     }
 
@@ -96,9 +96,9 @@ public class Exif implements android.os.Parcelable {
     protected Exif(android.os.Parcel in) {
         this.make = in.readString();
         this.model = in.readString();
-        this.exposureTime = in.readDouble();
-        this.aperture = in.readDouble();
-        this.focalLength = in.readInt();
+        this.exposureTime = in.readString();
+        this.aperture = in.readString();
+        this.focalLength = in.readString();
         this.iso = in.readInt();
     }
 

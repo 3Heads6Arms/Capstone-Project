@@ -77,7 +77,7 @@ public class ZoomPointProvider extends ContentProvider {
                         selectionArgs);
                 break;
             case PHOTO:
-                String photoId = uri.getPathSegments().get(0);
+                String photoId = uri.getLastPathSegment();
                 cursor = database.rawQuery(
                         "SELECT p.*, u." + UserProfile.COL_NAME +
                                 ", u." + UserProfile.COL_USERNAME +
@@ -108,7 +108,7 @@ public class ZoomPointProvider extends ContentProvider {
                         selectionArgs);
                 break;
             case COLLECTION:
-                String collectionId = uri.getPathSegments().get(0);
+                String collectionId = uri.getLastPathSegment();
                 cursor = database.query(
                         ZoomPointContract.CollectionEntry.TABLE_NAME,
                         null,

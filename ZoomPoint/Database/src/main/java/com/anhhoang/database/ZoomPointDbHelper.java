@@ -17,7 +17,7 @@ import com.anhhoang.unsplashmodel.UserProfile;
 
 public class ZoomPointDbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "zoompoint.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
 
     public ZoomPointDbHelper(Context context) {
@@ -44,9 +44,9 @@ public class ZoomPointDbHelper extends SQLiteOpenHelper {
                 Photo.COL_TYPE + " TEXT, " +
                 Exif.COL_MAKE + " TEXT, " +
                 Exif.COL_MODEL + " TEXT, " +
-                Exif.COL_EXPOSURE_TIME + " REAL, " +
-                Exif.COL_APERTURE + " REAL," +
-                Exif.COL_FOCAL_LENGTH + " INTEGER, " +
+                Exif.COL_EXPOSURE_TIME + " TEXT, " +
+                Exif.COL_APERTURE + " TEXT," +
+                Exif.COL_FOCAL_LENGTH + " TEXT, " +
                 Exif.COL_ISO + " INTEGER, " +
                 PhotoLocation.COL_CITY + " TEXT, " +
                 PhotoLocation.COL_COUNTRY + " TEXT, " +

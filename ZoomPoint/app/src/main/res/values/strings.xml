@@ -34,4 +34,14 @@
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="likes_placeholder">0 likes</string>
     <string name="success">Success!</string>
+
+    <string name="camera_icon">Camera Icon</string>
+    <string name="focal_length_icon">Focal length Icon</string>
+    <string name="aperture_icon">Aperture Icon</string>
+    <string name="iso_icon">ISO Icon</string>
+    <string name="calendar_icon">calendar Icon</string>
+    <string name="photo_content_description">%s\'s photo</string>
+    <string name="description">Description</string>
+    <string name="like_icon">Like Icon</string>
+    <string name="location_icon">Location Icon</string>
 </resources>

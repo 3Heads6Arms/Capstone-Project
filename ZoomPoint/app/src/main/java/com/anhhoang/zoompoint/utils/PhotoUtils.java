@@ -119,9 +119,9 @@ public class PhotoUtils {
 
         exif.setMake(cursor.getString(cursor.getColumnIndex(Exif.COL_MAKE)));
         exif.setModel(cursor.getString(cursor.getColumnIndex(Exif.COL_MODEL)));
-        exif.setExposureTime(cursor.getDouble(cursor.getColumnIndex(Exif.COL_EXPOSURE_TIME)));
-        exif.setAperture(cursor.getDouble(cursor.getColumnIndex(Exif.COL_APERTURE)));
-        exif.setFocalLength(cursor.getInt(cursor.getColumnIndex(Exif.COL_FOCAL_LENGTH)));
+        exif.setExposureTime(cursor.getString(cursor.getColumnIndex(Exif.COL_EXPOSURE_TIME)));
+        exif.setAperture(cursor.getString(cursor.getColumnIndex(Exif.COL_APERTURE)));
+        exif.setFocalLength(cursor.getString(cursor.getColumnIndex(Exif.COL_FOCAL_LENGTH)));
         exif.setIso(cursor.getInt(cursor.getColumnIndex(Exif.COL_ISO)));
 
         location.setCity(cursor.getString(cursor.getColumnIndex(PhotoLocation.COL_CITY)));

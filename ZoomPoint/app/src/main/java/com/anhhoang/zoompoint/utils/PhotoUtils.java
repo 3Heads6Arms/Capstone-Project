@@ -88,6 +88,7 @@ public class PhotoUtils {
         Photo result = new Photo();
         PhotoUrls urls = new PhotoUrls();
         UserProfile user = new UserProfile();
+        PhotoUrls userPhotoUrls = new PhotoUrls();
         Exif exif = new Exif();
         PhotoLocation location = new PhotoLocation();
         PhotoLocation.Position position = new PhotoLocation.Position();
@@ -109,6 +110,11 @@ public class PhotoUtils {
 
         user.setId(cursor.getString(cursor.getColumnIndex(Photo.COL_USER_ID)));
         user.setName(cursor.getString(cursor.getColumnIndex(UserProfile.COL_NAME)));
+        user.setUsername(cursor.getString(cursor.getColumnIndex(UserProfile.COL_USERNAME)));
+
+        userPhotoUrls.setMedium(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_MEDIUM)));
+        userPhotoUrls.setLarge(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_MEDIUM)));
+        userPhotoUrls.setSmall(cursor.getString(cursor.getColumnIndex(PhotoUrls.COL_SMALL)));
 
         exif.setMake(cursor.getString(cursor.getColumnIndex(Exif.COL_MAKE)));
         exif.setModel(cursor.getString(cursor.getColumnIndex(Exif.COL_MODEL)));
@@ -122,6 +128,8 @@ public class PhotoUtils {
         position.setLatitude(cursor.getDouble(cursor.getColumnIndex(PhotoLocation.COL_LAT)));
         position.setLongitude(cursor.getDouble(cursor.getColumnIndex(PhotoLocation.COL_LON)));
         location.setPosition(position);
+
+        user.setProfileImage(userPhotoUrls);
 
         result.setUrls(urls);
         result.setUser(user);

@@ -29,4 +29,7 @@
     <string name="log_out">Log Out</string>
     <string name="profile_picture">Profile Picture</string>
     <string name="title_activity_photo">PhotoActivity</string>
+    <string name="user_profile_picture">User Profile Picture</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="likes_placeholder">0 likes</string>
 </resources>

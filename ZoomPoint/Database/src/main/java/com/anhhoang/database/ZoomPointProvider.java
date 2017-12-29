@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
+import com.anhhoang.unsplashmodel.PhotoUrls;
 import com.anhhoang.unsplashmodel.UserProfile;
 
 /**
@@ -64,7 +65,12 @@ public class ZoomPointProvider extends ContentProvider {
         switch (match) {
             case PHOTOS:
                 cursor = database.rawQuery(
-                        "SELECT p.*, u." + UserProfile.COL_NAME + ", u." + UserProfile.COL_USERNAME + " FROM " + ZoomPointContract.PhotoEntry.TABLE_NAME + " p " +
+                        "SELECT p.*, u." + UserProfile.COL_NAME +
+                                ", u." + UserProfile.COL_USERNAME +
+                                ", u." + PhotoUrls.COL_MEDIUM +
+                                ", u." + PhotoUrls.COL_LARGE +
+                                ", u." + PhotoUrls.COL_SMALL +
+                                " FROM " + ZoomPointContract.PhotoEntry.TABLE_NAME + " p " +
                                 "INNER JOIN " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " u " +
                                 "ON p." + Photo.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
                                 "WHERE p." + selection,
@@ -72,7 +78,19 @@ public class ZoomPointProvider extends ContentProvider {
                 break;
             case PHOTO:
                 String photoId = uri.getPathSegments().get(0);
-                cursor = database.query(
+                cursor = database.rawQuery(
+                        "SELECT p.*, u." + UserProfile.COL_NAME +
+                                ", u." + UserProfile.COL_USERNAME +
+                                ", u." + PhotoUrls.COL_MEDIUM +
+                                ", u." + PhotoUrls.COL_LARGE +
+                                ", u." + PhotoUrls.COL_SMALL +
+                                " FROM " + ZoomPointContract.PhotoEntry.TABLE_NAME + " p " +
+                                "INNER JOIN " + ZoomPointContract.UserProfileEntry.TABLE_NAME + " u " +
+                                "ON p." + Photo.COL_USER_ID + "=u." + UserProfile.COL_ID + " " +
+                                "WHERE p." + Photo.COL_IDENTIFIER + "='" + photoId + "'",
+                        selectionArgs);
+
+                database.query(
                         ZoomPointContract.PhotoEntry.TABLE_NAME,
                         null,
                         Photo.COL_IDENTIFIER + "=?",

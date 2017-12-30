@@ -2,6 +2,7 @@ package com.anhhoang.zoompoint.ui.photo;
 
 import android.app.WallpaperManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -9,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -463,17 +466,36 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
                     }
 
                     @Override
-                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(getActivity().getApplicationContext());
+                    public boolean onResourceReady(final Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        final WallpaperManager wallpaperManager = WallpaperManager.getInstance(getActivity().getApplicationContext());
 
-                        try {
-                            wallpaperManager.setBitmap(resource);
-                            Toast.makeText(getActivity().getApplicationContext(), R.string.wallpaper_is_set, Toast.LENGTH_LONG).show();
-                            return true;
-                        } catch (IOException e) {
-                            Toast.makeText(getActivity().getApplicationContext(), R.string.unable_set_wallpaper, Toast.LENGTH_LONG).show();
-                            return false;
-                        }
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Context context = getActivity().getApplicationContext();
+                                try {
+                                    wallpaperManager.setBitmap(resource);
+
+                                    Handler handler = new Handler(Looper.getMainLooper());
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(context, R.string.wallpaper_is_set, Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                } catch (IOException e) {
+
+                                    Handler handler = new Handler(Looper.getMainLooper());
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(context, R.string.unable_set_wallpaper, Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                        return true;
                     }
                 })
                 .load(url)

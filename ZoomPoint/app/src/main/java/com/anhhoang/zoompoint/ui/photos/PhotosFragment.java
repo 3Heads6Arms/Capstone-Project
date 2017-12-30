@@ -221,10 +221,10 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
 
     @Override
     public void displayPhotos(List<Photo> photos) {
-        adapter.addPhotos(photos);
-        if (photos.size() == adapter.getItemCount()) {
+        if (photos.size() <= adapter.getItemCount()) {
             photosRv.removeOnScrollListener(endlessScrollListener);
         }
+        adapter.addPhotos(photos);
         if (adapter.getPhotos().size() > 0) {
             errorTv.setVisibility(View.INVISIBLE);
             photosRv.setVisibility(View.VISIBLE);

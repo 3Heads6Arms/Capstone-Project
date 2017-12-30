@@ -90,6 +90,9 @@
             android:exported="false" />
         <service
             android:name=".services.CollectionsIntentService"
+            android:exported="false" />
+        <service
+            android:name=".services.UserIntentService"
             android:exported="false"></service>
     </application>
 

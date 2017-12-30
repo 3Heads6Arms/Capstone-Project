@@ -87,7 +87,7 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             if (intent.getAction().equals(CollectionsIntentService.COLLECTIONS_LOAD_SUCCESS)) {
                 getLoaderManager().restartLoader(COLLECTION_LOADER_ID, null, loaderCallbacks);
             } else if (intent.getAction().equals(CollectionsIntentService.COLLECTIONS_LOAD_FAILED)) {
-                Snackbar.make(getView(), R.string.unable_to_get_photos, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(), R.string.unable_to_get_collections, Snackbar.LENGTH_LONG).show();
                 getLoaderManager().restartLoader(COLLECTION_LOADER_ID, null, loaderCallbacks);
             }
         }
@@ -211,10 +211,10 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
     @Override
     public void displayCollections(List<PhotoCollection> collections) {
-        adapter.addCollections(collections);
-        if (adapter.getItemCount() == collections.size()) {
+        if (adapter.getItemCount() >= collections.size()) {
             collectionsRv.removeOnScrollListener(endlessScrollListener);
         }
+        adapter.addCollections(collections);
 
         if (adapter.getCollections().size() > 0) {
             collectionsRv.setVisibility(View.VISIBLE);

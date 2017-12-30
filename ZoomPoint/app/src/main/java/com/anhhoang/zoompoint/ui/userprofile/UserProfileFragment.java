@@ -1,8 +1,10 @@
 package com.anhhoang.zoompoint.ui.userprofile;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -31,6 +33,8 @@ import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.services.CollectionsIntentService;
+import com.anhhoang.zoompoint.services.UserIntentService;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
 import com.anhhoang.zoompoint.ui.login.LoginActivity;
 import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionActivity;
@@ -64,6 +68,7 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
     private static final String LOCATION_KEY = "LocationKey";
     private static final String BIO_KEY = "BioKey";
     private static final int USER_LOADER_ID = 9;
+    private static final int COLLECTIONS_LOADER_ID = 10;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -88,6 +93,7 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
     @BindView(R.id.button_logout)
     Button logoutBtn;
 
+    private boolean tryOnce = true;
     private UserProfileContract.Presenter presenter;
     private String username;
     private String fullName;
@@ -96,14 +102,12 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallBack = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            String query = args.getString("query");
-            checkArgument(!TextUtils.isEmpty(query), "Query cannot be empty");
-
+            refreshLayout.setRefreshing(true);
             return new CursorLoader(
                     getContext(),
                     ZoomPointContract.UserProfileEntry.CONTENT_URI,
                     null,
-                    query,
+                    presenter.getSqlQuery(),
                     null,
                     null);
         }
@@ -117,6 +121,53 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
 
+        }
+    };
+    private LoaderManager.LoaderCallbacks<Cursor> collectionsCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            return new CursorLoader(
+                    getContext(),
+                    ZoomPointContract.CollectionEntry.CONTENT_URI,
+                    null,
+                    presenter.getSqlQueryCollections(),
+                    null,
+                    null);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            presenter.loadCollectionsFinished(data);
+            data.close();
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
+    };
+
+    BroadcastReceiver userReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(UserIntentService.USER_LOAD_SUCCESS)) {
+                getLoaderManager().restartLoader(USER_LOADER_ID, null, loaderCallBack);
+            } else if (intent.getAction().equals(UserIntentService.USER_LOAD_FAILED)) {
+                Snackbar.make(getView(), R.string.unable_to_connect, Snackbar.LENGTH_LONG).show();
+                getLoaderManager().restartLoader(USER_LOADER_ID, null, loaderCallBack);
+            }
+        }
+    };
+
+    BroadcastReceiver collectionsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CollectionsIntentService.COLLECTIONS_LOAD_SUCCESS)) {
+                getLoaderManager().restartLoader(COLLECTIONS_LOADER_ID, null, collectionsCallback);
+            } else if (intent.getAction().equals(CollectionsIntentService.COLLECTIONS_LOAD_FAILED)) {
+                Snackbar.make(getView(), R.string.unable_to_get_collections, Snackbar.LENGTH_LONG).show();
+                getLoaderManager().restartLoader(COLLECTIONS_LOADER_ID, null, collectionsCallback);
+            }
         }
     };
 
@@ -213,15 +264,26 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
         } else {
             new UserProfilePresenter(username).attach(this);
 
-            Bundle bundle = new Bundle();
-            bundle.putString("query", getSqlSelectionQuery());
-            getLoaderManager().restartLoader(USER_LOADER_ID, bundle, loaderCallBack);
+            getLoaderManager().restartLoader(USER_LOADER_ID, null, loaderCallBack);
+            getLoaderManager().restartLoader(COLLECTIONS_LOADER_ID, null, collectionsCallback);
         }
+
+        IntentFilter userIntentFilter = new IntentFilter();
+        userIntentFilter.addAction(UserIntentService.USER_LOAD_SUCCESS);
+        userIntentFilter.addAction(UserIntentService.USER_LOAD_FAILED);
+        IntentFilter collectionsIntentFilter = new IntentFilter();
+        collectionsIntentFilter.addAction(CollectionsIntentService.COLLECTIONS_LOAD_SUCCESS);
+        collectionsIntentFilter.addAction(CollectionsIntentService.COLLECTIONS_LOAD_FAILED);
+
+        getActivity().registerReceiver(userReceiver, userIntentFilter);
+        getActivity().registerReceiver(collectionsReceiver, collectionsIntentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        getActivity().unregisterReceiver(userReceiver);
+        getActivity().unregisterReceiver(collectionsReceiver);
         presenter.detach();
     }
 
@@ -261,12 +323,6 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
     }
 
     @Override
-    public String getToken() {
-        return PreferenceManager.getDefaultSharedPreferences(getContext())
-                .getString(getString(R.string.token_preference_key), null);
-    }
-
-    @Override
     public void displayProfilePicture(String url) {
         Glide.with(getContext())
                 .asDrawable()
@@ -289,26 +345,29 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
 
     @Override
     public void displayCollections(List<PhotoCollection> collections) {
+        if (adapter.getItemCount() >= collections.size()) {
+            collectionsRv.removeOnScrollListener(scrollListener);
+        }
         adapter.updateCollections(collections);
+
         if (adapter.getCollections().size() > 0) {
             emptyTv.setVisibility(View.INVISIBLE);
             collectionsRv.setVisibility(View.VISIBLE);
+        } else {
+            tryOnce();
         }
+
+        tryOnce = false;
     }
 
-    @Override
-    public void clearCollections() {
-        adapter.clear();
-    }
+//    @Override
+//    public void clearCollections() {
+//        adapter.clear();
+//    }
 
     @Override
     public void toggleProgress(boolean show) {
         refreshLayout.setRefreshing(show);
-    }
-
-    @Override
-    public void showError(int idStringError) {
-        Snackbar.make(getView(), idStringError, Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -318,29 +377,21 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
     }
 
     @Override
-    public void saveUserProfile(ContentValues userProfile) {
-        getContext()
-                .getContentResolver()
-                .insert(ZoomPointContract.UserProfileEntry.CONTENT_URI, userProfile);
-    }
-
-    @Override
-    public void loadUserFromLocal(String query) {
-        Bundle bundle = new Bundle();
-        bundle.putString("query", query);
-        getLoaderManager()
-                .restartLoader(USER_LOADER_ID, bundle, loaderCallBack);
-    }
-
-    @Override
-    public void removeLoadMore() {
-        collectionsRv.removeOnScrollListener(scrollListener);
-    }
-
-    @Override
     public void openCollection(int id, String collectionName) {
         Intent intent = PhotoCollectionActivity.getStartingIntent(getContext(), id, collectionName);
         startActivity(intent);
+    }
+
+    @Override
+    public void startLoadingUser(String username) {
+        Intent intent = UserIntentService.getStartingIntent(getContext(), username);
+        getActivity().startService(intent);
+    }
+
+    @Override
+    public void startLoadingCollections(String username, int page) {
+        Intent intent = CollectionsIntentService.getStartingIntent(getContext(), username, page);
+        getActivity().startService(intent);
     }
 
     public static Bundle getStartingBundle(String username, String fullName) {
@@ -351,7 +402,13 @@ public class UserProfileFragment extends Fragment implements UserProfileContract
         return args;
     }
 
-    private String getSqlSelectionQuery() {
-        return UserProfile.COL_USERNAME + "='" + username + "'";
+    private void tryOnce() {
+        if (tryOnce) {
+            collectionsRv.removeOnScrollListener(scrollListener);
+            collectionsRv.addOnScrollListener(scrollListener);
+            presenter.loadProfile();
+        }
+
+        tryOnce = false;
     }
 }

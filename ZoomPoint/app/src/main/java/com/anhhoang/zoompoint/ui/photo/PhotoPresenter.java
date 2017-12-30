@@ -276,13 +276,20 @@ public class PhotoPresenter implements Presenter {
     @Override
     public void onLocationSelected() {
         if (view != null) {
-            if (photo.getLocation() != null) {
-                photo.getLocation();
-
-                // TODO:
-                view.openLocation();
+            if (photo != null &&
+                    photo.getLocation() != null &&
+                    photo.getLocation().getPosition() != null &&
+                    !TextUtils.isEmpty(getValidLocationString(photo.getLocation())) &&
+                    (photo.getLocation().getPosition().getLatitude() != 0 ||
+                            photo.getLocation().getPosition().getLongitude() != 0)) {
+                view.openLocation(
+                        photo.getLocation().getPosition().getLatitude(),
+                        photo.getLocation().getPosition().getLongitude());
+            } else {
+                view.showError(R.string.invalid_position);
             }
         }
+
     }
 
     private void loadFinished(Photo photo) {

@@ -40,7 +40,7 @@ public interface PhotoContract {
 
         void updatePhoto(ContentValues photo);
 
-        void openLocation();
+        void openLocation(double lat, double lng);
 
         void loadPhotoFromLocalDb();
 

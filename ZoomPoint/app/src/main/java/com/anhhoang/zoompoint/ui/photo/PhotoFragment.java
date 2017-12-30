@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
+import com.anhhoang.zoompoint.ui.map.MapActivity;
 import com.anhhoang.zoompoint.ui.userprofile.UserProfileActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -128,6 +129,12 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
 
         }
     };
+    private View.OnClickListener locationClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            presenter.onLocationSelected();
+        }
+    };
 
     public PhotoFragment() {
         setRetainInstance(true);
@@ -172,6 +179,8 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         DrawableCompat.setTint(setWallpaperIcon, ContextCompat.getColor(getContext(), R.color.colorAccent));
         setWallpaperBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(null, setWallpaperIcon, null, null);
 
+        locationTv.setOnClickListener(locationClickListener);
+        locationIv.setOnClickListener(locationClickListener);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(int i) {
@@ -331,16 +340,6 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     @Override
     public void displayLocation(String location) {
         locationTv.setText(location);
-
-        View.OnClickListener locationClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                presenter.onLocationSelected();
-            }
-        };
-
-        locationTv.setOnClickListener(locationClickListener);
-        locationIv.setOnClickListener(locationClickListener);
     }
 
     @Override
@@ -381,8 +380,9 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     }
 
     @Override
-    public void openLocation() {
-        // TODO: Open Map
+    public void openLocation(double lat, double lng) {
+        Intent intent = MapActivity.getStartingIntent(getContext(), lat, lng);
+        startActivity(intent);
     }
 
     @Override

@@ -170,9 +170,10 @@ public class PhotoPresenter implements Presenter {
     }
 
     @Override
-    public void load(String photoId) {
+    public void load(String photoId, String photoType) {
         if (view != null && !isLoading) {
             isLoading = true;
+            this.photoType = photoType;
             view.toggleProgress(true);
             unsplashApi.getPhoto(photoId)
                     .enqueue(photoCallback);

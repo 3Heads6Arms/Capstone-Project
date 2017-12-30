@@ -97,9 +97,9 @@ public class PhotosPresenter implements PhotosContract.Presenter {
     }
 
     @Override
-    public void onPhotoSelected(String photoId) {
+    public void onPhotoSelected(String photoId, String photoType) {
         if (view != null) {
-            view.openPhoto(photoId);
+            view.openPhoto(photoId, photoType);
         }
     }
 

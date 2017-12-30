@@ -32,7 +32,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
     }
 
     interface OnPhotoClickListener {
-        void onPhotoClicked(String photoId);
+        void onPhotoClicked(String photoId, String photoType);
     }
 
     private List<Photo> photos;
@@ -57,7 +57,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
         Photo photo = photos.get(position);
-        holder.itemView.setTag(photo.getId());
+        holder.itemView.setTag(photo);
         holder.userNameTv.setTag(photo.getUser());
 
         holder.userNameTv.setText(photo.getUser().getName());
@@ -103,8 +103,8 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String photoId = (String) v.getTag();
-                    photoClickListener.onPhotoClicked(photoId);
+                    Photo photo = (Photo) v.getTag();
+                    photoClickListener.onPhotoClicked(photo.getId(), photo.getType());
                 }
             });
             userNameTv.setOnClickListener(new View.OnClickListener() {

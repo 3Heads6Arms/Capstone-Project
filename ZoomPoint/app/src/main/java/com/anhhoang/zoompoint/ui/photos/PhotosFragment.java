@@ -114,8 +114,8 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     private RecyclerView.OnScrollListener endlessScrollListener;
     private PhotosAdapter.OnPhotoClickListener photoClickListener = new PhotosAdapter.OnPhotoClickListener() {
         @Override
-        public void onPhotoClicked(String photoId) {
-            presenter.onPhotoSelected(photoId);
+        public void onPhotoClicked(String photoId, String photoType) {
+            presenter.onPhotoSelected(photoId, photoType);
         }
     };
     private PhotosCallType callType;
@@ -259,8 +259,8 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     }
 
     @Override
-    public void openPhoto(String photoId) {
-        startActivity(PhotoActivity.getStartingIntent(getContext(), photoId));
+    public void openPhoto(String photoId, String photoType) {
+        startActivity(PhotoActivity.getStartingIntent(getContext(), photoId, photoType));
     }
 
     @Override

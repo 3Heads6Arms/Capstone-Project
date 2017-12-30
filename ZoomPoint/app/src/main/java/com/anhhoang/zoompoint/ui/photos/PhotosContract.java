@@ -23,7 +23,7 @@ public interface PhotosContract {
 
         void openUser(String username, String fullname);
 
-        void openPhoto(String photoId);
+        void openPhoto(String photoId, String photoType);
 
         void startLoading(long collectionId, PhotosCallType callType, String query, int currentPage);
     }
@@ -37,7 +37,7 @@ public interface PhotosContract {
 
         void onUserSelected(UserProfile userProfile);
 
-        void onPhotoSelected(String photoId);
+        void onPhotoSelected(String photoId, String photoType);
 
         String getSqlSelection();
     }

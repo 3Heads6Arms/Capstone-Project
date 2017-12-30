@@ -15,6 +15,7 @@ import static com.bumptech.glide.util.Preconditions.checkArgument;
 public class PhotoActivity extends AppCompatActivity {
     private static final String TAG = PhotoActivity.class.getCanonicalName();
     private static final String PHOTO_ID_KEY = "PhotoIdKey";
+    private static final String PHOTO_TYPE_KEY = "PhotoTypeKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +24,14 @@ public class PhotoActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String photoId = intent.getStringExtra(PHOTO_ID_KEY);
+        String photoType = intent.getStringExtra(PHOTO_TYPE_KEY);
         checkArgument(!TextUtils.isEmpty(photoId), "PhotoId parameter cannot be null");
+        checkArgument(!TextUtils.isEmpty(photoId), "PhotoType parameter cannot be null");
 
 
         if (savedInstanceState == null) {
             Fragment fragment = new PhotoFragment();
-            fragment.setArguments(PhotoFragment.getStartingBundle(photoId));
+            fragment.setArguments(PhotoFragment.getStartingBundle(photoId, photoType));
 
             getSupportFragmentManager()
                     .beginTransaction()
@@ -47,10 +50,10 @@ public class PhotoActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static Intent getStartingIntent(Context context, String photoId) {
+    public static Intent getStartingIntent(Context context, String photoId, String photoType) {
         Intent intent = new Intent(context, PhotoActivity.class);
         intent.putExtra(PHOTO_ID_KEY, photoId);
-
+        intent.putExtra(PHOTO_TYPE_KEY, photoType);
         return intent;
     }
 }

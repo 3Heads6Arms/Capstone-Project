@@ -51,4 +51,5 @@
     <string name="wallpaper_is_set">Wallpaper has been set.</string>
     <string name="title_activity_map">Map</string>
     <string name="invalid_position">Photo does not have information about location taken</string>
+    <string name="select_collection">Select your Collection</string>
 </resources>

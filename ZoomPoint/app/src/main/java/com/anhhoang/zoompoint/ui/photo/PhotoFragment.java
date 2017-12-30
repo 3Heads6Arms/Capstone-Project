@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -51,6 +52,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -218,6 +220,12 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
             @Override
             public void onClick(View v) {
                 presenter.onSetWallpaperSelected();
+            }
+        });
+        addtoCollectionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onAddToCollectionSelected();
             }
         });
 
@@ -398,7 +406,16 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
 
     @Override
     public void displayCollections(List<Pair> collections) {
-        // TODO: Open dialog fragment for picker
+        final CollectionPickerDialog dialog = new CollectionPickerDialog();
+        dialog.setArguments(CollectionPickerDialog.getStartingBundle(collections));
+        dialog.setCollectionSelectedListener(new CollectionPickerDialog.CollectionSelectedListener() {
+            @Override
+            public void onCollectionSelected(int collectionId) {
+                presenter.onCollectionSelected(collectionId, photoId);
+                dialog.dismiss();
+            }
+        });
+        dialog.show(getFragmentManager(), CollectionPickerDialog.TAG);
     }
 
     @Override
@@ -476,5 +493,90 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         bundle.putString(PHOTO_ID_KEY, photoId);
 
         return bundle;
+    }
+
+    public static class CollectionPickerDialog extends DialogFragment {
+        interface CollectionSelectedListener {
+            void onCollectionSelected(int collectionId);
+        }
+
+        public static final String TAG = CollectionPickerDialog.class.getCanonicalName();
+        private RecyclerView recyclerView;
+        private CollectionSelectedListener collectionSelected;
+
+        public void setCollectionSelectedListener(CollectionSelectedListener listener) {
+            collectionSelected = listener;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.collection_picker_layout, container, false);
+
+            List<Pair> collections = getArguments().getParcelableArrayList("collections");
+            recyclerView = view.findViewById(R.id.recycler_view_collections);
+            recyclerView.setAdapter(new CollectionPickerAdapter(collections));
+
+            return view;
+        }
+
+        public static Bundle getStartingBundle(List<Pair> collections) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("collections", new ArrayList<>(collections));
+
+            return bundle;
+        }
+
+
+        class CollectionPickerAdapter extends RecyclerView.Adapter<CollectionPickerAdapter.ViewHolder> {
+
+            private final List<Pair> items;
+
+            CollectionPickerAdapter(List<Pair> items) {
+                this.items = items;
+            }
+
+            @Override
+            public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.collection_picker_item_view, parent, false);
+                return new ViewHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(ViewHolder holder, int position) {
+                Pair pair = items.get(position);
+                holder.textView.setTag(pair);
+                holder.textView.setText(pair.value);
+            }
+
+            @Override
+            public int getItemCount() {
+                return items.size();
+            }
+
+            public class ViewHolder extends RecyclerView.ViewHolder {
+                TextView textView;
+
+                public ViewHolder(View itemView) {
+                    super(itemView);
+                    textView = itemView.findViewById(R.id.textView);
+                    textView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (collectionSelected != null) {
+                                Pair pair = (Pair) textView.getTag();
+                                collectionSelected.onCollectionSelected(pair.id);
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 }

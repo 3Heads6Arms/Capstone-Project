@@ -62,7 +62,7 @@ public interface PhotoContract {
 
         void onSetWallpaperSelected();
 
-        void onAddToCollection();
+        void onAddToCollectionSelected();
 
         void onCollectionSelected(int collectionId, String photoId);
 

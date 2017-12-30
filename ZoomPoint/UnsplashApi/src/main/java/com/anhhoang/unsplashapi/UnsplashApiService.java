@@ -1,5 +1,6 @@
 package com.anhhoang.unsplashapi;
 
+import com.anhhoang.unsplashapi.RequestModel.RequestAddToCollection;
 import com.anhhoang.unsplashapi.RequestModel.RequestSearchPhoto;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
@@ -65,7 +66,7 @@ public interface UnsplashApiService {
 
     // Returns an object that wraps Photo
     @POST("collections/{id}/add")
-    Call<Photo> addPhotoToCollection(@Path("id") long collectionId, @Body String photoId);
+    Call<Photo> addPhotoToCollection(@Path("id") long collectionId, @Body RequestAddToCollection addToCollection);
 
 
     // Returns an object that wraps Photo

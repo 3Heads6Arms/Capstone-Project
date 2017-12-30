@@ -1,5 +1,6 @@
 package com.anhhoang.unsplashapi;
 
+import com.anhhoang.unsplashapi.RequestModel.RequestAddToCollection;
 import com.anhhoang.unsplashapi.RequestModel.RequestSearchPhoto;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
@@ -89,7 +90,7 @@ public class UnsplashApi {
     }
 
     public Call<Photo> addPhotoToCollection(long collectionId, String photoId) {
-        return unsplashApiService.addPhotoToCollection(collectionId, photoId);
+        return unsplashApiService.addPhotoToCollection(collectionId, new RequestAddToCollection(collectionId, photoId));
     }
 
     public Call<Photo> removePhotoFromCollection(long collectionId, String photoId) {

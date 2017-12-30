@@ -108,12 +108,11 @@ public class PhotoPresenter implements Presenter {
         @Override
         public void onResponse(Call<Photo> call, Response<Photo> response) {
             if (view != null) {
-                if (response.code() == HttpURLConnection.HTTP_OK) {
+                if (response.code() == HttpURLConnection.HTTP_OK || response.code() == HttpURLConnection.HTTP_CREATED) {
                     hasError = false;
                     view.showError(R.string.success);
                 } else {
                     hasError = true;
-                    view.toggleProgress(false);
                     view.showError(R.string.unable_to_connect);
                 }
                 view.toggleProgress(false);
@@ -240,7 +239,7 @@ public class PhotoPresenter implements Presenter {
     }
 
     @Override
-    public void onAddToCollection() {
+    public void onAddToCollectionSelected() {
         if (view != null) {
             if (hasError) {
                 view.showError(R.string.unable_to_connect);
@@ -317,6 +316,7 @@ public class PhotoPresenter implements Presenter {
 
             Exif exif = photo.getExif();
             processExif(exif, photo.getUpdatedAt());
+            loadMyCollections();
         }
     }
 

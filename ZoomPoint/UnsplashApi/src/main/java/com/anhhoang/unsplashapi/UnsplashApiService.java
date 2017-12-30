@@ -37,7 +37,7 @@ public interface UnsplashApiService {
     Call<Photo> getPhoto(@Path("id") String photoId);
 
     @GET("photos/random")
-    Call<Photo> getRandomPhoto(@Query("featured") boolean featured); // TODO: Check featured's type
+    Call<Photo> getRandomPhoto(@Query("featured") boolean featured);
 
     @POST("photos/{id}/like")
     Call<Photo> likePhoto(@Path("id") String photoId);

@@ -7,7 +7,7 @@
     <string name="fullname_preference_key" translatable="false">FullnamePreferenceKey</string>
     <string name="login_error">Unable to login</string>
     <string name="login_connection_error">Unable to connect to server</string>
-    <string name="title_activity_photo_collection" translatable="false">PhotoCollectionActivity</string>
+    <string name="title_activity_photo_collection" translatable="false">Photo Collection</string>
     <string name="action_settings">Settings</string>
 
     <string name="latest">Latest</string>
@@ -23,7 +23,7 @@
     <string name="unable_to_connect">Unable to connect to server\nRefresh to try again</string>
 
     <string name="search_button">Search Button</string>
-    <string name="title_activity_user_profile" translatable="false">UserProfileActivity</string>
+    <string name="title_activity_user_profile" translatable="false">User Profile</string>
     <string name="bio">Bio</string>
     <string name="collections">Collections</string>
     <string name="not_available">N/A</string>

@@ -1,11 +1,12 @@
 package com.anhhoang.zoompoint.ui.home.collections;
 
 
-import android.content.ContentValues;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.PhotoCollection;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.services.CollectionsIntentService;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
 import com.anhhoang.zoompoint.ui.photocollection.PhotoCollectionActivity;
 import com.anhhoang.zoompoint.utils.EndlessScrollListener;
@@ -34,8 +36,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -44,9 +44,11 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     private static final String COLLECTION_ITEMS = "CollectionItems";
     private static final String RECYCLER_VIEW_POSITION = "RecyclerViewPosition";
 
+    private boolean tryOnce = true;
     private CollectionsContract.Presenter presenter;
     private CollectionAdapter adapter;
     private RecyclerView.OnScrollListener endlessScrollListener;
+
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
     @BindView(R.id.recycler_view_collections)
@@ -57,16 +59,12 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-            checkNotNull(bundle);
-
-            String query = bundle.getString("query");
-            checkNotNull(query);
-
+            refreshLayout.setRefreshing(true);
             return new CursorLoader(
                     getContext(),
                     ZoomPointContract.CollectionEntry.CONTENT_URI,
                     null,
-                    query,
+                    presenter.getSqlQuery(),
                     null,
                     null
             );
@@ -83,11 +81,21 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
 
         }
     };
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(CollectionsIntentService.COLLECTIONS_LOAD_SUCCESS)) {
+                getLoaderManager().restartLoader(COLLECTION_LOADER_ID, null, loaderCallbacks);
+            } else if (intent.getAction().equals(CollectionsIntentService.COLLECTIONS_LOAD_FAILED)) {
+                Snackbar.make(getView(), R.string.unable_to_get_photos, Snackbar.LENGTH_LONG).show();
+                getLoaderManager().restartLoader(COLLECTION_LOADER_ID, null, loaderCallbacks);
+            }
+        }
+    };
 
     public CollectionsFragment() {
         setRetainInstance(true);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -123,6 +131,8 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             @Override
             public void onRefresh() {
                 presenter.load();
+                collectionsRv.removeOnScrollListener(endlessScrollListener);
+                collectionsRv.addOnScrollListener(endlessScrollListener);
             }
         });
 
@@ -137,13 +147,20 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
             presenter.attach(this);
         } else {
             new CollectionsPresenter().attach(this);
-            presenter.load();
+            getLoaderManager()
+                    .restartLoader(COLLECTION_LOADER_ID, null, loaderCallbacks);
         }
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(CollectionsIntentService.COLLECTIONS_LOAD_SUCCESS);
+        intentFilter.addAction(CollectionsIntentService.COLLECTIONS_LOAD_FAILED);
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        getActivity().unregisterReceiver(broadcastReceiver);
         presenter.detach();
     }
 
@@ -170,13 +187,6 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     }
 
     @Override
-    public String getToken() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(getContext())
-                .getString(getString(R.string.token_preference_key), null);
-    }
-
-    @Override
     public void toggleProgress(boolean show) {
         if (show) {
             refreshLayout.setRefreshing(true);
@@ -188,26 +198,9 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     }
 
     @Override
-    public void showError(int idString) {
-        Snackbar.make(getView(), idString, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void showEmpty(boolean hasError, int idString) {
-        if (hasError) {
-            errorTv.setText(idString);
-        } else {
-            errorTv.setText(R.string.no_collection_found);
-        }
-
+    public void showEmpty() {
         collectionsRv.setVisibility(View.INVISIBLE);
         errorTv.setVisibility(View.VISIBLE);
-        refreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void removeLoadMore() {
-        collectionsRv.removeOnScrollListener(endlessScrollListener);
     }
 
     @Override
@@ -217,46 +210,35 @@ public class CollectionsFragment extends Fragment implements CollectionsContract
     }
 
     @Override
-    public void loadLocalCollections(String query) {
-        Bundle bundle = new Bundle();
-        bundle.putString("query", query);
-        getLoaderManager()
-                .restartLoader(COLLECTION_LOADER_ID, bundle, loaderCallbacks);
-    }
-
-    @Override
-    public void saveUsers(ContentValues[] users) {
-        getContext()
-                .getContentResolver()
-                .bulkInsert(ZoomPointContract.UserProfileEntry.CONTENT_URI, users);
-    }
-
-    @Override
-    public void saveCollections(ContentValues[] collections) {
-        getContext()
-                .getContentResolver()
-                .bulkInsert(ZoomPointContract.CollectionEntry.CONTENT_URI, collections);
-    }
-
-    @Override
-    public void removeCollections(String query) {
-        getContext()
-                .getContentResolver()
-                .delete(ZoomPointContract.CollectionEntry.CONTENT_URI, query, null);
-    }
-
-    @Override
     public void displayCollections(List<PhotoCollection> collections) {
         adapter.addCollections(collections);
+        if (adapter.getItemCount() == collections.size()) {
+            collectionsRv.removeOnScrollListener(endlessScrollListener);
+        }
 
         if (adapter.getCollections().size() > 0) {
             collectionsRv.setVisibility(View.VISIBLE);
             errorTv.setVisibility(View.INVISIBLE);
+        } else {
+            tryOnce();
         }
+
+        tryOnce = false;
     }
 
     @Override
-    public void clearCollections() {
-        adapter.clearCollections();
+    public void startLoading(int currentPage) {
+        Intent intent = CollectionsIntentService.getStartingIntent(getContext(), currentPage);
+        getActivity().startService(intent);
+    }
+
+    private void tryOnce() {
+        if (tryOnce) {
+            presenter.load();
+            collectionsRv.removeOnScrollListener(endlessScrollListener);
+            collectionsRv.addOnScrollListener(endlessScrollListener);
+        }
+
+        tryOnce = false;
     }
 }

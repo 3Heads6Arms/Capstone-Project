@@ -87,6 +87,9 @@
 
         <service
             android:name=".services.PhotosIntentService"
+            android:exported="false" />
+        <service
+            android:name=".services.CollectionsIntentService"
             android:exported="false"></service>
     </application>
 

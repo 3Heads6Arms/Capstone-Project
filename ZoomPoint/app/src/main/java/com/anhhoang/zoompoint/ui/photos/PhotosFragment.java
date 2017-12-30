@@ -231,18 +231,9 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         } else {
             tryOnce();
         }
-    }
 
-    private void tryOnce() {
-        if (tryOnce) {
-            presenter.load();
-            // Re-enable onscrolllistener in case there are need
-            photosRv.removeOnScrollListener(endlessScrollListener);
-            photosRv.addOnScrollListener(endlessScrollListener);
-        }
         tryOnce = false;
     }
-
 
     @Override
     public void toggleProgress(boolean show) {
@@ -259,7 +250,6 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     public void showEmpty() {
         errorTv.setVisibility(View.VISIBLE);
         photosRv.setVisibility(View.INVISIBLE);
-        tryOnce();
     }
 
     @Override
@@ -297,5 +287,15 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         bundle.putSerializable(CALL_TYPE, callType);
 
         return bundle;
+    }
+
+    private void tryOnce() {
+        if (tryOnce) {
+            presenter.load();
+            // Re-enable onscrolllistener in case there are need
+            photosRv.removeOnScrollListener(endlessScrollListener);
+            photosRv.addOnScrollListener(endlessScrollListener);
+        }
+        tryOnce = false;
     }
 }

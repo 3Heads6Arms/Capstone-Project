@@ -18,7 +18,7 @@ import static com.bumptech.glide.util.Preconditions.checkNotNull;
  */
 
 public class PhotosPresenter implements PhotosContract.Presenter {
-
+    private static final int PAGE_SIZE = 15;
     private static final String COLLECTION_ID = "CollectionIdKey";
     private static final String QUERY = "QueryKey";
     private static final String CALL_TYPE = "CallTypeKey";
@@ -79,10 +79,11 @@ public class PhotosPresenter implements PhotosContract.Presenter {
             view.toggleProgress(false);
 
             List<Photo> photos = PhotoUtils.parsePhotos(cursor);
+            view.displayPhotos(photos);
             if (photos.size() <= 0) {
                 view.showEmpty();
             } else {
-                view.displayPhotos(photos);
+                currentPage = photos.size() / PAGE_SIZE;
             }
 
         }

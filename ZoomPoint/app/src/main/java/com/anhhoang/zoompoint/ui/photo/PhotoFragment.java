@@ -64,7 +64,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class PhotoFragment extends Fragment implements PhotoContract.View {
     private static final String PHOTO_ID_KEY = "PhotoIdKey";
-    private static final int PHOTO_LOADER_KEY = 42;
+    private static final int PHOTO_LOADER_ID = 42;
 
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
@@ -100,6 +100,8 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     Button setWallpaperBtn;
     @BindView(R.id.button_download)
     Button downloadBtn;
+    @BindView(R.id.hiddenPhotoImmersive)
+    ImageView hiddenPhotoImmersive;
 
     private String photoId;
     private ExifAdapter adapter;
@@ -235,6 +237,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         super.onStart();
         if (presenter != null) {
             presenter.attach(this);
+            getLoaderManager().restartLoader(PHOTO_LOADER_ID, null, loaderCallback);
         } else {
             new PhotoPresenter().attach(this);
             presenter.load(photoId);
@@ -276,7 +279,46 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
                         .skipMemoryCache(true))
                 .transition(new DrawableTransitionOptions().crossFade())
                 .into(photoIv);
-        // TODO: Open image
+
+        Glide.with(this)
+                .asDrawable()
+                .load(url)
+                .apply(new RequestOptions()
+                        .error(R.drawable.ic_image_placeholder)
+                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+                        .skipMemoryCache(true))
+                .transition(new DrawableTransitionOptions().crossFade())
+                .into(hiddenPhotoImmersive);
+
+        hiddenPhotoImmersive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenPhotoImmersive.setVisibility(View.GONE);
+                refreshLayout.setVisibility(View.VISIBLE);
+                getActivity()
+                        .getWindow()
+                        .getDecorView()
+                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            }
+        });
+
+        photoIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenPhotoImmersive.setVisibility(View.VISIBLE);
+                refreshLayout.setVisibility(View.GONE);
+                getActivity()
+                        .getWindow()
+                        .getDecorView()
+                        .setSystemUiVisibility(
+                                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            }
+        });
     }
 
     @Override
@@ -303,6 +345,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         };
 
         photoIv.setContentDescription(getString(R.string.photo_content_description, name));
+        hiddenPhotoImmersive.setContentDescription(getString(R.string.photo_content_description, name));
 
         userPhotoIv.setOnClickListener(userClickListener);
         nameTv.setOnClickListener(userClickListener);
@@ -388,7 +431,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     @Override
     public void loadPhotoFromLocalDb() {
         getLoaderManager()
-                .restartLoader(PHOTO_LOADER_KEY, null, loaderCallback);
+                .restartLoader(PHOTO_LOADER_ID, null, loaderCallback);
     }
 
     @Override

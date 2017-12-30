@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="?listPreferredItemHeight"
+        android:gravity="center_vertical"
+        android:paddingEnd="@dimen/grid_horizontal_padding"
+        android:paddingStart="@dimen/grid_horizontal_padding"
+        android:text="@string/select_collection"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="@dimen/grid_horizontal_padding"
+        android:layout_marginStart="@dimen/grid_horizontal_padding"
+        android:background="?dividerHorizontal" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_collections"
+        android:layout_width="match_parent"
+        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/collection_picker_item_view" />
+</LinearLayout>

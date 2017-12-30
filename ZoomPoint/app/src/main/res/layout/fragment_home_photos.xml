@@ -1,0 +1,27 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingEnd="@dimen/grid_horizontal_padding"
+    android:paddingStart="@dimen/grid_horizontal_padding"
+    tools:context="com.anhhoang.zoompoint.ui.home.homephotos.HomePhotosFragment">
+
+    <Spinner
+        android:id="@+id/spinner_sort_query"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+
+    <FrameLayout
+        android:id="@+id/fragment_photos"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_sort_query" />
+
+</android.support.constraint.ConstraintLayout>

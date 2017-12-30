@@ -1,3 +1,57 @@
 <resources>
-    <string name="app_name">ZoomPoint</string>
+    <string name="app_name">Zoom Point</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="token_preference_key" translatable="false">TokenPreferenceKey</string>
+    <string name="username_preference_key" translatable="false">UserPreferenceKey</string>
+    <string name="fullname_preference_key" translatable="false">FullnamePreferenceKey</string>
+    <string name="login_error">Unable to login</string>
+    <string name="login_connection_error">Unable to connect to server</string>
+    <string name="title_activity_photo_collection" translatable="false">PhotoCollectionActivity</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="latest">Latest</string>
+    <string name="populars">Populars</string>
+    <string name="curated">Curated</string>
+    <string name="oldest">Oldest</string>
+    <string name="by">by</string>
+    <string name="no_photos_here">No photos here</string>
+    <string name="unable_to_get_photos">Unable to get new photos from server\nTry again later</string>
+    <string name="unable_to_get_photo">Unable to get new photo from server\nTry again later</string>
+    <string name="unable_to_get_collections">Unable to get new collections from server\nTry again later</string>
+    <string name="no_collection_found">No collection found!</string>
+    <string name="unable_to_connect">Unable to connect to server\nRefresh to try again</string>
+
+    <string name="search_button">Search Button</string>
+    <string name="title_activity_user_profile" translatable="false">UserProfileActivity</string>
+    <string name="bio">Bio</string>
+    <string name="collections">Collections</string>
+    <string name="not_available">N/A</string>
+    <string name="log_out">Log Out</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="title_activity_photo">Photo</string>
+    <string name="user_profile_picture">User Profile Picture</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="likes_placeholder">0 likes</string>
+    <string name="success">Success!</string>
+
+    <string name="camera_icon">Camera Icon</string>
+    <string name="focal_length_icon">Focal length Icon</string>
+    <string name="aperture_icon">Aperture Icon</string>
+    <string name="iso_icon">ISO Icon</string>
+    <string name="calendar_icon">calendar Icon</string>
+    <string name="photo_content_description">%s\'s photo</string>
+    <string name="description">Description</string>
+    <string name="like_icon">Like Icon</string>
+    <string name="location_icon">Location Icon</string>
+    <string name="add_to_collection">Add to Collection</string>
+    <string name="download">Download</string>
+    <string name="set_wallpaper">Set Wallpaper</string>
+    <string name="unable_set_wallpaper">Unable to set wallpaper! Try again later.</string>
+    <string name="wallpaper_is_set">Wallpaper has been set.</string>
+    <string name="title_activity_map">Map</string>
+    <string name="invalid_position">Photo does not have information about location taken</string>
+    <string name="select_collection">Select your Collection</string>
+    <string name="add_widget">Add widget</string>
+    <string name="random_featured">Random Featured</string>
 </resources>

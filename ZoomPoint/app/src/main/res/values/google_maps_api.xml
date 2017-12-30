@@ -1,0 +1,22 @@
+<resources>
+    <!--
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=77:2E:28:74:A8:C0:68:0F:79:AB:90:D0:8B:40:46:1A:E8:86:76:27%3Bcom.anhhoang.zoompoint.ui.map
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    77:2E:28:74:A8:C0:68:0F:79:AB:90:D0:8B:40:46:1A:E8:86:76:27
+
+    SHA-1 certificate fingerprint:
+    77:2E:28:74:A8:C0:68:0F:79:AB:90:D0:8B:40:46:1A:E8:86:76:27
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAFbDgsXRuXT7rtpQLDFNZ6pPDkXFM_sZ0</string>
+</resources>

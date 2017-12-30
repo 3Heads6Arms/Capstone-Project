@@ -47,4 +47,6 @@
     <string name="add_to_collection">Add to Collection</string>
     <string name="download">Download</string>
     <string name="set_wallpaper">Set Wallpaper</string>
+    <string name="unable_set_wallpaper">Unable to set wallpaper! Try again later.</string>
+    <string name="wallpaper_is_set">Wallpaper has been set.</string>
 </resources>

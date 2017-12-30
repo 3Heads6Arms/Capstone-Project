@@ -223,7 +223,7 @@ public class PhotoPresenter implements Presenter {
         } else {
             DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
             DownloadManager.Request request = new DownloadManager.Request(
-                    Uri.parse("https://unsplash.com/photos/" + photo.getId() + "/download")
+                    Uri.parse(getPhotoDownloadUrl())
             );
             request.setTitle("Zoom Point picture download");
             request.setDescription("Zoom Point downloading a picture from Unsplash");
@@ -234,8 +234,9 @@ public class PhotoPresenter implements Presenter {
 
     @Override
     public void onSetWallpaperSelected() {
-        // TODO
-
+        if (photo != null && view != null) {
+            view.setWallpaper(getPhotoDownloadUrl());
+        }
     }
 
     @Override
@@ -400,5 +401,9 @@ public class PhotoPresenter implements Presenter {
                 view.displayExif(pairs);
             }
         }
+    }
+
+    private String getPhotoDownloadUrl() {
+        return "https://unsplash.com/photos/" + photo.getId() + "/download";
     }
 }

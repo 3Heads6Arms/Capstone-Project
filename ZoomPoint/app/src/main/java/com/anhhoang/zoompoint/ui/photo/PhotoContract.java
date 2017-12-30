@@ -44,6 +44,8 @@ public interface PhotoContract {
 
         void loadPhotoFromLocalDb();
 
+        void setWallpaper(String url);
+
         String getMyUsername();
     }
 

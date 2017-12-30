@@ -1,8 +1,10 @@
 package com.anhhoang.zoompoint.ui.photo;
 
+import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -29,19 +31,25 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
 import com.anhhoang.zoompoint.ui.userprofile.UserProfileActivity;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
+import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
@@ -195,6 +203,12 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
                 presenter.onDownloadSelected(getContext());
             }
         });
+        setWallpaperBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onSetWallpaperSelected();
+            }
+        });
 
         adapter = new ExifAdapter();
         exifRv.addItemDecoration(new ItemSpacingDecoration(
@@ -244,7 +258,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
 
     @Override
     public void displayPhotoImage(String url) {
-        Glide.with(getContext())
+        Glide.with(this)
                 .asDrawable()
                 .load(url)
                 .apply(new RequestOptions()
@@ -258,7 +272,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
 
     @Override
     public void displayUser(String name, String username, String profileImageUrl) {
-        Glide.with(getContext())
+        Glide.with(this)
                 .asDrawable()
                 .load(profileImageUrl)
                 .apply(new RequestOptions()
@@ -375,6 +389,36 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     public void loadPhotoFromLocalDb() {
         getLoaderManager()
                 .restartLoader(PHOTO_LOADER_KEY, null, loaderCallback);
+    }
+
+    @Override
+    public void setWallpaper(String url) {
+        Glide.with(this)
+                .asBitmap()
+                .listener(new RequestListener<Bitmap>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                        showError(R.string.unable_to_get_photo);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(getActivity().getApplicationContext());
+
+                        try {
+                            wallpaperManager.setBitmap(resource);
+                            Toast.makeText(getActivity().getApplicationContext(), R.string.wallpaper_is_set, Toast.LENGTH_LONG).show();
+                            return true;
+                        } catch (IOException e) {
+                            Toast.makeText(getActivity().getApplicationContext(), R.string.unable_set_wallpaper, Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                    }
+                })
+                .load(url)
+                .submit();
+
     }
 
     @Override

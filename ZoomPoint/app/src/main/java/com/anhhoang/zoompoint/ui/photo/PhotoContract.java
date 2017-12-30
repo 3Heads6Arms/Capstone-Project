@@ -1,6 +1,7 @@
 package com.anhhoang.zoompoint.ui.photo;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 
 import com.anhhoang.zoompoint.BaseMvpContract;
@@ -55,7 +56,7 @@ public interface PhotoContract {
 
         void onLikeButtonSelected();
 
-        void onDownloadSelected();
+        void onDownloadSelected(Context context);
 
         void onSetWallpaperSelected();
 

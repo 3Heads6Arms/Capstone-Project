@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/photo_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -43,187 +43,192 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingBottom="@dimen/grid_vertical_padding"
+            android:paddingEnd="@dimen/grid_horizontal_padding"
+
+            android:paddingStart="@dimen/grid_horizontal_padding"
+            android:paddingTop="@dimen/grid_vertical_padding"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/refreshLayout"
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="@dimen/grid_vertical_padding"
-                android:paddingEnd="@dimen/grid_horizontal_padding"
-                android:paddingStart="@dimen/grid_horizontal_padding"
-                android:paddingTop="@dimen/grid_vertical_padding">
+                android:layout_height="match_parent">
 
-                <android.support.v4.widget.NestedScrollView
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
 
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    <android.support.constraint.Guideline
+                        android:id="@+id/vertical_guidline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
 
-                        <ImageView
-                            android:id="@+id/image_view_user_photo"
-                            android:layout_width="@dimen/user_profile_small_photo"
-                            android:layout_height="@dimen/user_profile_small_photo"
-                            android:contentDescription="@string/user_profile_picture"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/user_placeholder"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                    <ImageView
+                        android:id="@+id/image_view_user_photo"
+                        android:layout_width="@dimen/user_profile_small_photo"
+                        android:layout_height="@dimen/user_profile_small_photo"
+                        android:contentDescription="@string/user_profile_picture"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/user_placeholder"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/text_view_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/grid_item_padding"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                            app:layout_constraintStart_toEndOf="@id/image_view_user_photo"
-                            app:layout_constraintTop_toTopOf="@id/image_view_user_photo"
-                            tools:text="John Doe" />
+                    <TextView
+                        android:id="@+id/text_view_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/grid_item_padding"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        app:layout_constraintStart_toEndOf="@id/image_view_user_photo"
+                        app:layout_constraintTop_toTopOf="@id/image_view_user_photo"
+                        tools:text="John Doe" />
 
-                        <TextView
-                            android:id="@+id/text_view_username"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/grid_item_padding"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                            app:layout_constraintStart_toEndOf="@id/image_view_user_photo"
-                            app:layout_constraintTop_toBottomOf="@id/text_view_name"
-                            tools:text="johndoe" />
+                    <TextView
+                        android:id="@+id/text_view_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/grid_item_padding"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                        app:layout_constraintStart_toEndOf="@id/image_view_user_photo"
+                        app:layout_constraintTop_toBottomOf="@id/text_view_name"
+                        tools:text="johndoe" />
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/grid_item_padding"
-                            android:orientation="horizontal"
-                            android:gravity="end"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="1"
-                            app:layout_constraintStart_toEndOf="@id/text_view_name">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/grid_item_padding"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1"
+                        app:layout_constraintStart_toEndOf="@id/text_view_name">
 
-
-                            <android.support.v7.widget.AppCompatImageView
-                                android:id="@+id/image_view_location"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:contentDescription="@string/location_icon"
-                                android:src="@drawable/ic_location" />
-
-                            <TextView
-                                android:id="@+id/text_view_location"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/not_available"
-                                tools:text="Toronto, Canada" />
-                        </LinearLayout>
 
                         <android.support.v7.widget.AppCompatImageView
-                            android:id="@+id/image_view_like"
+                            android:id="@+id/image_view_location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/grid_item_padding"
-                            android:contentDescription="@string/like_icon"
-                            android:padding="@dimen/grid_item_padding"
-                            android:src="@drawable/ic_favorite_border"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/image_view_user_photo"
-                            app:tint="@android:color/black" />
+                            android:contentDescription="@string/location_icon"
+                            android:src="@drawable/ic_location" />
 
                         <TextView
-                            android:id="@+id/text_view_likes"
+                            android:id="@+id/text_view_location"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/grid_item_padding"
-                            android:text="@string/likes_placeholder"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            app:layout_constraintBottom_toBottomOf="@id/image_view_like"
-                            app:layout_constraintStart_toEndOf="@id/image_view_like"
-                            app:layout_constraintTop_toTopOf="@id/image_view_like"
-                            tools:text="12k likes" />
-
-                        <TextView
-                            android:id="@+id/text_view_description_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/grid_item_padding"
-                            android:text="@string/description"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/image_view_like" />
-
-                        <TextView
-                            android:id="@+id/text_view_description"
-                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/not_available"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            app:layout_constraintTop_toBottomOf="@id/text_view_description_label"
-                            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
+                            tools:text="Toronto, Canada" />
+                    </LinearLayout>
 
-                        <FrameLayout
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/image_view_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/grid_item_padding"
+                        android:contentDescription="@string/like_icon"
+                        android:padding="@dimen/grid_item_padding"
+                        android:src="@drawable/ic_favorite_border"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/image_view_user_photo"
+                        app:tint="@android:color/black" />
+
+                    <TextView
+                        android:id="@+id/text_view_likes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/grid_item_padding"
+                        android:text="@string/likes_placeholder"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        app:layout_constraintBottom_toBottomOf="@id/image_view_like"
+                        app:layout_constraintStart_toEndOf="@id/image_view_like"
+                        app:layout_constraintTop_toTopOf="@id/image_view_like"
+                        tools:text="12k likes" />
+
+                    <TextView
+                        android:id="@+id/text_view_description_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/grid_item_padding"
+                        android:text="@string/description"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/image_view_like" />
+
+                    <TextView
+                        android:id="@+id/text_view_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/not_available"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        app:layout_constraintTop_toBottomOf="@id/text_view_description_label"
+                        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
+
+                    <FrameLayout
+                        android:id="@+id/exif_wrapper"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/grid_vertical_padding"
+                        app:layout_constraintTop_toBottomOf="@id/text_view_description">
+
+                        <TextView
+                            android:id="@+id/text_view_empty_exif"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="@string/not_available"
+                            android:visibility="gone" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_exif"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/grid_vertical_padding"
-                            app:layout_constraintTop_toBottomOf="@id/text_view_description">
+                            app:layoutManager="android.support.v7.widget.StaggeredGridLayoutManager"
+                            app:spanCount="2"
+                            tools:listitem="@layout/exif_item_view" />
+                    </FrameLayout>
 
-                            <TextView
-                                android:id="@+id/text_view_empty_exif"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:text="@string/not_available"
-                                android:visibility="gone" />
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/button_add_to_collection"
+                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/grid_vertical_padding"
+                        android:drawableTop="@drawable/ic_add_collection"
+                        android:text="@string/add_to_collection"
+                        app:layout_constraintTop_toBottomOf="@id/exif_wrapper" />
 
-                            <android.support.v7.widget.RecyclerView
-                                android:id="@+id/recycler_view_exif"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:layoutManager="android.support.v7.widget.StaggeredGridLayoutManager"
-                                app:spanCount="2"
-                                tools:listitem="@layout/exif_item_view" />
-                        </FrameLayout>
-                    </android.support.constraint.ConstraintLayout>
-                </android.support.v4.widget.NestedScrollView>
-            </android.support.v4.widget.SwipeRefreshLayout>
-        </android.support.constraint.ConstraintLayout>
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/button_download"
+                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_file_download"
+                        android:text="@string/download"
+                        android:tint="@color/colorAccent"
+                        app:layout_constraintEnd_toStartOf="@id/vertical_guidline"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/button_add_to_collection" />
 
-        <com.getbase.floatingactionbutton.FloatingActionsMenu
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fab_addButtonColorNormal="?attr/colorAccent"
-            app:fab_addButtonColorPressed="?attr/colorAccent"
-            app:layout_anchor="@id/refreshLayout"
-            app:layout_anchorGravity="bottom|end">
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_download"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/grid_item_padding"
-                android:src="@drawable/ic_file_download"
-                app:fab_size="mini" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_set_wallpaper"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/grid_item_padding"
-                android:src="@drawable/ic_wallpaper"
-                app:fab_size="mini" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_add_to_collection"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/grid_item_padding"
-                android:src="@drawable/ic_add_collection"
-                app:fab_size="mini" />
-        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+                    <android.support.v7.widget.AppCompatButton
+                        android:id="@+id/button_set_wallpaper"
+                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:drawableTop="@drawable/ic_wallpaper"
+                        android:text="@string/set_wallpaper"
+                        android:tint="@color/colorAccent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/vertical_guidline"
+                        app:layout_constraintTop_toBottomOf="@id/button_add_to_collection" />
+                </android.support.constraint.ConstraintLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </android.support.v4.widget.SwipeRefreshLayout>
     </android.support.design.widget.CoordinatorLayout>
 
     <com.google.android.gms.ads.AdView

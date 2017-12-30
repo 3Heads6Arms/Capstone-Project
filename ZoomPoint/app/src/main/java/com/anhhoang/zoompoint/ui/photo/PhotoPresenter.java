@@ -1,13 +1,18 @@
 package com.anhhoang.zoompoint.ui.photo;
 
+import android.app.DownloadManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Environment;
 import android.text.TextUtils;
 
 import com.anhhoang.unsplashapi.UnsplashApi;
 import com.anhhoang.unsplashmodel.Exif;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.PhotoCollection;
+import com.anhhoang.unsplashmodel.PhotoLocation;
 import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
 import com.anhhoang.zoompoint.ui.photo.PhotoContract.Presenter;
@@ -210,8 +215,21 @@ public class PhotoPresenter implements Presenter {
     }
 
     @Override
-    public void onDownloadSelected() {
-        // TODO
+    public void onDownloadSelected(Context context) {
+        if (photo == null) {
+            if (view != null) {
+                view.showError(R.string.unable_to_get_photo);
+            }
+        } else {
+            DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            DownloadManager.Request request = new DownloadManager.Request(
+                    Uri.parse("https://unsplash.com/photos/" + photo.getId() + "/download")
+            );
+            request.setTitle("Zoom Point picture download");
+            request.setDescription("Zoom Point downloading a picture from Unsplash");
+            request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, photo.getId() + ".jpg");
+            downloadManager.enqueue(request);
+        }
     }
 
     @Override
@@ -277,8 +295,10 @@ public class PhotoPresenter implements Presenter {
                     user.getUsername(),
                     user.getProfileImage().getLarge());
 
-            if (photo.getLocation() != null) {
-                view.displayLocation(photo.getLocation().getCity() + ", " + photo.getLocation().getCountry());
+
+            String location = getValidLocationString(photo.getLocation());
+            if (!TextUtils.isEmpty(location)) {
+                view.displayLocation(location);
             }
 
             view.displayLikes(photo.isLikedByUser(), photo.getLikes());
@@ -290,6 +310,24 @@ public class PhotoPresenter implements Presenter {
             Exif exif = photo.getExif();
             processExif(exif, photo.getUpdatedAt());
         }
+    }
+
+    private String getValidLocationString(PhotoLocation photoLocation) {
+        String location = "";
+        if (photoLocation != null) {
+            if (!TextUtils.isEmpty(photoLocation.getCity())) {
+                location += photoLocation.getCity();
+            }
+            if (!TextUtils.isEmpty(photoLocation.getCountry())) {
+                if (TextUtils.isEmpty(location)) {
+                    location += photoLocation.getCountry();
+                } else {
+                    location += ", " + photoLocation.getCountry();
+                }
+            }
+        }
+
+        return location;
     }
 
     private void processExif(Exif exif, Date updatedAt) {

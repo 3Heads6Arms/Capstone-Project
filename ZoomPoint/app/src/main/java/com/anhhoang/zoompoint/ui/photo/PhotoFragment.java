@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -27,6 +26,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -85,12 +85,12 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     RecyclerView exifRv;
     @BindView(R.id.text_view_empty_exif)
     TextView emptyExifTv;
-    @BindView(R.id.fab_download)
-    FloatingActionButton downloadFab;
-    @BindView(R.id.fab_set_wallpaper)
-    FloatingActionButton setWallpaperFab;
-    @BindView(R.id.fab_add_to_collection)
-    FloatingActionButton addToCollectionFab;
+    @BindView(R.id.button_add_to_collection)
+    Button addtoCollectionBtn;
+    @BindView(R.id.button_set_wallpaper)
+    Button setWallpaperBtn;
+    @BindView(R.id.button_download)
+    Button downloadBtn;
 
     private String photoId;
     private ExifAdapter adapter;
@@ -146,6 +146,24 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Drawable addCollectionIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_add_collection);
+        addCollectionIcon = DrawableCompat.wrap(addCollectionIcon);
+        addCollectionIcon.mutate();
+        DrawableCompat.setTint(addCollectionIcon, ContextCompat.getColor(getContext(), R.color.colorAccent));
+        addtoCollectionBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(null, addCollectionIcon, null, null);
+
+        Drawable downloadIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_file_download);
+        downloadIcon = DrawableCompat.wrap(downloadIcon);
+        downloadIcon.mutate();
+        DrawableCompat.setTint(downloadIcon, ContextCompat.getColor(getContext(), R.color.colorAccent));
+        downloadBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(null, downloadIcon, null, null);
+
+        Drawable setWallpaperIcon = ContextCompat.getDrawable(getContext(), R.drawable.ic_wallpaper);
+        setWallpaperIcon = DrawableCompat.wrap(setWallpaperIcon);
+        setWallpaperIcon.mutate();
+        DrawableCompat.setTint(setWallpaperIcon, ContextCompat.getColor(getContext(), R.color.colorAccent));
+        setWallpaperBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(null, setWallpaperIcon, null, null);
+
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(int i) {
@@ -171,6 +189,12 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
                 presenter.onLikeButtonSelected();
             }
         });
+        downloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.onDownloadSelected(getContext());
+            }
+        });
 
         adapter = new ExifAdapter();
         exifRv.addItemDecoration(new ItemSpacingDecoration(
@@ -178,6 +202,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
                 false));
         exifRv.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         exifRv.setAdapter(adapter);
+
 
         return view;
     }
@@ -265,6 +290,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     public void displayLikes(boolean likedByUser, int likes) {
         if (likedByUser) {
             Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_favorite_white_24dp);
+            drawable = DrawableCompat.wrap(drawable);
             drawable.mutate();
             DrawableCompat.setTint(drawable, Color.RED);
             likeIv.setImageDrawable(drawable);

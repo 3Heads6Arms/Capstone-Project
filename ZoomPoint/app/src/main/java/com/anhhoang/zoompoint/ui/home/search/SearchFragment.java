@@ -105,7 +105,7 @@ public class SearchFragment extends Fragment implements SearchContract.View {
     public void updatePhotoSource(PhotosCallType type, String query) {
 
         Fragment fragment = new PhotosFragment();
-        fragment.setArguments(PhotosFragment.createBundle(type, query));
+        fragment.setArguments(PhotosFragment.getStartingBundle(type, query));
 
         getFragmentManager()
                 .beginTransaction()

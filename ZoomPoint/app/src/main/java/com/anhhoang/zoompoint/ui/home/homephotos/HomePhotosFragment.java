@@ -118,7 +118,7 @@ public class HomePhotosFragment extends Fragment implements HomePhotosContract.V
     @Override
     public void updatePhotoSource(PhotosCallType callType, String query) {
         Fragment fragment = new PhotosFragment();
-        fragment.setArguments(PhotosFragment.createBundle(callType, query));
+        fragment.setArguments(PhotosFragment.getStartingBundle(callType, query));
 
         getFragmentManager()
                 .beginTransaction()

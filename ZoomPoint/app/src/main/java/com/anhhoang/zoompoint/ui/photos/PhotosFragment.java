@@ -1,10 +1,11 @@
 package com.anhhoang.zoompoint.ui.photos;
 
-import android.content.ContentValues;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,7 @@ import com.anhhoang.database.ZoomPointContract;
 import com.anhhoang.unsplashmodel.Photo;
 import com.anhhoang.unsplashmodel.UserProfile;
 import com.anhhoang.zoompoint.R;
+import com.anhhoang.zoompoint.services.PhotosIntentService;
 import com.anhhoang.zoompoint.ui.ItemSpacingDecoration;
 import com.anhhoang.zoompoint.ui.photo.PhotoActivity;
 import com.anhhoang.zoompoint.ui.userprofile.UserProfileActivity;
@@ -55,6 +57,7 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
 
     private PhotosContract.Presenter presenter;
     private PhotosAdapter adapter;
+    private boolean tryOnce = true;
 
     @BindView(R.id.recycler_view_photos)
     RecyclerView photosRv;
@@ -63,14 +66,25 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(PhotosIntentService.PHOTOS_LOAD_SUCCESS)) {
+                getLoaderManager().restartLoader(PHOTO_LOADER, null, loaderCallbacks);
+            } else if (intent.getAction().equals(PhotosIntentService.PHOTOS_LOAD_FAILED)) {
+                Snackbar.make(getView(), R.string.unable_to_get_photos, Snackbar.LENGTH_LONG).show();
+                getLoaderManager().restartLoader(PHOTO_LOADER, null, loaderCallbacks);
+            }
+        }
+    };
 
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            checkNotNull(args);
 
-            String query = args.getString("query");
+            String query = presenter.getSqlSelection();
             checkNotNull(query, "Query cannot be null");
+            refreshLayout.setRefreshing(true);
 
             return new CursorLoader(
                     getContext(),
@@ -104,6 +118,7 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
             presenter.onPhotoSelected(photoId);
         }
     };
+    private PhotosCallType callType;
 
     public PhotosFragment() {
         setRetainInstance(true);
@@ -115,7 +130,10 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         Bundle bundle = getArguments();
 
         checkNotNull(bundle, "Missing bundle!");
+
+        callType = (PhotosCallType) bundle.getSerializable(CALL_TYPE);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,7 +157,7 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.load(getArguments());
+                presenter.load();
                 // Re-enable onscrolllistener in case there are need
                 photosRv.removeOnScrollListener(endlessScrollListener);
                 photosRv.addOnScrollListener(endlessScrollListener);
@@ -160,17 +178,34 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         super.onStart();
 
         if (presenter == null) {
-            new PhotosPresenter().attach(this);
-            presenter.load(getArguments());
+            new PhotosPresenter(getArguments()).attach(this);
+            if (callType != PhotosCallType.SEARCH_PHOTOS) {
+                getLoaderManager().restartLoader(PHOTO_LOADER, null, loaderCallbacks);
+            } else {
+                presenter.load();
+            }
         } else {
             presenter.attach(this);
         }
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(PhotosIntentService.PHOTOS_LOAD_SUCCESS);
+        intentFilter.addAction(PhotosIntentService.PHOTOS_LOAD_FAILED);
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+
+        getActivity().unregisterReceiver(broadcastReceiver);
+
         presenter.detach();
+
+        if (callType == PhotosCallType.SEARCH_PHOTOS) {
+            getContext().getContentResolver()
+                    .delete(ZoomPointContract.PhotoEntry.CONTENT_URI, presenter.getSqlSelection(), null);
+        }
     }
 
     @Override
@@ -185,30 +220,29 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     }
 
     @Override
-    public void loadLocalPhotos(String query) {
-        Bundle bundle = new Bundle();
-        bundle.putString("query", query);
-        getLoaderManager().restartLoader(PHOTO_LOADER, bundle, loaderCallbacks);
-    }
-
-    @Override
     public void displayPhotos(List<Photo> photos) {
         adapter.addPhotos(photos);
+        if (photos.size() == adapter.getItemCount()) {
+            photosRv.removeOnScrollListener(endlessScrollListener);
+        }
         if (adapter.getPhotos().size() > 0) {
             errorTv.setVisibility(View.INVISIBLE);
             photosRv.setVisibility(View.VISIBLE);
+        } else {
+            tryOnce();
         }
     }
 
-    @Override
-    public void clearPhotos() {
-        adapter.clearPhotos();
+    private void tryOnce() {
+        if (tryOnce) {
+            presenter.load();
+            // Re-enable onscrolllistener in case there are need
+            photosRv.removeOnScrollListener(endlessScrollListener);
+            photosRv.addOnScrollListener(endlessScrollListener);
+        }
+        tryOnce = false;
     }
 
-    @Override
-    public void showError(int idString) {
-        Snackbar.make(getView(), idString, Snackbar.LENGTH_LONG).show();
-    }
 
     @Override
     public void toggleProgress(boolean show) {
@@ -222,46 +256,10 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
     }
 
     @Override
-    public String getToken() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(getContext())
-                .getString(getString(R.string.token_preference_key), null);
-    }
-
-    @Override
-    public void savePhotos(final ContentValues[] photos) {
-        getContext().getContentResolver().bulkInsert(ZoomPointContract.PhotoEntry.CONTENT_URI, photos);
-    }
-
-
-    @Override
-    public void saveUsers(final ContentValues[] users) {
-        getContext().getContentResolver().bulkInsert(ZoomPointContract.UserProfileEntry.CONTENT_URI, users);
-    }
-
-    @Override
-    public void removePhotos(String query) {
-        getContext()
-                .getContentResolver()
-                .delete(ZoomPointContract.PhotoEntry.CONTENT_URI, query, null);
-    }
-
-    @Override
-    public void showEmpty(boolean isError, int errorId) {
-        if (isError) {
-            errorTv.setText(errorId);
-        } else {
-            errorTv.setText(R.string.no_photos_here);
-        }
-
+    public void showEmpty() {
         errorTv.setVisibility(View.VISIBLE);
-        refreshLayout.setRefreshing(false);
         photosRv.setVisibility(View.INVISIBLE);
-    }
-
-    @Override
-    public void removeLoadMore() {
-        photosRv.removeOnScrollListener(endlessScrollListener);
+        tryOnce();
     }
 
     @Override
@@ -275,7 +273,13 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         startActivity(PhotoActivity.getStartingIntent(getContext(), photoId));
     }
 
-    public static Bundle createBundle(long collectionId) {
+    @Override
+    public void startLoading(long collectionId, PhotosCallType callType, String query, int currentPage) {
+        Intent intent = PhotosIntentService.getStartingIntent(getContext(), collectionId, callType, query, currentPage);
+        getActivity().startService(intent);
+    }
+
+    public static Bundle getStartingBundle(long collectionId) {
         checkArgument(collectionId > 0, "Invalid collection Id, should be greater than 0");
 
         Bundle bundle = new Bundle();
@@ -285,7 +289,7 @@ public class PhotosFragment extends Fragment implements PhotosContract.View {
         return bundle;
     }
 
-    public static Bundle createBundle(PhotosCallType callType, String query) {
+    public static Bundle getStartingBundle(PhotosCallType callType, String query) {
         checkArgument(!TextUtils.isEmpty(query), "Invalid query, mustn't be null or empty");
 
         Bundle bundle = new Bundle();

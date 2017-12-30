@@ -29,7 +29,7 @@
     <string name="not_available">N/A</string>
     <string name="log_out">Log Out</string>
     <string name="profile_picture">Profile Picture</string>
-    <string name="title_activity_photo">PhotoActivity</string>
+    <string name="title_activity_photo">Photo</string>
     <string name="user_profile_picture">User Profile Picture</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="likes_placeholder">0 likes</string>
@@ -52,4 +52,6 @@
     <string name="title_activity_map">Map</string>
     <string name="invalid_position">Photo does not have information about location taken</string>
     <string name="select_collection">Select your Collection</string>
+    <string name="add_widget">Add widget</string>
+    <string name="random_featured">Random Featured</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.anhhoang.zoompoint.ui.userprofile;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.anhhoang.unsplashmodel.PhotoCollection;
@@ -15,29 +14,21 @@ import java.util.List;
 
 public interface UserProfileContract {
     interface View extends BaseMvpContract.View<Presenter> {
-        String getToken();
-
         void displayProfilePicture(String url);
 
         void displayProfile(UserProfile profile);
 
         void displayCollections(List<PhotoCollection> collections);
 
-        void clearCollections();
-
         void toggleProgress(boolean show);
-
-        void showError(int idStringError);
 
         void showEmptyCollection();
 
-        void saveUserProfile(ContentValues userProfile);
-
-        void loadUserFromLocal(String query);
-
-        void removeLoadMore();
-
         void openCollection(int id, String collectionName);
+
+        void startLoadingUser(String username);
+
+        void startLoadingCollections(String username, int page);
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
@@ -45,8 +36,14 @@ public interface UserProfileContract {
 
         void loadFinished(Cursor data);
 
+        void loadCollectionsFinished(Cursor data);
+
         void loadMore();
 
         void collectionSelected(PhotoCollection collection);
+
+        String getSqlQuery();
+
+        String getSqlQueryCollections();
     }
 }

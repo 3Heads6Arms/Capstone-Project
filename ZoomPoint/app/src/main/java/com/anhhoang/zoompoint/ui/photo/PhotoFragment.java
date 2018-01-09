@@ -70,6 +70,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PhotoFragment extends Fragment implements PhotoContract.View {
     private static final String PHOTO_ID_KEY = "PhotoIdKey";
     private static final int PHOTO_LOADER_ID = 42;
+    private static final String PHOTO_TYPE = "PhotoTypeKey";
 
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
@@ -109,6 +110,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
     ImageView hiddenPhotoImmersive;
 
     private String photoId;
+    private String photoType;
     private ExifAdapter adapter;
     private PhotoContract.Presenter presenter;
     private LoaderManager.LoaderCallbacks<Cursor> loaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
@@ -154,7 +156,9 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         Bundle bundle = getArguments();
         checkNotNull(bundle);
         photoId = bundle.getString(PHOTO_ID_KEY);
+        photoType = bundle.getString(PHOTO_TYPE);
         checkArgument(!TextUtils.isEmpty(photoId), "Photo Id must be passed as parameter");
+        checkArgument(!TextUtils.isEmpty(photoType), "Photo Type must be passed as parameter");
     }
 
     @Override
@@ -204,7 +208,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.load(photoId);
+                presenter.load(photoId, photoType);
             }
         });
         likeIv.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +255,7 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
             getLoaderManager().restartLoader(PHOTO_LOADER_ID, null, loaderCallback);
         } else {
             new PhotoPresenter().attach(this);
-            presenter.load(photoId);
+            presenter.load(photoId, photoType);
         }
 
         AdRequest adRequest = new AdRequest.Builder()
@@ -510,9 +514,10 @@ public class PhotoFragment extends Fragment implements PhotoContract.View {
                 .getString(getString(R.string.username_preference_key), null);
     }
 
-    public static Bundle getStartingBundle(String photoId) {
+    public static Bundle getStartingBundle(String photoId, String photoType) {
         Bundle bundle = new Bundle();
         bundle.putString(PHOTO_ID_KEY, photoId);
+        bundle.putString(PHOTO_TYPE, photoType);
 
         return bundle;
     }

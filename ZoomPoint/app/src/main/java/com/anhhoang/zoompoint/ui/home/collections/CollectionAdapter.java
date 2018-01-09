@@ -76,12 +76,8 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
     }
 
     public void addCollections(List<PhotoCollection> collections) {
+        this.collections.clear();
         this.collections.addAll(collections);
-        notifyDataSetChanged();
-    }
-
-    public void clearCollections() {
-        collections.clear();
         notifyDataSetChanged();
     }
 

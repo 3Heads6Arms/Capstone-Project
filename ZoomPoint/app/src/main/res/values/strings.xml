@@ -7,7 +7,7 @@
     <string name="fullname_preference_key" translatable="false">FullnamePreferenceKey</string>
     <string name="login_error">Unable to login</string>
     <string name="login_connection_error">Unable to connect to server</string>
-    <string name="title_activity_photo_collection" translatable="false">PhotoCollectionActivity</string>
+    <string name="title_activity_photo_collection" translatable="false">Photo Collection</string>
     <string name="action_settings">Settings</string>
 
     <string name="latest">Latest</string>
@@ -23,7 +23,7 @@
     <string name="unable_to_connect">Unable to connect to server\nRefresh to try again</string>
 
     <string name="search_button">Search Button</string>
-    <string name="title_activity_user_profile" translatable="false">UserProfileActivity</string>
+    <string name="title_activity_user_profile" translatable="false">User Profile</string>
     <string name="bio">Bio</string>
     <string name="collections">Collections</string>
     <string name="not_available">N/A</string>
@@ -54,4 +54,7 @@
     <string name="select_collection">Select your Collection</string>
     <string name="add_widget">Add widget</string>
     <string name="random_featured">Random Featured</string>
+    <string name="my_profile">My profile</string>
+    <string name="download_title">Zoom Point picture download</string>
+    <string name="download_description">Zoom Point downloading a picture from Unsplash</string>
 </resources>

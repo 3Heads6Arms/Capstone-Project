@@ -170,9 +170,10 @@ public class PhotoPresenter implements Presenter {
     }
 
     @Override
-    public void load(String photoId) {
+    public void load(String photoId, String photoType) {
         if (view != null && !isLoading) {
             isLoading = true;
+            this.photoType = photoType;
             view.toggleProgress(true);
             unsplashApi.getPhoto(photoId)
                     .enqueue(photoCallback);
@@ -224,8 +225,8 @@ public class PhotoPresenter implements Presenter {
             DownloadManager.Request request = new DownloadManager.Request(
                     Uri.parse(getPhotoDownloadUrl())
             );
-            request.setTitle("Zoom Point picture download");
-            request.setDescription("Zoom Point downloading a picture from Unsplash");
+            request.setTitle(context.getString(R.string.download_title));
+            request.setDescription(context.getString(R.string.download_description));
             request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, photo.getId() + ".jpg");
             downloadManager.enqueue(request);
         }

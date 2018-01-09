@@ -9,7 +9,6 @@ import com.anhhoang.unsplashmodel.UserProfile;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -33,12 +32,8 @@ public class UnsplashApi {
     private UnsplashApiService unsplashApiService;
 
     private UnsplashApi(String token) {
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new AuthorizationInterceptor(token))
-                .addInterceptor(loggingInterceptor)
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()

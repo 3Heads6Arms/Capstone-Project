@@ -71,12 +71,8 @@ public class UserCollectionAdapter extends RecyclerView.Adapter<UserCollectionAd
     }
 
     public void updateCollections(List<PhotoCollection> collections) {
-        data.addAll(collections);
-        notifyDataSetChanged();
-    }
-
-    public void clear() {
         data.clear();
+        data.addAll(collections);
         notifyDataSetChanged();
     }
 

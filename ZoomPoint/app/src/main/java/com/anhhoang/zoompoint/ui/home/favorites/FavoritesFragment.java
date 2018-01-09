@@ -40,7 +40,7 @@ public class FavoritesFragment extends Fragment {
         if (!isRestoringScreen) {
             String username = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.username_preference_key), null);
             Fragment fragment = new PhotosFragment();
-            fragment.setArguments(PhotosFragment.createBundle(PhotosCallType.LIKED_PHOTOS, username));
+            fragment.setArguments(PhotosFragment.getStartingBundle(PhotosCallType.LIKED_PHOTOS, username));
             getFragmentManager()
                     .beginTransaction()
                     .add(R.id.fragment_favorite_photos, fragment, TAG)

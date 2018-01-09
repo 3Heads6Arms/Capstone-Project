@@ -21,7 +21,7 @@ public class PhotoCollectionUtils {
         throw new UnsupportedOperationException("PhotoCollectionUtils cannot be instantiated");
     }
 
-    public static ContentValues parseCollection(PhotoCollection collection) {
+    public static ContentValues parseCollection(PhotoCollection collection, String type) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(PhotoCollection.COL_ID, collection.getId());
         contentValues.put(PhotoCollection.COL_TITLE, collection.getTitle());
@@ -30,6 +30,7 @@ public class PhotoCollectionUtils {
         contentValues.put(PhotoCollection.COL_UPDATED, collection.getUpdatedAt().getTime());
         contentValues.put(PhotoCollection.COL_CURATED, collection.isCurated());
         contentValues.put(PhotoCollection.COL_FEATURED, collection.isFeatured());
+        contentValues.put(PhotoCollection.COL_TYPE, type);
 
         if (collection.getPhoto() != null) {
             contentValues.put(Photo.COL_WIDTH, collection.getPhoto().getWidth());
@@ -51,11 +52,11 @@ public class PhotoCollectionUtils {
         return contentValues;
     }
 
-    public static ContentValues[] parseCollections(List<PhotoCollection> collections) {
+    public static ContentValues[] parseCollections(List<PhotoCollection> collections, String type) {
         List<ContentValues> contentValues = new ArrayList<>();
 
         for (PhotoCollection collection : collections) {
-            contentValues.add(parseCollection(collection));
+            contentValues.add(parseCollection(collection, type));
         }
 
         return contentValues.toArray(new ContentValues[contentValues.size()]);
@@ -74,6 +75,7 @@ public class PhotoCollectionUtils {
         collection.setUpdatedAt(new Date(cursor.getLong(cursor.getColumnIndex(PhotoCollection.COL_UPDATED))));
         collection.setCurated(cursor.getInt(cursor.getColumnIndex(PhotoCollection.COL_CURATED)) > 0);
         collection.setFeatured(cursor.getInt(cursor.getColumnIndex(PhotoCollection.COL_FEATURED)) > 0);
+        collection.setType(cursor.getString(cursor.getColumnIndex(PhotoCollection.COL_TYPE)));
 
 
         photo.setWidth(cursor.getInt(cursor.getColumnIndex(Photo.COL_WIDTH)));

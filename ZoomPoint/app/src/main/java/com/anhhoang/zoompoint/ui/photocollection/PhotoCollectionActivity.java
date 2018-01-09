@@ -39,7 +39,7 @@ public class PhotoCollectionActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             PhotosFragment fragment = new PhotosFragment();
-            fragment.setArguments(PhotosFragment.createBundle(collectionId));
+            fragment.setArguments(PhotosFragment.getStartingBundle(collectionId));
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()

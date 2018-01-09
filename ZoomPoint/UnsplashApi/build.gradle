@@ -30,11 +30,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     api 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:retrofit-converters:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
-    testImplementation 'junit:junit:4.12'
     api project(':UnsplashModel')
 }

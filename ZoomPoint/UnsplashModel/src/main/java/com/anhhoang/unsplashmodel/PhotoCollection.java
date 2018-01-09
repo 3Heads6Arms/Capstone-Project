@@ -19,6 +19,7 @@ public class PhotoCollection implements Parcelable {
     public static final String COL_UPDATED = "updated_at";
     public static final String COL_CURATED = "curated";
     public static final String COL_FEATURED = "featured";
+    public static final String COL_TYPE = "type";
 
     public static final String COL_USER_ID = "user_id";
 
@@ -40,6 +41,15 @@ public class PhotoCollection implements Parcelable {
     private Photo photo;
     @SerializedName("user")
     private UserProfile user;
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public int getId() {
         return id;
@@ -129,6 +139,7 @@ public class PhotoCollection implements Parcelable {
         dest.writeByte(this.isFeatured ? (byte) 1 : (byte) 0);
         dest.writeParcelable(this.photo, flags);
         dest.writeParcelable(this.user, flags);
+        dest.writeString(this.type);
     }
 
     public PhotoCollection() {
@@ -146,6 +157,7 @@ public class PhotoCollection implements Parcelable {
         this.isFeatured = in.readByte() != 0;
         this.photo = in.readParcelable(Photo.class.getClassLoader());
         this.user = in.readParcelable(UserProfile.class.getClassLoader());
+        this.type = in.readString();
     }
 
     public static final Parcelable.Creator<PhotoCollection> CREATOR = new Parcelable.Creator<PhotoCollection>() {

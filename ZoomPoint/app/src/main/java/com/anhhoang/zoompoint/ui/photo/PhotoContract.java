@@ -50,7 +50,7 @@ public interface PhotoContract {
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
-        void load(String photoId);
+        void load(String photoId, String photoType);
 
         void loadFinished(Cursor data);
 

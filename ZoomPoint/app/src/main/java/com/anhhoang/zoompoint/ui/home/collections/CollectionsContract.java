@@ -1,6 +1,5 @@
 package com.anhhoang.zoompoint.ui.home.collections;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.anhhoang.unsplashmodel.PhotoCollection;
@@ -14,30 +13,32 @@ import java.util.List;
 
 public interface CollectionsContract {
     interface View extends BaseMvpContract.View<Presenter> {
-        String getToken();
+//        String getToken();
 
         void toggleProgress(boolean show);
 
-        void showError(int idString);
+//        void showError(int idString);
 
-        void showEmpty(boolean hasError, int idString);
+        void showEmpty();
 
-        void removeLoadMore();
+//        void removeLoadMore();
 
         void openCollection(long id, String collectionName);
 
 
-        void loadLocalCollections(String query);
+//        void loadLocalCollections(String query);
 
-        void saveUsers(ContentValues[] users);
+//        void saveUsers(ContentValues[] users);
 
-        void saveCollections(ContentValues[] collections);
+//        void saveCollections(ContentValues[] collections);
 
-        void removeCollections(String query);
+//        void removeCollections(String query);
 
         void displayCollections(List<PhotoCollection> collections);
 
-        void clearCollections();
+//        void clearCollections();
+
+        void startLoading(int currentPage);
     }
 
     interface Presenter extends BaseMvpContract.Presenter<View> {
@@ -47,8 +48,10 @@ public interface CollectionsContract {
 
         void loadFinished(Cursor cursor);
 
-        void loadFinished(List<PhotoCollection> collections);
+//        void loadFinished(List<PhotoCollection> collections);
 
         void collectionSelected(PhotoCollection collection);
+
+        String getSqlQuery();
     }
 }

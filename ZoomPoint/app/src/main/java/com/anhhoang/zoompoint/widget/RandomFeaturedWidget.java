@@ -85,7 +85,7 @@ public class RandomFeaturedWidget extends AppWidgetProvider {
             PendingIntent pendingIntent = PendingIntent.getActivity(
                     context,
                     0,
-                    PhotoActivity.getStartingIntent(context, photo.getId()),
+                    PhotoActivity.getStartingIntent(context, photo.getId(), "random_featured"),
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             views.setOnClickPendingIntent(R.id.image_view_photo, pendingIntent);

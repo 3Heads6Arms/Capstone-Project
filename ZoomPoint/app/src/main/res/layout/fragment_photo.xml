@@ -145,7 +145,7 @@
                         android:id="@+id/text_view_likes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/grid_item_padding"
+                        android:layout_marginStart="@dimen/grid_item_padding"
                         android:text="@string/likes_placeholder"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         app:layout_constraintBottom_toBottomOf="@id/image_view_like"

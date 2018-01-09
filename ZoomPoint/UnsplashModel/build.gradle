@@ -22,11 +22,6 @@ android {
         }
     }
 
-    buildTypes.each {
-        it.buildConfigField("String", "UNSPLASH_API_KEY", UnsplashApiKey)
-        it.buildConfigField("String", "UNSPLASH_SECRET", UnsplashSecret)
-    }
-
 }
 
 dependencies {

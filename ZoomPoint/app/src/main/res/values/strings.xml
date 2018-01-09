@@ -54,4 +54,7 @@
     <string name="select_collection">Select your Collection</string>
     <string name="add_widget">Add widget</string>
     <string name="random_featured">Random Featured</string>
+    <string name="my_profile">My profile</string>
+    <string name="download_title">Zoom Point picture download</string>
+    <string name="download_description">Zoom Point downloading a picture from Unsplash</string>
 </resources>

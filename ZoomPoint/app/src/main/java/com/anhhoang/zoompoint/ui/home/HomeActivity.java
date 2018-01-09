@@ -54,7 +54,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
+        if (item.getItemId() == R.id.action_my_profile) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             String username = preferences.getString(getString(R.string.username_preference_key), null);
             String fullname = preferences.getString(getString(R.string.fullname_preference_key), null);
